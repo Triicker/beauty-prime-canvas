@@ -139,6 +139,6 @@ export const pt = {
     subscribe: "Subscrever",
     emailPh: "O seu email",
   },
-} as const;
+};
 
 export type Dict = typeof pt;
