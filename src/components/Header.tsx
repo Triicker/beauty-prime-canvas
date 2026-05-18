@@ -28,6 +28,7 @@ export function Header() {
     { to: "/", label: t("nav.home") },
     { to: "/sobre", label: t("nav.about") },
     { to: "/servicos", label: t("nav.services") },
+    { to: "/profissionais", label: t("nav.pros") },
     { to: "/galeria", label: t("nav.gallery") },
     { to: "/loja", label: t("nav.shop") },
     { to: "/contactos", label: t("nav.contact") },
