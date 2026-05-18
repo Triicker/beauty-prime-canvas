@@ -206,7 +206,7 @@ function ProsPage() {
                 <span className="text-gradient-gold">{t("pros.experienceTitle")}</span>
               </h2>
               <p className="mt-6 text-muted-foreground leading-relaxed text-lg">{t("pros.experienceBody")}</p>
-              <a href="#contacto" className="mt-10 inline-flex items-center gap-3 px-8 h-13 py-4 border border-primary/40 text-primary text-[12px] uppercase tracking-[0.28em] hover:bg-primary hover:text-primary-foreground transition">
+              <a href="#contacto" className="mt-10 inline-flex items-center gap-3 px-8 h-14 border border-primary/40 text-primary text-[12px] uppercase tracking-[0.28em] hover:bg-primary hover:text-primary-foreground transition">
                 {t("pros.ctaVisit")} <ArrowRight className="w-4 h-4" />
               </a>
             </div>
