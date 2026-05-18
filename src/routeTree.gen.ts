@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as ServicosRouteImport } from './routes/servicos'
+import { Route as ProfissionaisRouteImport } from './routes/profissionais'
 import { Route as LojaRouteImport } from './routes/loja'
 import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as ContactosRouteImport } from './routes/contactos'
@@ -25,6 +26,11 @@ const SobreRoute = SobreRouteImport.update({
 const ServicosRoute = ServicosRouteImport.update({
   id: '/servicos',
   path: '/servicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfissionaisRoute = ProfissionaisRouteImport.update({
+  id: '/profissionais',
+  path: '/profissionais',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LojaRoute = LojaRouteImport.update({
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/contactos': typeof ContactosRoute
   '/galeria': typeof GaleriaRoute
   '/loja': typeof LojaRoute
+  '/profissionais': typeof ProfissionaisRoute
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
 }
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/contactos': typeof ContactosRoute
   '/galeria': typeof GaleriaRoute
   '/loja': typeof LojaRoute
+  '/profissionais': typeof ProfissionaisRoute
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
 }
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/contactos': typeof ContactosRoute
   '/galeria': typeof GaleriaRoute
   '/loja': typeof LojaRoute
+  '/profissionais': typeof ProfissionaisRoute
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
 }
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/contactos'
     | '/galeria'
     | '/loja'
+    | '/profissionais'
     | '/servicos'
     | '/sobre'
   fileRoutesByTo: FileRoutesByTo
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/contactos'
     | '/galeria'
     | '/loja'
+    | '/profissionais'
     | '/servicos'
     | '/sobre'
   id:
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/contactos'
     | '/galeria'
     | '/loja'
+    | '/profissionais'
     | '/servicos'
     | '/sobre'
   fileRoutesById: FileRoutesById
@@ -117,6 +129,7 @@ export interface RootRouteChildren {
   ContactosRoute: typeof ContactosRoute
   GaleriaRoute: typeof GaleriaRoute
   LojaRoute: typeof LojaRoute
+  ProfissionaisRoute: typeof ProfissionaisRoute
   ServicosRoute: typeof ServicosRoute
   SobreRoute: typeof SobreRoute
 }
@@ -135,6 +148,13 @@ declare module '@tanstack/react-router' {
       path: '/servicos'
       fullPath: '/servicos'
       preLoaderRoute: typeof ServicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profissionais': {
+      id: '/profissionais'
+      path: '/profissionais'
+      fullPath: '/profissionais'
+      preLoaderRoute: typeof ProfissionaisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/loja': {
@@ -181,6 +201,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactosRoute: ContactosRoute,
   GaleriaRoute: GaleriaRoute,
   LojaRoute: LojaRoute,
+  ProfissionaisRoute: ProfissionaisRoute,
   ServicosRoute: ServicosRoute,
   SobreRoute: SobreRoute,
 }
