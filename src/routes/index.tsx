@@ -57,7 +57,8 @@ function Index() {
     { name: t("shop.products.2.name"), img: pOil, price: 38 },
     { name: t("shop.products.5.name"), img: pKit, price: 120 },
   ];
-  const testimonials = t("testimonials.items", { returnObjects: true }) as {
+  const testimonialsRaw = t("testimonials.items", { returnObjects: true });
+  const testimonials = (Array.isArray(testimonialsRaw) ? testimonialsRaw : []) as {
     n: string;
     t: string;
   }[];
