@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+﻿import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Instagram, Facebook, MapPin, Mail, Phone } from "lucide-react";
 import logo from "@/assets/logo-loma-light.jpg";
@@ -123,16 +123,10 @@ export function Footer() {
             © {new Date().getFullYear()} LOMA Clinic & Beauty Hair. {t("footer.rights")}
           </span>
           <div className="flex items-center gap-4">
-            <Link
-              to="/privacidade"
-              className="hover:text-primary transition-colors"
-            >
+            <Link to="/privacidade" className="hover:text-primary transition-colors">
               Privacidade
             </Link>
-            <Link
-              to="/termos"
-              className="hover:text-primary transition-colors"
-            >
+            <Link to="/termos" className="hover:text-primary transition-colors">
               Termos
             </Link>
             <span className="tracking-[0.2em] uppercase">Made with care</span>

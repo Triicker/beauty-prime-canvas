@@ -1,4 +1,4 @@
-@import "tailwindcss" source(none);
+﻿@import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
 
@@ -121,17 +121,34 @@
   --card-foreground: oklch(0.96 0.02 85);
   --popover: oklch(0.30 0.045 45);
   --popover-foreground: oklch(0.96 0.02 85);
-  --primary: oklch(0.96 0.02 85);
+  --primary: oklch(0.88 0.08 85);
   --primary-foreground: oklch(0.24 0.04 45);
   --secondary: oklch(0.34 0.05 45);
   --secondary-foreground: oklch(0.96 0.02 85);
   --muted: oklch(0.32 0.04 45);
-  --muted-foreground: oklch(0.78 0.04 80);
+  --muted-foreground: oklch(0.72 0.04 80);
   --accent: oklch(0.78 0.11 82);
   --accent-foreground: oklch(0.24 0.04 45);
+  --destructive: oklch(0.62 0.20 25);
+  --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.96 0.02 85 / 0.16);
   --input: oklch(0.96 0.02 85 / 0.20);
   --ring: oklch(0.78 0.11 82 / 0.5);
+
+  --chart-1: oklch(0.88 0.08 85);
+  --chart-2: oklch(0.78 0.11 82);
+  --chart-3: oklch(0.55 0.08 40);
+  --chart-4: oklch(0.42 0.06 50);
+  --chart-5: oklch(0.96 0.02 85);
+
+  --sidebar: oklch(0.27 0.04 45);
+  --sidebar-foreground: oklch(0.96 0.02 85);
+  --sidebar-primary: oklch(0.88 0.08 85);
+  --sidebar-primary-foreground: oklch(0.24 0.04 45);
+  --sidebar-accent: oklch(0.34 0.05 45);
+  --sidebar-accent-foreground: oklch(0.96 0.02 85);
+  --sidebar-border: oklch(0.96 0.02 85 / 0.16);
+  --sidebar-ring: oklch(0.78 0.11 82 / 0.5);
 }
 
 @layer base {
@@ -153,10 +170,21 @@
     text-transform: uppercase;
     letter-spacing: 0.32em;
     font-size: 0.7rem;
-    color: var(--color-gold);
+    color: oklch(0.60 0.16 76); /* rich amber-gold — readable on light bg */
     font-weight: 500;
   }
+  .theme-dark .eyebrow {
+    color: var(--color-gold); /* luminous gold on dark bg */
+  }
+  /* Light mode: richer, darker gold for readability on cream */
   .text-gradient-gold {
+    background: linear-gradient(135deg, oklch(0.68 0.15 76), oklch(0.58 0.18 73), oklch(0.68 0.15 76));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* Dark mode: luminous light gold */
+  .theme-dark .text-gradient-gold {
     background: linear-gradient(135deg, oklch(0.95 0.05 90), oklch(0.78 0.12 80), oklch(0.95 0.05 90));
     -webkit-background-clip: text;
     background-clip: text;
@@ -164,6 +192,11 @@
   }
   .bg-gradient-cocoa {
     background: linear-gradient(180deg, oklch(0.27 0.04 50) 0%, oklch(0.22 0.035 50) 100%);
+    /* Always use light text on this dark background, regardless of theme */
+    --foreground: oklch(0.96 0.02 85);
+    --muted-foreground: oklch(0.72 0.05 80);
+    --primary: oklch(0.88 0.08 85);
+    --border: oklch(0.96 0.02 85 / 0.15);
   }
   .bg-gradient-gold {
     background: linear-gradient(135deg, oklch(0.92 0.08 88) 0%, oklch(0.78 0.12 80) 50%, oklch(0.92 0.08 88) 100%);

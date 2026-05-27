@@ -1,14 +1,28 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+﻿import { Link, useRouterState } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import { Menu, X, ShoppingBag } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Menu, X, ShoppingBag, Sun, Moon, ChevronDown } from "lucide-react";
 import logo from "@/assets/logo-loma.jpg";
 import { useCart } from "@/store/cart";
+
+const LANGS = [
+  { code: "pt", label: "Português" },
+  { code: "en", label: "English" },
+  { code: "fr", label: "Français" },
+];
 
 export function Header() {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof document !== "undefined") {
+      return document.documentElement.classList.contains("theme-dark") ? "dark" : "light";
+    }
+    return "dark";
+  });
+  const langRef = useRef<HTMLDivElement>(null);
   const { pathname } = useRouterState({ select: (s) => s.location });
   const cartCount = useCart((s) => s.count());
   const setCartOpen = useCart((s) => s.setOpen);
@@ -22,7 +36,38 @@ export function Header() {
 
   useEffect(() => {
     setOpen(false);
+    setLangOpen(false);
   }, [pathname]);
+
+  // Close lang dropdown on outside click
+  useEffect(() => {
+    if (!langOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [langOpen]);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.classList.toggle("theme-dark", next === "dark");
+    try {
+      localStorage.setItem("loma-theme", next);
+    } catch {
+      // ignore
+    }
+  };
+
+  const setLang = (code: string) => {
+    i18n.changeLanguage(code);
+    setLangOpen(false);
+  };
+
+  const currentLang = i18n.language?.slice(0, 2) ?? "pt";
 
   const links = [
     { to: "/", label: t("nav.home") },
@@ -35,12 +80,6 @@ export function Header() {
     { to: "/contactos", label: t("nav.contact") },
   ];
 
-  const switchLang = () => {
-    const cur = i18n.language?.slice(0, 2) ?? "pt";
-    const cycle: Record<string, string> = { pt: "en", en: "fr", fr: "pt" };
-    i18n.changeLanguage(cycle[cur] ?? "pt");
-  };
-
   return (
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
@@ -50,7 +89,7 @@ export function Header() {
       }`}
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 h-20 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3 group">
+        <Link to="/" aria-label="LOMA — Página inicial">
           <img
             src={logo}
             alt="Loma"
@@ -58,9 +97,6 @@ export function Header() {
             height={44}
             className="rounded-full ring-1 ring-primary/30 object-cover"
           />
-          <span className="hidden sm:block font-display text-xl tracking-wide text-gradient-gold">
-            LOMA
-          </span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-9">
@@ -76,14 +112,49 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-1 sm:gap-2">
+          {/* Language dropdown */}
+          <div ref={langRef} className="relative">
+            <button
+              onClick={() => setLangOpen((v) => !v)}
+              className="flex items-center gap-1 text-[11px] uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition px-2 py-2"
+              aria-label="Select language"
+              aria-expanded={langOpen}
+            >
+              {currentLang.toUpperCase()}
+              <ChevronDown
+                className={`w-3 h-3 transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+            {langOpen && (
+              <div className="absolute right-0 top-full mt-1 bg-background border border-border shadow-2xl z-50 w-36 py-1">
+                {LANGS.map((l) => (
+                  <button
+                    key={l.code}
+                    onClick={() => setLang(l.code)}
+                    className={`w-full text-left px-4 py-2.5 text-[11px] uppercase tracking-[0.2em] transition-colors ${
+                      currentLang === l.code
+                        ? "text-primary bg-primary/8"
+                        : "text-muted-foreground hover:text-primary hover:bg-secondary"
+                    }`}
+                  >
+                    {l.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Theme toggle */}
           <button
-            onClick={switchLang}
-            className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition px-2"
-            aria-label="Switch language"
+            onClick={toggleTheme}
+            className="p-2 text-muted-foreground hover:text-primary transition"
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           >
-            {(i18n.language?.slice(0, 2) ?? "pt").toUpperCase()}
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
+
+          {/* Cart */}
           <button
             onClick={() => setCartOpen(true)}
             className="relative p-2 text-muted-foreground hover:text-primary transition"
@@ -96,6 +167,7 @@ export function Header() {
               </span>
             )}
           </button>
+
           <Link
             to="/agendamento"
             className="hidden sm:inline-flex items-center px-5 h-10 text-[12px] uppercase tracking-[0.25em] border border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
