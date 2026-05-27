@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { MapPin, Clock, Phone, Mail, Instagram, MessageCircle } from "lucide-react";

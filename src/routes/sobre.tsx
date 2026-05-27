@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import about from "@/assets/about-salon.jpg";
 import seal from "@/assets/logo-loma-seal.jpg";

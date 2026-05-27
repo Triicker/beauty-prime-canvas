@@ -1,4 +1,4 @@
-export const pt = {
+﻿export const pt = {
   nav: {
     home: "Início",
     about: "Sobre",

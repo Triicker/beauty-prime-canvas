@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { ArrowRight, Sparkles } from "lucide-react";
 import heroVideo from "@/assets/woman1.mp4";

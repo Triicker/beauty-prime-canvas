@@ -1,4 +1,4 @@
-import type { Dict } from "./pt";
+﻿import type { Dict } from "./pt";
 
 export const en: Dict = {
   nav: {
