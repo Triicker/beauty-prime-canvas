@@ -9,15 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as ServicosRouteImport } from './routes/servicos'
 import { Route as ProfissionaisRouteImport } from './routes/profissionais'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as LojaRouteImport } from './routes/loja'
 import { Route as GaleriaRouteImport } from './routes/galeria'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactosRouteImport } from './routes/contactos'
 import { Route as AgendamentoRouteImport } from './routes/agendamento'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
   path: '/sobre',
@@ -33,6 +41,11 @@ const ProfissionaisRoute = ProfissionaisRouteImport.update({
   path: '/profissionais',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LojaRoute = LojaRouteImport.update({
   id: '/loja',
   path: '/loja',
@@ -41,6 +54,11 @@ const LojaRoute = LojaRouteImport.update({
 const GaleriaRoute = GaleriaRouteImport.update({
   id: '/galeria',
   path: '/galeria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactosRoute = ContactosRouteImport.update({
@@ -63,32 +81,41 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agendamento': typeof AgendamentoRoute
   '/contactos': typeof ContactosRoute
+  '/faq': typeof FaqRoute
   '/galeria': typeof GaleriaRoute
   '/loja': typeof LojaRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/profissionais': typeof ProfissionaisRoute
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
+  '/termos': typeof TermosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agendamento': typeof AgendamentoRoute
   '/contactos': typeof ContactosRoute
+  '/faq': typeof FaqRoute
   '/galeria': typeof GaleriaRoute
   '/loja': typeof LojaRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/profissionais': typeof ProfissionaisRoute
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
+  '/termos': typeof TermosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agendamento': typeof AgendamentoRoute
   '/contactos': typeof ContactosRoute
+  '/faq': typeof FaqRoute
   '/galeria': typeof GaleriaRoute
   '/loja': typeof LojaRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/profissionais': typeof ProfissionaisRoute
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
+  '/termos': typeof TermosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,46 +123,65 @@ export interface FileRouteTypes {
     | '/'
     | '/agendamento'
     | '/contactos'
+    | '/faq'
     | '/galeria'
     | '/loja'
+    | '/privacidade'
     | '/profissionais'
     | '/servicos'
     | '/sobre'
+    | '/termos'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/agendamento'
     | '/contactos'
+    | '/faq'
     | '/galeria'
     | '/loja'
+    | '/privacidade'
     | '/profissionais'
     | '/servicos'
     | '/sobre'
+    | '/termos'
   id:
     | '__root__'
     | '/'
     | '/agendamento'
     | '/contactos'
+    | '/faq'
     | '/galeria'
     | '/loja'
+    | '/privacidade'
     | '/profissionais'
     | '/servicos'
     | '/sobre'
+    | '/termos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgendamentoRoute: typeof AgendamentoRoute
   ContactosRoute: typeof ContactosRoute
+  FaqRoute: typeof FaqRoute
   GaleriaRoute: typeof GaleriaRoute
   LojaRoute: typeof LojaRoute
+  PrivacidadeRoute: typeof PrivacidadeRoute
   ProfissionaisRoute: typeof ProfissionaisRoute
   ServicosRoute: typeof ServicosRoute
   SobreRoute: typeof SobreRoute
+  TermosRoute: typeof TermosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sobre': {
       id: '/sobre'
       path: '/sobre'
@@ -157,6 +203,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfissionaisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/loja': {
       id: '/loja'
       path: '/loja'
@@ -169,6 +222,13 @@ declare module '@tanstack/react-router' {
       path: '/galeria'
       fullPath: '/galeria'
       preLoaderRoute: typeof GaleriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contactos': {
@@ -199,12 +259,25 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgendamentoRoute: AgendamentoRoute,
   ContactosRoute: ContactosRoute,
+  FaqRoute: FaqRoute,
   GaleriaRoute: GaleriaRoute,
   LojaRoute: LojaRoute,
+  PrivacidadeRoute: PrivacidadeRoute,
   ProfissionaisRoute: ProfissionaisRoute,
   ServicosRoute: ServicosRoute,
   SobreRoute: SobreRoute,
+  TermosRoute: TermosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

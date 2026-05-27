@@ -7,21 +7,37 @@ import { SectionHeading } from "@/components/SectionHeading";
 export const Route = createFileRoute("/agendamento")({
   head: () => ({
     meta: [
-      { title: "Agendamento — Loma Clinic & Beauty Spa" },
+      { title: "Agendamento — LOMA Clinic & Beauty Hair" },
       { name: "description", content: "Reserve a sua experiência Loma em três passos elegantes." },
       { property: "og:title", content: "Agendamento — Loma" },
       { property: "og:description", content: "Reserve em três passos elegantes." },
+      { property: "og:url", content: "https://lomaexperience.com/agendamento" },
     ],
+    links: [{ rel: "canonical", href: "https://lomaexperience.com/agendamento" }],
   }),
   component: Booking,
 });
 
 function Booking() {
   const { t } = useTranslation();
-  const services = (t("services.list", { returnObjects: true }) as { name: string; price: string; time: string }[]).map((s) => s.name);
+  const allCategories = t("services.categories", { returnObjects: true }) as {
+    name: string;
+    slug: string;
+    items: { name: string; price: string; time: string }[];
+  }[];
+  const services = allCategories.flatMap((cat) => cat.items.map((s) => s.name));
   const pros = t("booking.professionals", { returnObjects: true }) as string[];
   const [step, setStep] = useState(0);
-  const [data, setData] = useState({ service: "", pro: "", date: "", time: "", name: "", email: "", phone: "", notes: "" });
+  const [data, setData] = useState({
+    service: "",
+    pro: "",
+    date: "",
+    time: "",
+    name: "",
+    email: "",
+    phone: "",
+    notes: "",
+  });
   const [done, setDone] = useState(false);
 
   const dates = useMemo(() => {
@@ -39,7 +55,12 @@ function Booking() {
   }, []);
   const times = ["10:00", "11:00", "12:30", "14:00", "15:30", "17:00", "18:30"];
 
-  const steps = [t("booking.chooseService"), t("booking.chooseProfessional"), t("booking.chooseSlot"), t("booking.yourDetails")];
+  const steps = [
+    t("booking.chooseService"),
+    t("booking.chooseProfessional"),
+    t("booking.chooseSlot"),
+    t("booking.yourDetails"),
+  ];
   const canNext = [data.service, data.pro, data.date && data.time, data.name && data.email][step];
 
   if (done) {
@@ -51,9 +72,27 @@ function Booking() {
           </div>
           <div className="eyebrow mb-3">{t("booking.confirmed")}</div>
           <h1 className="font-display text-4xl md:text-5xl">{data.service}</h1>
-          <p className="mt-5 text-muted-foreground">{data.date} · {data.time} · {data.pro}</p>
+          <p className="mt-5 text-muted-foreground">
+            {data.date} · {data.time} · {data.pro}
+          </p>
           <p className="mt-6 text-sm text-muted-foreground">{t("booking.confirmedBody")}</p>
-          <button onClick={() => { setDone(false); setStep(0); setData({ service: "", pro: "", date: "", time: "", name: "", email: "", phone: "", notes: "" }); }} className="mt-10 px-6 py-3 border border-primary/40 text-primary text-[12px] uppercase tracking-[0.28em]">
+          <button
+            onClick={() => {
+              setDone(false);
+              setStep(0);
+              setData({
+                service: "",
+                pro: "",
+                date: "",
+                time: "",
+                name: "",
+                email: "",
+                phone: "",
+                notes: "",
+              });
+            }}
+            className="mt-10 px-6 py-3 border border-primary/40 text-primary text-[12px] uppercase tracking-[0.28em]"
+          >
             {t("booking.newBooking")}
           </button>
         </div>
@@ -68,16 +107,25 @@ function Booking() {
 
         <div className="mt-14 flex items-center justify-center gap-2">
           {steps.map((_, i) => (
-            <div key={i} className={`h-px transition-all duration-500 ${i <= step ? "bg-primary w-12" : "bg-border w-6"}`} />
+            <div
+              key={i}
+              className={`h-px transition-all duration-500 ${i <= step ? "bg-primary w-12" : "bg-border w-6"}`}
+            />
           ))}
         </div>
-        <div className="text-center mt-3 eyebrow">{t("booking.step")} {step + 1} {t("booking.of")} {steps.length} · {steps[step]}</div>
+        <div className="text-center mt-3 eyebrow">
+          {t("booking.step")} {step + 1} {t("booking.of")} {steps.length} · {steps[step]}
+        </div>
 
         <div className="mt-12 border border-border bg-card p-6 md:p-10 min-h-[360px]">
           {step === 0 && (
             <div className="grid sm:grid-cols-2 gap-3">
               {services.map((s) => (
-                <button key={s} onClick={() => setData({ ...data, service: s })} className={`text-left p-5 border transition ${data.service === s ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}>
+                <button
+                  key={s}
+                  onClick={() => setData({ ...data, service: s })}
+                  className={`text-left p-5 border transition ${data.service === s ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
+                >
                   <div className="font-display text-lg">{s}</div>
                 </button>
               ))}
@@ -86,7 +134,11 @@ function Booking() {
           {step === 1 && (
             <div className="grid sm:grid-cols-2 gap-3">
               {pros.map((p) => (
-                <button key={p} onClick={() => setData({ ...data, pro: p })} className={`text-left p-5 border transition ${data.pro === p ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}>
+                <button
+                  key={p}
+                  onClick={() => setData({ ...data, pro: p })}
+                  className={`text-left p-5 border transition ${data.pro === p ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
+                >
                   <div className="font-display text-lg">{p}</div>
                 </button>
               ))}
@@ -96,8 +148,14 @@ function Booking() {
             <div className="space-y-6">
               <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
                 {dates.map((d) => (
-                  <button key={d.iso} onClick={() => setData({ ...data, date: d.iso })} className={`p-3 border text-center transition ${data.date === d.iso ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/40"}`}>
-                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{d.label}</div>
+                  <button
+                    key={d.iso}
+                    onClick={() => setData({ ...data, date: d.iso })}
+                    className={`p-3 border text-center transition ${data.date === d.iso ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/40"}`}
+                  >
+                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                      {d.label}
+                    </div>
                     <div className="font-display text-xl mt-1">{d.day}</div>
                   </button>
                 ))}
@@ -105,7 +163,13 @@ function Booking() {
               {data.date && (
                 <div className="grid grid-cols-3 sm:grid-cols-7 gap-2">
                   {times.map((tm) => (
-                    <button key={tm} onClick={() => setData({ ...data, time: tm })} className={`py-3 border text-sm transition ${data.time === tm ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/40"}`}>{tm}</button>
+                    <button
+                      key={tm}
+                      onClick={() => setData({ ...data, time: tm })}
+                      className={`py-3 border text-sm transition ${data.time === tm ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/40"}`}
+                    >
+                      {tm}
+                    </button>
                   ))}
                 </div>
               )}
@@ -140,7 +204,9 @@ function Booking() {
                 <div className="eyebrow mb-3">{t("booking.summary")}</div>
                 <div className="text-sm text-foreground space-y-1">
                   <div>{data.service}</div>
-                  <div className="text-muted-foreground">{data.pro} · {data.date} · {data.time}</div>
+                  <div className="text-muted-foreground">
+                    {data.pro} · {data.date} · {data.time}
+                  </div>
                 </div>
               </div>
             </div>
@@ -148,11 +214,32 @@ function Booking() {
         </div>
 
         <div className="mt-8 flex justify-between">
-          <button onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0} className="inline-flex items-center gap-2 px-5 py-3 text-[12px] uppercase tracking-[0.25em] text-muted-foreground disabled:opacity-30 hover:text-primary"><ArrowLeft className="w-4 h-4" />{t("common.back")}</button>
+          <button
+            onClick={() => setStep(Math.max(0, step - 1))}
+            disabled={step === 0}
+            className="inline-flex items-center gap-2 px-5 py-3 text-[12px] uppercase tracking-[0.25em] text-muted-foreground disabled:opacity-30 hover:text-primary"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            {t("common.back")}
+          </button>
           {step < steps.length - 1 ? (
-            <button onClick={() => canNext && setStep(step + 1)} disabled={!canNext} className="inline-flex items-center gap-2 px-7 py-3 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.25em] disabled:opacity-30">{t("common.continue")}<ArrowRight className="w-4 h-4" /></button>
+            <button
+              onClick={() => canNext && setStep(step + 1)}
+              disabled={!canNext}
+              className="inline-flex items-center gap-2 px-7 py-3 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.25em] disabled:opacity-30"
+            >
+              {t("common.continue")}
+              <ArrowRight className="w-4 h-4" />
+            </button>
           ) : (
-            <button onClick={() => canNext && setDone(true)} disabled={!canNext} className="inline-flex items-center gap-2 px-7 py-3 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.25em] disabled:opacity-30">{t("booking.pay")}<ArrowRight className="w-4 h-4" /></button>
+            <button
+              onClick={() => canNext && setDone(true)}
+              disabled={!canNext}
+              className="inline-flex items-center gap-2 px-7 py-3 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.25em] disabled:opacity-30"
+            >
+              {t("booking.pay")}
+              <ArrowRight className="w-4 h-4" />
+            </button>
           )}
         </div>
       </div>

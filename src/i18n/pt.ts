@@ -8,6 +8,7 @@ export const pt = {
     gallery: "Galeria",
     contact: "Contactos",
     pros: "Profissionais",
+    faq: "FAQ",
     bookCta: "Marcar Visita",
   },
   common: {
@@ -23,15 +24,15 @@ export const pt = {
     close: "Fechar",
   },
   home: {
-    eyebrow: "Loma Clinic & Beauty Spa",
+    eyebrow: "LOMA Clinic & Beauty Hair",
     title: "Beleza que revela\na sua melhor versão",
     subtitle:
       "Cada gesto, corte e tratamento é uma experiência sensorial pensada para revelar a sua identidade — porque a beleza não é tendência, é refinamento.",
     seeServices: "Conhecer Serviços",
     aboutEyebrow: "A Casa Loma",
-    aboutTitle: "Um santuário de beleza, redefinido em ouro e cacau",
+    aboutTitle: "Beleza, saúde capilar e bem-estar num só espaço",
     aboutBody:
-      "No coração da cidade, a Loma é um refúgio onde a estética premium se encontra com a ciência capilar. Um espaço cuidadosamente desenhado para devolver tempo, brilho e confiança.",
+      "A LOMA é mais do que um salão — é um ambiente pensado para desacelerar, cuidar e transformar. Combinamos técnicas avançadas, atendimento personalizado e uma atmosfera sofisticada e acolhedora em Santa Cruz — Torres Vedras.",
     servicesEyebrow: "Serviços assinatura",
     servicesTitle: "Rituais de beleza criados à medida",
     productsEyebrow: "Boutique",
@@ -45,30 +46,140 @@ export const pt = {
   },
   about: {
     eyebrow: "Sobre Nós",
-    title: "Onde a tradição da beleza se encontra com a precisão moderna",
-    body:
-      "A Loma nasceu da convicção de que a verdadeira sofisticação está no detalhe. Reunimos uma equipa multidisciplinar de hairstylists, coloristas e terapeutas capilares para criar uma experiência integral, num ambiente que respira calma e luxo discreto.",
+    title: "Um espaço premium de transformação capilar e autocuidado",
+    body: "A LOMA Clinic & Beauty Hair nasceu do desejo de transformar o conceito tradicional de salão de beleza numa experiência completa de bem-estar, autoestima e cuidado personalizado. Fundada por Marina Loreti, especialista em beleza capilar e terapeuta capilar, a LOMA foi criada com uma visão clara: oferecer muito mais do que serviços de cabelo — um espaço onde cada cliente se sente acolhida, valorizada e cuidada de forma única.",
     missionTitle: "A nossa missão",
     missionBody:
-      "Elevar o ritual de cuidado capilar a uma forma de expressão pessoal — com técnica, sensibilidade e produtos de excelência.",
+      "Oferecer uma experiência completa de beleza, saúde capilar e bem-estar — onde cada cliente é cuidada de forma única, com técnica avançada e um ambiente acolhedor que respira sofisticação.",
     valuesTitle: "Diferenciais",
     values: [
-      { t: "Técnica de autor", b: "Cortes desenhados em função do rosto, lifestyle e textura natural." },
-      { t: "Coloração responsável", b: "Pigmentos premium e protocolos que preservam a fibra capilar." },
-      { t: "Ambiente sereno", b: "Suites privadas, aromaterapia e atendimento personalizado." },
-      { t: "Resultado duradouro", b: "Tratamentos com efeito visível desde a primeira sessão." },
+      {
+        t: "Saúde Capilar",
+        b: "Diagnóstico personalizado e tratamentos focados no bem-estar do couro cabeludo e dos fios.",
+      },
+      {
+        t: "Experiência Sensorial",
+        b: "Cada visita é um ritual — aromaterapia, massagem e cuidados pensados para os sentidos.",
+      },
+      {
+        t: "Atendimento Humanizado",
+        b: "Cada cliente é única. Escutamos, avaliamos e personalizamos cada serviço ao seu estilo de vida.",
+      },
+      {
+        t: "Luxo Acolhedor",
+        b: "Sofisticação sem distância. Um ambiente premium que convida à desaceleração e ao autocuidado.",
+      },
     ],
   },
   services: {
     eyebrow: "Carta de Serviços",
-    title: "Cada serviço, uma assinatura Loma",
-    list: [
-      { name: "Corte Assinatura", desc: "Análise facial, lavagem ritual, corte e finalização editorial.", price: "desde 45€", time: "60 min" },
-      { name: "Coloração & Balayage", desc: "Pigmentação personalizada, técnicas francesas, brilho prolongado.", price: "desde 95€", time: "120 min" },
-      { name: "Tratamentos Capilares", desc: "Diagnóstico, máscara reconstrutora e selagem com vapor de ozono.", price: "desde 60€", time: "75 min" },
-      { name: "Alisamentos Premium", desc: "Protocolos sem formol para uma fibra lisa, leve e saudável.", price: "desde 180€", time: "180 min" },
-      { name: "Estética Capilar", desc: "Limpeza profunda do couro cabeludo, massagem e finalização.", price: "desde 70€", time: "90 min" },
-      { name: "Hidratação Profunda", desc: "Ritual em três tempos com óleos preciosos e ativos botânicos.", price: "desde 55€", time: "60 min" },
+    title: "Cada serviço, uma assinatura LOMA",
+    all: "Todos",
+    featured: [
+      "Corte cabelo dia de técnicos",
+      "Balayage",
+      "Coloração raiz S",
+      "Brushing médio",
+      "Coloração raiz M",
+      "Corte com brushing M",
+    ],
+    categories: [
+      {
+        name: "Em Destaque",
+        slug: "featured",
+        items: [
+          { name: "Corte cabelo dia de técnicos", desc: "Transforme o seu visual com um corte feito por técnicos qualificados, realçando a beleza única dos seus cabelos com leveza e modernidade.", price: "€20", time: "15 min" },
+          { name: "Balayage", desc: "Mechas iluminadas com resultado natural e duradouro. Inclui tratamento pós-mechas na primeira lavagem, válido por até uma semana.", price: "a partir de €120", time: "4 h" },
+          { name: "Coloração raiz S", desc: "Toque de cor vibrante e saudável nas raízes, sem amoníaco, ideal para até 2 cm de crescimento.", price: "€45", time: "1 h 30 min" },
+          { name: "Brushing médio", desc: "Escovação elegante que proporciona brilho e movimento aos cabelos até aos ombros.", price: "€15", time: "40 min" },
+          { name: "Coloração raiz M", desc: "Coloração de raízes com efeito harmonioso e natural, ideal para até 2 cm de crescimento.", price: "€50", time: "1 h 30 min" },
+          { name: "Corte com brushing M", desc: "Corte moderno com brushing impecável, trazendo leveza e movimento aos fios médios.", price: "€35", time: "1 h" },
+        ],
+      },
+      {
+        name: "Avaliação / Orçamento",
+        slug: "avaliacao",
+        items: [
+          { name: "Consulta capilar", desc: "Avaliação personalizada com recomendações específicas para os cuidados ideais dos fios. Apenas para mulheres.", price: "€35", time: "1 h" },
+          { name: "Avaliação / teste mecha", desc: "Avaliação capilar para identificar necessidades e indicar soluções. O valor é descontado na realização do serviço técnico.", price: "€20", time: "30 min" },
+        ],
+      },
+      {
+        name: "Extensões Capilares",
+        slug: "extensoes",
+        items: [
+          { name: "Manutenção extensões +60 dias", desc: "Revitalização das extensões para manter brilho e beleza mesmo após 60 dias de uso.", price: "€220", time: "1 h 30 min" },
+          { name: "Manutenção extensões até 60 dias", desc: "Serviço ideal para manter as extensões saudáveis, naturais e impecáveis.", price: "€180", time: "1 h 30 min" },
+          { name: "Manutenção extensões até 30 dias", desc: "Cuidados especializados para prolongar a durabilidade e beleza das extensões capilares.", price: "€150", time: "1 h 30 min" },
+          { name: "Extensões 1ª vez", desc: "Aplicação de extensões com técnica de banda adesiva, garantindo resultado natural sem danificar os fios.", price: "€220", time: "45 min" },
+        ],
+      },
+      {
+        name: "Alisamento",
+        slug: "alisamento",
+        items: [
+          { name: "Botox", desc: "Tratamento que revitaliza os fios, proporcionando aparência renovada, brilho e maciez.", price: "a partir de €75", time: "3 h" },
+          { name: "Alisamento", desc: "Fios lisos, sedosos e brilhantes. Valores variam conforme o comprimento.", price: "a partir de €100", time: "3 h" },
+        ],
+      },
+      {
+        name: "Wellness Spa",
+        slug: "wellness",
+        items: [
+          { name: "Terapia capilar", desc: "Tratamento revitalizante para couro cabeludo que promove saúde, equilíbrio e fortalecimento da raiz.", price: "€100", time: "1 h" },
+          { name: "Head spa", desc: "Experiência profunda de relaxamento e cuidado capilar, promovendo bem-estar físico e mental.", price: "€75", time: "1 h 30 min" },
+        ],
+      },
+      {
+        name: "Cronograma Capilar",
+        slug: "cronograma",
+        items: [
+          { name: "Esfoliação capilar", desc: "Elimina impurezas e resíduos acumulados, revitalizando o couro cabeludo e preparando os fios para tratamentos.", price: "€35", time: "1 h" },
+          { name: "Velaterapia", desc: "Técnica que remove pontas duplas e revitaliza os fios. Indicada especialmente para loiras. Não compatível com progressiva, exceto em transição para caracóis.", price: "€90", time: "2 h 30 min" },
+          { name: "Cronograma capilar", desc: "Tratamento personalizado para hidratação, nutrição e reconstrução dos fios.", price: "a partir de €45", time: "1 h" },
+        ],
+      },
+      {
+        name: "Aclaramento",
+        slug: "aclaramento",
+        items: [
+          { name: "Madeixas", desc: "Técnica de clareamento que proporciona luminosidade e sofisticação aos fios.", price: "a partir de €100", time: "3 h" },
+          { name: "Free hands", desc: "Clareamento artístico com pinceladas livres para um resultado único e natural.", price: "a partir de €120", time: "4 h" },
+          { name: "Moreno iluminado", desc: "Pré-clareamento que ilumina e realça a beleza natural dos cabelos escuros.", price: "a partir de €120", time: "3 h" },
+          { name: "Air touch", desc: "Técnica de mechas com secador de ar para transição suave e natural entre tons.", price: "a partir de €120", time: "4 h" },
+          { name: "Babylights", desc: "Mechas suaves e delicadas que imitam o clareamento natural dos fios na infância.", price: "a partir de €120", time: "4 h" },
+          { name: "Balayage", desc: "Técnica de iluminação pintada à mão com tratamento pós-mechas incluso.", price: "€120", time: "4 h" },
+          { name: "Super blond", desc: "Pré-clareamento intenso com tratamento hidratante pós-mechas para brilho e vitalidade.", price: "a partir de €120", time: "4 h" },
+          { name: "Matização / Toner L", desc: "Tonalização para neutralizar reflexos indesejados e realçar a luminosidade dos fios longos.", price: "€50", time: "1 h 30 min" },
+          { name: "Matização / Toner M", desc: "Neutraliza tons indesejados e realça a luminosidade dos fios médios.", price: "€45", time: "1 h 30 min" },
+          { name: "Matização / Toner S", desc: "Matização para fios curtos, proporcionando brilho e uniformidade à cor.", price: "€40", time: "1 h 30 min" },
+          { name: "Coloração raiz L", desc: "Cobertura de raiz até 2 cm com tratamento nutritivo incluso, para cabelos longos.", price: "€55", time: "1 h 30 min" },
+          { name: "Coloração raiz M", desc: "Retoque de raiz com acabamento natural e harmonioso para cabelos médios.", price: "€50", time: "1 h 30 min" },
+          { name: "Coloração raiz S", desc: "Coloração suave sem amoníaco para raízes curtas com até 2 cm de crescimento.", price: "€45", time: "1 h 30 min" },
+          { name: "Coloração total L", desc: "Coloração completa para cabelos longos com tratamento de brilho e durabilidade.", price: "€70", time: "2 h 30 min" },
+          { name: "Coloração total M", desc: "Coloração completa sem amoníaco para fios médios, garantindo saúde e brilho.", price: "€60", time: "2 h" },
+          { name: "Coloração total S", desc: "Coloração total para cabelos curtos com tratamento fortalecedor incluso.", price: "€55", time: "1 h 30 min" },
+        ],
+      },
+      {
+        name: "Styling",
+        slug: "styling",
+        items: [
+          { name: "Penteado + make", desc: "Penteado elegante combinado com maquiagem profissional para qualquer ocasião especial.", price: "€90", time: "2 h" },
+          { name: "Penteado com brushing", desc: "Penteado estilizado com brushing para acabamento suave e sofisticado.", price: "€60", time: "1 h" },
+          { name: "Penteado sem brushing", desc: "Penteado moderno sem escovação, ideal para praticidade e autenticidade.", price: "€50", time: "30 min" },
+          { name: "Corte franja", desc: "Corte de franja personalizado para valorizar o formato do rosto e renovar o visual.", price: "€10", time: "15 min" },
+          { name: "Corte cabelo adolescente 11–15 anos", desc: "Corte moderno para adolescentes com lavagem e secagem inclusas.", price: "€25", time: "1 h" },
+          { name: "Corte cabelo criança 5–10 anos", desc: "Corte infantil em ambiente acolhedor, adaptado à personalidade da criança.", price: "€20", time: "40 min" },
+          { name: "Corte cabelo bebê 0–4 anos", desc: "Experiência delicada e confortável de corte para bebês.", price: "€15", time: "20 min" },
+          { name: "Corte com brushing L", desc: "Corte moderno com brushing para cabelos longos, proporcionando volume e movimento.", price: "€40", time: "1 h" },
+          { name: "Corte com brushing M", desc: "Corte e brushing para cabelos médios com leveza e acabamento impecável.", price: "€35", time: "1 h" },
+          { name: "Corte com brushing S", desc: "Corte estiloso com brushing para cabelos curtos, incluindo shampoo e condicionador.", price: "€30", time: "1 h" },
+          { name: "Brushing longo", desc: "Escovação para cabelos longos com brilho intenso e acabamento sofisticado.", price: "€18", time: "1 h" },
+          { name: "Brushing médio", desc: "Escovação elegante para cabelos até os ombros.", price: "€15", time: "40 min" },
+          { name: "Brushing curto", desc: "Escovação prática e sofisticada para cabelos curtos até a altura das orelhas.", price: "€12", time: "30 min" },
+        ],
+      },
     ],
   },
   booking: {
@@ -89,33 +200,76 @@ export const pt = {
     confirmed: "Reserva confirmada",
     confirmedBody: "Receberá em breve um email com todos os detalhes da sua experiência Loma.",
     newBooking: "Nova reserva",
-    professionals: ["Sofia Almeida", "Inês Carvalho", "Mariana Pinto", "Equipa Loma"],
+    professionals: ["Marina Loreti", "Equipa LOMA"],
   },
   shop: {
     eyebrow: "Boutique Loma",
     title: "Cuidado profissional, agora também em sua casa",
-    filters: { all: "Todos", shampoo: "Shampoos", mask: "Máscaras", oil: "Óleos", styling: "Finalizadores", kit: "Kits" },
+    filters: {
+      all: "Todos",
+      shampoo: "Shampoos",
+      mask: "Máscaras",
+      oil: "Óleos",
+      styling: "Finalizadores",
+      kit: "Kits",
+    },
     cart: "Carrinho",
     empty: "O seu carrinho está vazio.",
     subtotal: "Subtotal",
     products: [
-      { name: "Shampoo Reconstrutor", cat: "shampoo", price: 28, desc: "Limpeza suave que devolve corpo e brilho." },
-      { name: "Máscara Royal Cocoa", cat: "mask", price: 42, desc: "Tratamento intensivo com manteiga de cacau." },
-      { name: "Óleo Precioso Gold", cat: "oil", price: 38, desc: "Selante de pontas com extracto de argan." },
-      { name: "Spray Leave-In Sublime", cat: "styling", price: 32, desc: "Protecção térmica e brilho instantâneo." },
-      { name: "Creme Modelador Soft", cat: "styling", price: 30, desc: "Definição com toque natural." },
-      { name: "Kit Ritual Completo", cat: "kit", price: 120, desc: "Shampoo, máscara, óleo e leave-in." },
+      {
+        name: "Shampoo Reconstrutor",
+        cat: "shampoo",
+        price: 28,
+        desc: "Limpeza suave que devolve corpo e brilho.",
+      },
+      {
+        name: "Máscara Royal Cocoa",
+        cat: "mask",
+        price: 42,
+        desc: "Tratamento intensivo com manteiga de cacau.",
+      },
+      {
+        name: "Óleo Precioso Gold",
+        cat: "oil",
+        price: 38,
+        desc: "Selante de pontas com extracto de argan.",
+      },
+      {
+        name: "Spray Leave-In Sublime",
+        cat: "styling",
+        price: 32,
+        desc: "Protecção térmica e brilho instantâneo.",
+      },
+      {
+        name: "Creme Modelador Soft",
+        cat: "styling",
+        price: 30,
+        desc: "Definição com toque natural.",
+      },
+      {
+        name: "Kit Ritual Completo",
+        cat: "kit",
+        price: 120,
+        desc: "Shampoo, máscara, óleo e leave-in.",
+      },
     ],
   },
   gallery: {
     eyebrow: "Portfólio",
     title: "Trabalhos que refletem a alma Loma",
-    tabs: { all: "Tudo", before: "Antes & Depois", salon: "Ambiente" },
+    tabs: { all: "Tudo", before: "Antes & Depois", salon: "Ambiente", team: "Equipa" },
   },
   testimonials: {
     items: [
-      { n: "Beatriz M.", t: "Saí transformada. O cuidado, o ambiente e o resultado são incomparáveis." },
-      { n: "Catarina S.", t: "Encontrei finalmente uma equipa que ouve e desenha o cabelo à minha pessoa." },
+      {
+        n: "Beatriz M.",
+        t: "Saí transformada. O cuidado, o ambiente e o resultado são incomparáveis.",
+      },
+      {
+        n: "Catarina S.",
+        t: "Encontrei finalmente uma equipa que ouve e desenha o cabelo à minha pessoa.",
+      },
       { n: "Maria L.", t: "É mais do que um salão — é uma experiência sensorial completa." },
       { n: "Rita F.", t: "A coloração é simplesmente impecável. Brilho que dura semanas." },
     ],
@@ -123,7 +277,7 @@ export const pt = {
   contact: {
     eyebrow: "Visite-nos",
     title: "Estamos à sua espera",
-    address: "Av. da Liberdade, 123 — Lisboa",
+    address: "R. da Azenha 6, 2560-474 Silveira, Torres Vedras",
     hours: "Seg–Sáb · 10h às 20h",
     formTitle: "Envie-nos uma mensagem",
     message: "Mensagem",
@@ -131,7 +285,7 @@ export const pt = {
     sent: "Mensagem enviada. Em breve entramos em contacto.",
   },
   footer: {
-    tagline: "Clinic & Beauty Spa",
+    tagline: "Clinic & Beauty Hair",
     rights: "Todos os direitos reservados.",
     explore: "Explorar",
     contact: "Contacto",
@@ -149,14 +303,46 @@ export const pt = {
     spacesEyebrow: "Espaços disponíveis",
     spacesTitle: "Encontre o formato ideal para a sua carreira",
     spaces: [
-      { n: "Cadeira Individual", d: "Estação privada com espelho iluminado, marmore e iluminação editorial.", b: ["Aluguer flexível", "Marmore + ouro", "Wifi premium"] },
-      { n: "Espaço Premium", d: "Sala reservada para atendimentos exclusivos com total privacidade.", b: ["Suite privada", "Climatização", "Receção partilhada"] },
-      { n: "Estação Completa", d: "Bancada, lava-cabeças e área de trabalho completa para hairstylists.", b: ["Lava-cabeças", "Arrumação", "Apoio técnico"] },
-      { n: "Aluguer Diário", d: "Use o espaço por dia, ideal para projectos, sessões e convidados.", b: ["Sem contrato", "Reserva online", "Faturação simples"] },
-      { n: "Aluguer Mensal", d: "Plano mensal com presença fixa e visibilidade no salão.", b: ["Lugar fixo", "Marketing partilhado", "Tarifa preferencial"] },
-      { n: "Espaço Cabeleireiro", d: "Estações desenhadas para cortes, cor e tratamentos de excelência.", b: ["Equipamento pro", "Vapor de ozono", "Iluminação CRI 95"] },
-      { n: "Espaço Nail Designer", d: "Mesa em marmore, exaustão e iluminação focada para manicure e pedicure.", b: ["Exaustão silenciosa", "Luz dedicada", "Display de cores"] },
-      { n: "Espaço Estética", d: "Cabine completa para tratamentos faciais, corporais e bem-estar.", b: ["Marquesa premium", "Aromaterapia", "Som ambiente"] },
+      {
+        n: "Cadeira Individual",
+        d: "Estação privada com espelho iluminado, marmore e iluminação editorial.",
+        b: ["Aluguer flexível", "Marmore + ouro", "Wifi premium"],
+      },
+      {
+        n: "Espaço Premium",
+        d: "Sala reservada para atendimentos exclusivos com total privacidade.",
+        b: ["Suite privada", "Climatização", "Receção partilhada"],
+      },
+      {
+        n: "Estação Completa",
+        d: "Bancada, lava-cabeças e área de trabalho completa para hairstylists.",
+        b: ["Lava-cabeças", "Arrumação", "Apoio técnico"],
+      },
+      {
+        n: "Aluguer Diário",
+        d: "Use o espaço por dia, ideal para projectos, sessões e convidados.",
+        b: ["Sem contrato", "Reserva online", "Faturação simples"],
+      },
+      {
+        n: "Aluguer Mensal",
+        d: "Plano mensal com presença fixa e visibilidade no salão.",
+        b: ["Lugar fixo", "Marketing partilhado", "Tarifa preferencial"],
+      },
+      {
+        n: "Espaço Cabeleireiro",
+        d: "Estações desenhadas para cortes, cor e tratamentos de excelência.",
+        b: ["Equipamento pro", "Vapor de ozono", "Iluminação CRI 95"],
+      },
+      {
+        n: "Espaço Nail Designer",
+        d: "Mesa em marmore, exaustão e iluminação focada para manicure e pedicure.",
+        b: ["Exaustão silenciosa", "Luz dedicada", "Display de cores"],
+      },
+      {
+        n: "Espaço Estética",
+        d: "Cabine completa para tratamentos faciais, corporais e bem-estar.",
+        b: ["Marquesa premium", "Aromaterapia", "Som ambiente"],
+      },
     ],
     moreCta: "Quero saber mais",
     beforeEyebrow: "Antes & Depois",
@@ -177,7 +363,8 @@ export const pt = {
     ],
     experienceEyebrow: "Experiência",
     experienceTitle: "Mais do que um espaço de trabalho.\nUma experiência profissional.",
-    experienceBody: "Café de especialidade, receção elegante, clientes satisfeitos e uma comunidade que celebra a sua arte. Cada detalhe foi pensado para elevar a forma como recebe quem confia em si.",
+    experienceBody:
+      "Café de especialidade, receção elegante, clientes satisfeitos e uma comunidade que celebra a sua arte. Cada detalhe foi pensado para elevar a forma como recebe quem confia em si.",
     formEyebrow: "Quero fazer parte",
     formTitle: "Vamos conhecer o seu projecto",
     fName: "Nome",
@@ -190,6 +377,152 @@ export const pt = {
     fMessage: "Mensagem",
     fSubmit: "Quero fazer parte",
     fSent: "Recebemos a sua candidatura. Entraremos em contacto em 24h.",
+  },
+  faq: {
+    eyebrow: "Perguntas Frequentes",
+    title: "Tudo o que precisa de saber",
+    sections: [
+      {
+        title: "Sobre o Salão",
+        items: [
+          {
+            q: "O que torna a LOMA diferente?",
+            a: "A LOMA é mais do que um salão — é um espaço pensado para desacelerar, cuidar e transformar. Combinamos técnica avançada, atendimento personalizado e uma atmosfera sofisticada e acolhedora. Cada cliente é tratada de forma única, com diagnóstico e protocolo próprio.",
+          },
+          {
+            q: "A LOMA trabalha apenas com cabelo?",
+            a: "O nosso foco principal é a saúde e beleza capilar, incluindo loiros, coloração, extensões, terapia capilar e Head Spa. Pode sempre consultar a nossa equipa para perceber quais os serviços mais adequados ao que procura.",
+          },
+          {
+            q: "Onde fica a LOMA?",
+            a: "Estamos em R. da Azenha 6, 2560-474 Silveira, Torres Vedras. Para indicações, visite a nossa página de Contactos ou envie-nos uma mensagem via WhatsApp.",
+          },
+        ],
+      },
+      {
+        title: "Agendamentos",
+        items: [
+          {
+            q: "Como posso fazer marcação?",
+            a: "Pode marcar diretamente no nosso site, através do WhatsApp ou por email em Lomahairspa@gmail.com. Respondemos o mais brevemente possível.",
+          },
+          {
+            q: "É necessário marcar com antecedência?",
+            a: "Sim. Recomendamos sempre marcação prévia para garantir disponibilidade e preparar o serviço ideal para si. Para serviços de loiros e extensões, a antecedência é especialmente importante.",
+          },
+          {
+            q: "Posso cancelar ou alterar a marcação?",
+            a: "Sim. Pedimos que qualquer cancelamento ou alteração seja feito com pelo menos 24 horas de antecedência, para que possamos reorganizar a agenda e atender outros clientes.",
+          },
+          {
+            q: "A LOMA aceita clientes sem marcação?",
+            a: "Em casos pontuais e sujeito a disponibilidade. Para garantir o melhor atendimento, a marcação prévia é sempre aconselhada.",
+          },
+        ],
+      },
+      {
+        title: "Loiros e Coloração",
+        items: [
+          {
+            q: "A LOMA é especializada em loiros?",
+            a: "Sim. Os loiros personalizados são uma das nossas grandes especialidades. Trabalhamos técnicas como balayage, mechas, loiro solar e correção de cor, sempre com foco na saúde do cabelo.",
+          },
+          {
+            q: "É possível clarear sem danificar?",
+            a: "Com os produtos certos e o protocolo adequado, sim. Fazemos sempre uma avaliação prévia do estado do cabelo e recomendamos o processo mais seguro e eficaz para o seu caso.",
+          },
+          {
+            q: "Quanto tempo demora um serviço de loiros?",
+            a: "Dependendo do tipo de técnica e do estado de partida do cabelo, pode variar entre 2 a 8 horas. Para uma estimativa personalizada, agende uma consulta prévia.",
+          },
+          {
+            q: "Fazem correção de cor?",
+            a: "Sim. A correção de cor é um dos serviços que oferecemos. Recomendamos vir a uma consulta para avaliação antes de agendar o serviço completo.",
+          },
+        ],
+      },
+      {
+        title: "Terapia Capilar",
+        items: [
+          {
+            q: "O que é terapia capilar?",
+            a: "É um conjunto de tratamentos especializados que visam diagnosticar e tratar problemas do couro cabeludo e dos fios, como queda, oleosidade, ressecamento ou fragilidade. Na LOMA usamos protocolos personalizados com ativos profissionais.",
+          },
+          {
+            q: "Como sei se preciso de terapia capilar?",
+            a: "Sinais como queda excessiva, couro cabeludo oleoso ou irritado, cabelo quebradiço ou sem brilho são indicativos. Fazemos um diagnóstico gratuito na primeira consulta.",
+          },
+          {
+            q: "Quantas sessões são necessárias?",
+            a: "Depende do diagnóstico e do objetivo. Em geral, recomendamos um protocolo de 4 a 6 sessões para resultados visíveis e duradouros, com manutenção periódica.",
+          },
+        ],
+      },
+      {
+        title: "Extensões Capilares",
+        items: [
+          {
+            q: "As extensões danificam o cabelo?",
+            a: "Quando aplicadas e removidas corretamente, por profissionais experientes, as extensões não danificam o cabelo natural. Na LOMA usamos técnicas de baixo impacto e acompanhamos o cliente durante todo o processo.",
+          },
+          {
+            q: "As extensões ficam visíveis?",
+            a: "Não. Trabalhamos com técnicas imperceptíveis, adaptadas à cor e textura do seu cabelo, para um resultado completamente natural.",
+          },
+          {
+            q: "Quanto tempo duram?",
+            a: "Em média 3 a 4 meses, com manutenção adequada. A durabilidade depende dos cuidados em casa e do tipo de cabelo. Damos todas as orientações necessárias.",
+          },
+        ],
+      },
+      {
+        title: "Head Spa & Wellness",
+        items: [
+          {
+            q: "O que é o Head Spa?",
+            a: "O Head Spa é um ritual de bem-estar capilar que combina massagem do couro cabeludo, limpeza profunda e tratamentos sensoriais. É profundamente relaxante e ao mesmo tempo benéfico para a saúde do cabelo.",
+          },
+          {
+            q: "O Head Spa é apenas relaxamento?",
+            a: "Não. Para além do relaxamento, o Head Spa estimula a circulação sanguínea no couro cabeludo, favorece o crescimento capilar e remove impurezas acumuladas. É terapêutico e estético ao mesmo tempo.",
+          },
+          {
+            q: "Posso oferecer um serviço como presente?",
+            a: "Sim! Os nossos serviços podem ser oferecidos em voucher de presente. Entre em contacto connosco para saber como adquirir um voucher personalizado.",
+          },
+        ],
+      },
+      {
+        title: "Produtos & Cuidados",
+        items: [
+          {
+            q: "A LOMA vende produtos profissionais?",
+            a: "Sim. Na nossa loja online e no salão pode encontrar uma seleção de produtos profissionais usados nos nossos tratamentos, para que possa manter os resultados em casa.",
+          },
+          {
+            q: "Recebo orientação de cuidados em casa?",
+            a: "Sempre. No final de cada serviço, a nossa equipa partilha uma rotina personalizada de cuidados em casa, adaptada ao seu cabelo e ao tratamento realizado.",
+          },
+        ],
+      },
+      {
+        title: "Atendimento",
+        items: [
+          {
+            q: "A primeira avaliação está incluída?",
+            a: "Sim. Fazemos sempre uma consulta inicial sem custo adicional para perceber as necessidades do seu cabelo e recomendar o protocolo mais adequado.",
+          },
+          {
+            q: "A LOMA atende apenas mulheres?",
+            a: "Não. Atendemos todos os géneros. O nosso espaço é inclusivo e os nossos serviços são adaptados a qualquer tipo de cabelo.",
+          },
+          {
+            q: "Posso levar acompanhantes?",
+            a: "Claro. O espaço foi pensado para ser acolhedor. Acompanhantes são bem-vindos, garantindo sempre o conforto de todos os presentes.",
+          },
+        ],
+      },
+    ],
   },
 };
 

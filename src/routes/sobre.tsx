@@ -9,12 +9,21 @@ import { Sparkles, Leaf, Crown, Heart } from "lucide-react";
 export const Route = createFileRoute("/sobre")({
   head: () => ({
     meta: [
-      { title: "Sobre — Loma Clinic & Beauty Spa" },
-      { name: "description", content: "Conheça a história, missão e diferenciais da Loma Clinic & Beauty Spa." },
-      { property: "og:title", content: "Sobre — Loma" },
-      { property: "og:description", content: "Onde a tradição da beleza se encontra com a precisão moderna." },
+      { title: "Sobre — LOMA Clinic & Beauty Hair" },
+      {
+        name: "description",
+        content:
+          "Conheça a história, missão e diferenciais da LOMA Clinic & Beauty Hair, fundada por Marina Loreti.",
+      },
+      { property: "og:title", content: "Sobre — LOMA" },
+      {
+        property: "og:description",
+        content: "Um espaço premium de transformação capilar e autocuidado.",
+      },
       { property: "og:image", content: about },
+      { property: "og:url", content: "https://lomaexperience.com/sobre" },
     ],
+    links: [{ rel: "canonical", href: "https://lomaexperience.com/sobre" }],
   }),
   component: Sobre,
 });
@@ -30,8 +39,12 @@ function Sobre() {
           <Reveal>
             <div>
               <div className="eyebrow mb-5">{t("about.eyebrow")}</div>
-              <h1 className="font-display text-5xl md:text-6xl leading-[1.05]">{t("about.title")}</h1>
-              <p className="mt-7 text-lg text-muted-foreground leading-relaxed">{t("about.body")}</p>
+              <h1 className="font-display text-5xl md:text-6xl leading-[1.05]">
+                {t("about.title")}
+              </h1>
+              <p className="mt-7 text-lg text-muted-foreground leading-relaxed">
+                {t("about.body")}
+              </p>
             </div>
           </Reveal>
           <Reveal delay={150}>
@@ -44,17 +57,25 @@ function Sobre() {
 
       <section className="py-24 bg-gradient-cocoa">
         <div className="mx-auto max-w-5xl px-6 text-center">
-          <img src={seal} alt="" className="mx-auto w-24 h-24 rounded-full ring-1 ring-primary/40 mb-8" />
+          <img
+            src={seal}
+            alt=""
+            className="mx-auto w-24 h-24 rounded-full ring-1 ring-primary/40 mb-8"
+          />
           <Reveal>
             <div className="eyebrow mb-4">{t("about.missionTitle")}</div>
-            <p className="font-display text-3xl md:text-4xl leading-relaxed italic text-gradient-gold">{t("about.missionBody")}</p>
+            <p className="font-display text-3xl md:text-4xl leading-relaxed italic text-gradient-gold">
+              {t("about.missionBody")}
+            </p>
           </Reveal>
         </div>
       </section>
 
       <section className="py-24 md:py-32">
         <div className="mx-auto max-w-7xl px-6 sm:px-8">
-          <Reveal><SectionHeading eyebrow={t("about.valuesTitle")} title={t("home.servicesTitle")} /></Reveal>
+          <Reveal>
+            <SectionHeading eyebrow={t("about.valuesTitle")} title={t("home.servicesTitle")} />
+          </Reveal>
           <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-5">
             {values.map((v, i) => {
               const Icon = icons[i];

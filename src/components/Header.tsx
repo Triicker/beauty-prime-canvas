@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Menu, X, ShoppingBag } from "lucide-react";
-import logo from "@/assets/logo-loma-light.jpg";
+import logo from "@/assets/logo-loma.jpg";
 import { useCart } from "@/store/cart";
 
 export function Header() {
@@ -31,24 +31,36 @@ export function Header() {
     { to: "/profissionais", label: t("nav.pros") },
     { to: "/galeria", label: t("nav.gallery") },
     { to: "/loja", label: t("nav.shop") },
+    { to: "/faq", label: t("nav.faq") },
     { to: "/contactos", label: t("nav.contact") },
   ];
 
   const switchLang = () => {
-    const next = i18n.language?.startsWith("en") ? "pt" : "en";
-    i18n.changeLanguage(next);
+    const cur = i18n.language?.slice(0, 2) ?? "pt";
+    const cycle: Record<string, string> = { pt: "en", en: "fr", fr: "pt" };
+    i18n.changeLanguage(cycle[cur] ?? "pt");
   };
 
   return (
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
-        scrolled || open ? "bg-background/85 backdrop-blur-xl border-b border-border" : "bg-transparent"
+        scrolled || open
+          ? "bg-background/85 backdrop-blur-xl border-b border-border"
+          : "bg-transparent"
       }`}
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <img src={logo} alt="Loma" width={44} height={44} className="rounded-full ring-1 ring-primary/30 object-cover" />
-          <span className="hidden sm:block font-display text-xl tracking-wide text-gradient-gold">LOMA</span>
+          <img
+            src={logo}
+            alt="Loma"
+            width={44}
+            height={44}
+            className="rounded-full ring-1 ring-primary/30 object-cover"
+          />
+          <span className="hidden sm:block font-display text-xl tracking-wide text-gradient-gold">
+            LOMA
+          </span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-9">
@@ -70,7 +82,7 @@ export function Header() {
             className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition px-2"
             aria-label="Switch language"
           >
-            {i18n.language?.startsWith("en") ? "PT" : "EN"}
+            {(i18n.language?.slice(0, 2) ?? "pt").toUpperCase()}
           </button>
           <button
             onClick={() => setCartOpen(true)}
@@ -90,7 +102,11 @@ export function Header() {
           >
             {t("nav.bookCta")}
           </Link>
-          <button className="lg:hidden p-2 text-foreground" onClick={() => setOpen((v) => !v)} aria-label="Menu">
+          <button
+            className="lg:hidden p-2 text-foreground"
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Menu"
+          >
             {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
