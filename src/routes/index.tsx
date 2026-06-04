@@ -48,12 +48,11 @@ function Index() {
     { name: featuredNames[4], img: sAesth },
     { name: featuredNames[5], img: sHydra },
   ];
-  const products = [
-    { name: t("shop.products.0.name"), img: pShampoo, price: 28 },
-    { name: t("shop.products.1.name"), img: pMask, price: 42 },
-    { name: t("shop.products.2.name"), img: pOil, price: 38 },
-    { name: t("shop.products.5.name"), img: pKit, price: 120 },
-  ];
+  const products = [allProducts[0], allProducts[15], allProducts[27], allProducts[19]].map((p) => ({
+    name: p.name,
+    img: p.image,
+    price: p.price,
+  }));
   const testimonials = t("testimonials.items", { returnObjects: true }) as {
     n: string;
     t: string;
