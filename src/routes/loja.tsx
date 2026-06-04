@@ -1,16 +1,11 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import pShampoo from "@/assets/product-shampoo.jpg";
-import pMask from "@/assets/product-mask.jpg";
-import pOil from "@/assets/product-oil.jpg";
-import pSpray from "@/assets/product-spray.jpg";
-import pCream from "@/assets/product-cream.jpg";
-import pKit from "@/assets/product-kit.jpg";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
 import { useCart } from "@/store/cart";
+import { products } from "@/data/products";
 
 export const Route = createFileRoute("/loja")({
   head: () => ({
@@ -18,11 +13,11 @@ export const Route = createFileRoute("/loja")({
       { title: "Boutique — LOMA Clinic & Beauty Hair" },
       {
         name: "description",
-        content: "Produtos profissionais selecionados para resultados de salão em casa.",
+        content:
+          "Produtos profissionais Avani: styling, cronograma capilar e cuidado. Revendedor oficial.",
       },
       { property: "og:title", content: "Boutique — Loma" },
-      { property: "og:description", content: "Produtos profissionais selecionados." },
-      { property: "og:image", content: pKit },
+      { property: "og:description", content: "Produtos profissionais Avani na LOMA." },
       { property: "og:url", content: "https://lomaexperience.com/loja" },
     ],
     links: [{ rel: "canonical", href: "https://lomaexperience.com/loja" }],
@@ -30,21 +25,13 @@ export const Route = createFileRoute("/loja")({
   component: Loja,
 });
 
-const imgs = [pShampoo, pMask, pOil, pSpray, pCream, pKit];
-
 function Loja() {
-  const { t } = useTranslation();
-  const products = (
-    t("shop.products", { returnObjects: true }) as {
-      name: string;
-      cat: string;
-      price: number;
-      desc: string;
-    }[]
-  ).map((p, i) => ({ ...p, image: imgs[i], id: `p-${i}` }));
+  const { t, i18n } = useTranslation();
   const filters = t("shop.filters", { returnObjects: true }) as Record<string, string>;
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState<string>("all");
   const add = useCart((s) => s.add);
+  const lang = (i18n.language?.slice(0, 2) ?? "pt") as "pt" | "en" | "fr";
+  const descKey = lang === "en" ? "descEn" : lang === "fr" ? "descFr" : "descPt";
 
   const list = filter === "all" ? products : products.filter((p) => p.cat === filter);
 
@@ -52,8 +39,11 @@ function Loja() {
     <section className="py-20">
       <div className="mx-auto max-w-7xl px-6 sm:px-8">
         <SectionHeading eyebrow={t("shop.eyebrow")} title={t("shop.title")} />
+        <p className="mt-3 text-center text-xs uppercase tracking-[0.3em] text-primary/70">
+          {t("shop.brand")}
+        </p>
 
-        <div className="mt-14 flex flex-wrap justify-center gap-2">
+        <div className="mt-12 flex flex-wrap justify-center gap-2">
           {Object.entries(filters).map(([k, label]) => (
             <button
               key={k}
@@ -67,14 +57,14 @@ function Loja() {
 
         <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {list.map((p, i) => (
-            <Reveal key={p.id} delay={i * 50}>
+            <Reveal key={p.id} delay={i * 30}>
               <article className="group">
                 <div className="relative aspect-[4/5] overflow-hidden bg-secondary">
                   <img
                     src={p.image}
                     alt={p.name}
                     loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                    className="w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-1000"
                   />
                   <button
                     onClick={() => add({ id: p.id, name: p.name, price: p.price, image: p.image })}
@@ -84,11 +74,13 @@ function Loja() {
                     <Plus className="w-5 h-5" />
                   </button>
                 </div>
-                <div className="mt-5 flex justify-between items-baseline">
-                  <h3 className="font-display text-xl">{p.name}</h3>
-                  <span className="text-primary font-display text-lg">{p.price.toFixed(2)} €</span>
+                <div className="mt-5 flex justify-between items-baseline gap-3">
+                  <h3 className="font-display text-base leading-tight">{p.name}</h3>
+                  <span className="text-primary font-display text-lg whitespace-nowrap">
+                    {p.price.toFixed(2)} €
+                  </span>
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{p[descKey]}</p>
               </article>
             </Reveal>
           ))}
