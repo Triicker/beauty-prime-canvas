@@ -15,10 +15,7 @@ import g1 from "@/assets/IMG_5364.jpg";
 import g2 from "@/assets/IMG_5368.jpg";
 import g3 from "@/assets/IMG_5722.jpg";
 import g5 from "@/assets/IMG_5978.jpg";
-import pShampoo from "@/assets/product-shampoo.jpg";
-import pMask from "@/assets/product-mask.jpg";
-import pOil from "@/assets/product-oil.jpg";
-import pKit from "@/assets/product-kit.jpg";
+import { products as allProducts } from "@/data/products";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
 
@@ -51,12 +48,11 @@ function Index() {
     { name: featuredNames[4], img: sAesth },
     { name: featuredNames[5], img: sHydra },
   ];
-  const products = [
-    { name: t("shop.products.0.name"), img: pShampoo, price: 28 },
-    { name: t("shop.products.1.name"), img: pMask, price: 42 },
-    { name: t("shop.products.2.name"), img: pOil, price: 38 },
-    { name: t("shop.products.5.name"), img: pKit, price: 120 },
-  ];
+  const products = [allProducts[0], allProducts[15], allProducts[27], allProducts[19]].map((p) => ({
+    name: p.name,
+    img: p.image,
+    price: p.price,
+  }));
   const testimonialsRaw = t("testimonials.items", { returnObjects: true });
   const testimonials = (Array.isArray(testimonialsRaw) ? testimonialsRaw : []) as {
     n: string;

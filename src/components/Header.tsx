@@ -2,7 +2,7 @@
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X, ShoppingBag, Sun, Moon, ChevronDown } from "lucide-react";
-import logo from "@/assets/logo-loma.jpg";
+import logoAsset from "@/assets/loma-logo.png.asset.json";
 import { useCart } from "@/store/cart";
 
 const LANGS = [
@@ -89,13 +89,11 @@ export function Header() {
       }`}
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 h-20 flex items-center justify-between">
-        <Link to="/" aria-label="LOMA — Página inicial">
+        <Link to="/" aria-label="LOMA — Página inicial" className="flex items-center">
           <img
-            src={logo}
-            alt="Loma"
-            width={44}
-            height={44}
-            className="rounded-full ring-1 ring-primary/30 object-cover"
+            src={logoAsset.url}
+            alt="LOMA Clinic & Beauty Spa"
+            className="h-12 sm:h-14 w-auto object-contain"
           />
         </Link>
 
