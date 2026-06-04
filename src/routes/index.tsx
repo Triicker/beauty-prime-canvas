@@ -15,10 +15,7 @@ import g1 from "@/assets/IMG_5364.jpg";
 import g2 from "@/assets/IMG_5368.jpg";
 import g3 from "@/assets/IMG_5722.jpg";
 import g5 from "@/assets/IMG_5978.jpg";
-import pShampoo from "@/assets/product-shampoo.jpg";
-import pMask from "@/assets/product-mask.jpg";
-import pOil from "@/assets/product-oil.jpg";
-import pKit from "@/assets/product-kit.jpg";
+import { products as allProducts } from "@/data/products";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
 
