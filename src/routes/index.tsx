@@ -61,23 +61,10 @@ function Index() {
     <>
       {/* HERO */}
       <section className="relative -mt-20 h-[100svh] min-h-[640px] overflow-hidden">
-        {/* Mobile video */}
-        <video
-          src={heroVideoMobile}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover md:hidden"
-        />
-        {/* Desktop video */}
-        <video
-          src={heroVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover hidden md:block"
+        <img
+          src={heroImg}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
