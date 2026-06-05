@@ -1,8 +1,7 @@
 ﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { ArrowRight, Sparkles } from "lucide-react";
-import heroVideo from "@/assets/woman1.mp4";
-import heroVideoMobile from "@/assets/woman1mobile.mp4";
+import heroImg from "@/assets/hero.jpg";
 import aboutImg from "@/assets/about-salon.jpg";
 import seal from "@/assets/logo-loma-seal.jpg";
 import sCut from "@/assets/service-cut.jpg";
@@ -48,7 +47,7 @@ function Index() {
     { name: featuredNames[4], img: sAesth },
     { name: featuredNames[5], img: sHydra },
   ];
-  const products = [allProducts[0], allProducts[15], allProducts[27], allProducts[19]].map((p) => ({
+  const products = [allProducts[0], allProducts[8], allProducts[15], allProducts[19]].map((p) => ({
     name: p.name,
     img: p.image,
     price: p.price,
@@ -62,23 +61,10 @@ function Index() {
     <>
       {/* HERO */}
       <section className="relative -mt-20 h-[100svh] min-h-[640px] overflow-hidden">
-        {/* Mobile video */}
-        <video
-          src={heroVideoMobile}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover md:hidden"
-        />
-        {/* Desktop video */}
-        <video
-          src={heroVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover hidden md:block"
+        <img
+          src={heroImg}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
