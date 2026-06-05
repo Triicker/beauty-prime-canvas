@@ -1,6 +1,6 @@
 ﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Play, Heart, Award, Star, Sofa } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import aboutImg from "@/assets/about-salon.jpg";
 import seal from "@/assets/logo-loma-seal.jpg";
@@ -91,20 +91,41 @@ function Index() {
               </p>
             </Reveal>
             <Reveal delay={360}>
-              <div className="mt-10 flex flex-wrap gap-3">
+              <div className="mt-10 flex flex-wrap items-center gap-4">
                 <Link
                   to="/agendamento"
-                  className="group inline-flex items-center gap-3 px-7 h-13 py-4 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.28em] hover:bg-primary/90 transition-all"
+                  className="group inline-flex items-center gap-3 px-7 h-13 py-4 bg-gradient-gold text-cocoa-deep text-[12px] uppercase tracking-[0.28em] hover:opacity-90 transition-all shadow-elegant"
+                  style={{ color: "oklch(0.22 0.04 50)" }}
                 >
                   {t("common.bookNow")}
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
                 </Link>
-                <Link
-                  to="/servicos"
-                  className="inline-flex items-center px-7 py-4 border border-primary/40 text-primary text-[12px] uppercase tracking-[0.28em] hover:bg-primary/10 transition-all"
+                <a
+                  href="#video"
+                  className="group inline-flex items-center gap-3 text-primary text-[12px] uppercase tracking-[0.28em]"
                 >
-                  {t("home.seeServices")}
-                </Link>
+                  <span className="w-11 h-11 rounded-full border border-primary/60 flex items-center justify-center group-hover:bg-primary/10 transition">
+                    <Play className="w-4 h-4 fill-current" />
+                  </span>
+                  {t("home.watchVideo")}
+                </a>
+              </div>
+            </Reveal>
+            <Reveal delay={480}>
+              <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-5 max-w-2xl">
+                {[
+                  { i: Heart, k: "f1" },
+                  { i: Award, k: "f2" },
+                  { i: Star, k: "f3" },
+                  { i: Sofa, k: "f4" },
+                ].map(({ i: Icon, k }) => (
+                  <div key={k} className="flex items-center gap-3">
+                    <Icon className="w-6 h-6 text-primary shrink-0" strokeWidth={1.4} />
+                    <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-foreground/85 leading-tight">
+                      {t(`home.heroFeatures.${k}`)}
+                    </span>
+                  </div>
+                ))}
               </div>
             </Reveal>
           </div>
