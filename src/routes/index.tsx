@@ -1,8 +1,7 @@
 ﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { ArrowRight, Sparkles } from "lucide-react";
-import heroVideo from "@/assets/woman1.mp4";
-import heroVideoMobile from "@/assets/woman1mobile.mp4";
+import heroImg from "@/assets/hero.jpg";
 import aboutImg from "@/assets/about-salon.jpg";
 import seal from "@/assets/logo-loma-seal.jpg";
 import sCut from "@/assets/service-cut.jpg";
