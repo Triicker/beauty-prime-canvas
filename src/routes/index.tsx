@@ -47,7 +47,7 @@ function Index() {
     { name: featuredNames[4], img: sAesth },
     { name: featuredNames[5], img: sHydra },
   ];
-  const products = [allProducts[0], allProducts[15], allProducts[27], allProducts[19]].map((p) => ({
+  const products = [allProducts[0], allProducts[8], allProducts[15], allProducts[19]].map((p) => ({
     name: p.name,
     img: p.image,
     price: p.price,

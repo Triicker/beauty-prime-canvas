@@ -91,7 +91,7 @@ export function Header() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8 h-20 flex items-center justify-between">
         <Link to="/" aria-label="LOMA — Página inicial" className="flex items-center">
           <img
-            src={logoAsset.url}
+            src={logoLight}
             alt="LOMA Clinic & Beauty Spa"
             className="h-12 sm:h-14 w-auto object-contain"
           />
