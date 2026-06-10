@@ -1,6 +1,6 @@
 ﻿import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Sparkles,
   CalendarCheck,
@@ -21,6 +21,7 @@ import stationImg from "@/assets/pros-station.jpg";
 import nailImg from "@/assets/pros-nail.jpg";
 import estheticImg from "@/assets/pros-esthetic.jpg";
 import loungeImg from "@/assets/pros-lounge.jpg";
+import type { ProfessionalSpaceRecord } from "@/lib/admin/professionals.server";
 
 export const Route = createFileRoute("/profissionais")({
   head: () => ({
@@ -65,13 +66,63 @@ const BENEFIT_ICONS = [
 function ProsPage() {
   const { t, i18n } = useTranslation();
   const [sent, setSent] = useState(false);
-  const spaces = t("pros.spaces", { returnObjects: true }) as {
+  const fallbackSpaces = t("pros.spaces", { returnObjects: true }) as {
     n: string;
     d: string;
     b: string[];
   }[];
+  const [dbSpaces, setDbSpaces] = useState<ProfessionalSpaceRecord[]>([]);
   const benefits = t("pros.benefits", { returnObjects: true }) as { t: string; d: string }[];
   const isPT = !i18n.language?.startsWith("en");
+  const lang = (i18n.language?.slice(0, 2) ?? "pt") as "pt" | "en" | "fr";
+
+  useEffect(() => {
+    let active = true;
+
+    fetch("/api/professional-spaces")
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Falha ao carregar espaços");
+        return (await response.json()) as { spaces: ProfessionalSpaceRecord[] };
+      })
+      .then((data) => {
+        if (active) setDbSpaces(data.spaces);
+      })
+      .catch(() => {
+        if (active) setDbSpaces([]);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const spaces = useMemo(() => {
+    if (dbSpaces.length > 0) {
+      return dbSpaces.map((space) => ({
+        n:
+          lang === "en"
+            ? space.nameEn || space.namePt
+            : lang === "fr"
+              ? space.nameFr || space.namePt
+              : space.namePt,
+        d:
+          lang === "en"
+            ? space.descriptionEn || space.descriptionPt || ""
+            : lang === "fr"
+              ? space.descriptionFr || space.descriptionPt || ""
+              : space.descriptionPt || "",
+        b:
+          lang === "en" && space.benefitsEn.length > 0
+            ? space.benefitsEn
+            : lang === "fr" && space.benefitsFr.length > 0
+              ? space.benefitsFr
+              : space.benefitsPt,
+        imageUrl: space.imageUrl,
+      }));
+    }
+
+    return fallbackSpaces.map((space) => ({ ...space, imageUrl: null }));
+  }, [dbSpaces, fallbackSpaces, lang]);
 
   return (
     <div className="overflow-hidden">
@@ -117,7 +168,7 @@ function ProsPage() {
                 <article className="group border border-border bg-card hover-lift flex flex-col h-full">
                   <div className="aspect-[4/5] overflow-hidden">
                     <img
-                      src={SPACE_IMAGES[i % SPACE_IMAGES.length]}
+                      src={s.imageUrl || SPACE_IMAGES[i % SPACE_IMAGES.length]}
                       alt={s.n}
                       loading="lazy"
                       className="w-full h-full object-cover transition duration-[1200ms] group-hover:scale-110"

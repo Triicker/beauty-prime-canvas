@@ -1,10 +1,11 @@
 ﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Clock, ArrowRight } from "lucide-react";
 import sColor from "@/assets/service-color.jpg";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
+import type { PublicServiceCategory } from "@/lib/admin/services.server";
 
 export const Route = createFileRoute("/servicos")({
   head: () => ({
@@ -25,13 +26,78 @@ export const Route = createFileRoute("/servicos")({
   component: Servicos,
 });
 
-type ServiceItem = { name: string; desc: string; price: string; time: string };
+type ServiceItem = { id: string; name: string; desc: string; price: string; time: string };
 type Category = { name: string; slug: string; items: ServiceItem[] };
 
 function Servicos() {
-  const { t } = useTranslation();
-  const categories = t("services.categories", { returnObjects: true }) as Category[];
+  const { t, i18n } = useTranslation();
+  const fallbackCategories = t("services.categories", { returnObjects: true }) as {
+    name: string;
+    slug: string;
+    items: Omit<ServiceItem, "id">[];
+  }[];
+  const [dbCategories, setDbCategories] = useState<PublicServiceCategory[]>([]);
   const [active, setActive] = useState("all");
+  const lang = (i18n.language?.slice(0, 2) ?? "pt") as "pt" | "en" | "fr";
+
+  useEffect(() => {
+    let activeRequest = true;
+
+    fetch("/api/services")
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Falha ao carregar serviços");
+        return (await response.json()) as { categories: PublicServiceCategory[] };
+      })
+      .then((data) => {
+        if (activeRequest) setDbCategories(data.categories);
+      })
+      .catch(() => {
+        if (activeRequest) setDbCategories([]);
+      });
+
+    return () => {
+      activeRequest = false;
+    };
+  }, []);
+
+  const categories = useMemo<Category[]>(() => {
+    if (dbCategories.length > 0) {
+      return dbCategories.map((category) => ({
+        name:
+          lang === "en"
+            ? category.nameEn || category.namePt
+            : lang === "fr"
+              ? category.nameFr || category.namePt
+              : category.namePt,
+        slug: category.slug,
+        items: category.services.map((service) => ({
+          id: service.id,
+          name:
+            lang === "en"
+              ? service.nameEn || service.namePt
+              : lang === "fr"
+                ? service.nameFr || service.namePt
+                : service.namePt,
+          desc:
+            lang === "en"
+              ? service.descriptionEn || service.descriptionPt || ""
+              : lang === "fr"
+                ? service.descriptionFr || service.descriptionPt || ""
+                : service.descriptionPt || "",
+          price: service.priceLabel ?? "",
+          time: service.durationLabel ?? "",
+        })),
+      }));
+    }
+
+    return fallbackCategories.map((category) => ({
+      ...category,
+      items: category.items.map((service) => ({
+        ...service,
+        id: `${category.slug}-${service.name}`,
+      })),
+    }));
+  }, [dbCategories, fallbackCategories, lang]);
 
   const visible = active === "all" ? categories : categories.filter((c) => c.slug === active);
 
@@ -84,14 +150,16 @@ function Servicos() {
               )}
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {cat.items.map((s, i) => (
-                  <Reveal key={s.name} delay={i * 40}>
+                  <Reveal key={s.id} delay={i * 40}>
                     <article className="group border border-border rounded-sm p-6 flex flex-col gap-4 hover:border-primary/60 transition-colors">
                       <div className="flex items-start justify-between gap-3">
                         <h3 className="font-display text-xl leading-tight">{s.name}</h3>
-                        <span className="flex-shrink-0 flex items-center gap-1 text-[11px] text-muted-foreground border border-border rounded-full px-2 py-0.5 whitespace-nowrap">
-                          <Clock className="w-3 h-3" />
-                          {s.time}
-                        </span>
+                        {s.time && (
+                          <span className="flex-shrink-0 flex items-center gap-1 text-[11px] text-muted-foreground border border-border rounded-full px-2 py-0.5 whitespace-nowrap">
+                            <Clock className="w-3 h-3" />
+                            {s.time}
+                          </span>
+                        )}
                       </div>
                       <p className="text-sm text-muted-foreground leading-relaxed flex-1 line-clamp-3">
                         {s.desc}

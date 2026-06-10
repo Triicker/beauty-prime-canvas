@@ -19,7 +19,27 @@ import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactosRouteImport } from './routes/contactos'
 import { Route as AgendamentoRouteImport } from './routes/agendamento'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiServicesRouteImport } from './routes/api.services'
+import { Route as ApiProfessionalsRouteImport } from './routes/api.professionals'
+import { Route as ApiProfessionalSpacesRouteImport } from './routes/api.professional-spaces'
+import { Route as ApiProductsRouteImport } from './routes/api.products'
+import { Route as AdminServicosRouteImport } from './routes/admin.servicos'
+import { Route as AdminProfissionaisRouteImport } from './routes/admin.profissionais'
+import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as ApiAdminServicesRouteImport } from './routes/api.admin.services'
+import { Route as ApiAdminProfessionalsRouteImport } from './routes/api.admin.professionals'
+import { Route as ApiAdminProfessionalSpacesRouteImport } from './routes/api.admin.professional-spaces'
+import { Route as ApiAdminProductsRouteImport } from './routes/api.admin.products'
+import { Route as ApiAdminLogoutRouteImport } from './routes/api.admin.logout'
+import { Route as ApiAdminLoginRouteImport } from './routes/api.admin.login'
+import { Route as ApiAdminDashboardRouteImport } from './routes/api.admin.dashboard'
+import { Route as ApiAdminServicesServiceIdRouteImport } from './routes/api.admin.services.$serviceId'
+import { Route as ApiAdminProfessionalsProfessionalIdRouteImport } from './routes/api.admin.professionals.$professionalId'
+import { Route as ApiAdminProfessionalSpacesSpaceIdRouteImport } from './routes/api.admin.professional-spaces.$spaceId'
+import { Route as ApiAdminProductsProductIdRouteImport } from './routes/api.admin.products.$productId'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -71,14 +91,120 @@ const AgendamentoRoute = AgendamentoRouteImport.update({
   path: '/agendamento',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiServicesRoute = ApiServicesRouteImport.update({
+  id: '/api/services',
+  path: '/api/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProfessionalsRoute = ApiProfessionalsRouteImport.update({
+  id: '/api/professionals',
+  path: '/api/professionals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProfessionalSpacesRoute = ApiProfessionalSpacesRouteImport.update({
+  id: '/api/professional-spaces',
+  path: '/api/professional-spaces',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProductsRoute = ApiProductsRouteImport.update({
+  id: '/api/products',
+  path: '/api/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminServicosRoute = AdminServicosRouteImport.update({
+  id: '/servicos',
+  path: '/servicos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProfissionaisRoute = AdminProfissionaisRouteImport.update({
+  id: '/profissionais',
+  path: '/profissionais',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProdutosRoute = AdminProdutosRouteImport.update({
+  id: '/produtos',
+  path: '/produtos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
+const ApiAdminServicesRoute = ApiAdminServicesRouteImport.update({
+  id: '/api/admin/services',
+  path: '/api/admin/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminProfessionalsRoute = ApiAdminProfessionalsRouteImport.update({
+  id: '/api/admin/professionals',
+  path: '/api/admin/professionals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminProfessionalSpacesRoute =
+  ApiAdminProfessionalSpacesRouteImport.update({
+    id: '/api/admin/professional-spaces',
+    path: '/api/admin/professional-spaces',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiAdminProductsRoute = ApiAdminProductsRouteImport.update({
+  id: '/api/admin/products',
+  path: '/api/admin/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminLogoutRoute = ApiAdminLogoutRouteImport.update({
+  id: '/api/admin/logout',
+  path: '/api/admin/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminLoginRoute = ApiAdminLoginRouteImport.update({
+  id: '/api/admin/login',
+  path: '/api/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminDashboardRoute = ApiAdminDashboardRouteImport.update({
+  id: '/api/admin/dashboard',
+  path: '/api/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminServicesServiceIdRoute =
+  ApiAdminServicesServiceIdRouteImport.update({
+    id: '/$serviceId',
+    path: '/$serviceId',
+    getParentRoute: () => ApiAdminServicesRoute,
+  } as any)
+const ApiAdminProfessionalsProfessionalIdRoute =
+  ApiAdminProfessionalsProfessionalIdRouteImport.update({
+    id: '/$professionalId',
+    path: '/$professionalId',
+    getParentRoute: () => ApiAdminProfessionalsRoute,
+  } as any)
+const ApiAdminProfessionalSpacesSpaceIdRoute =
+  ApiAdminProfessionalSpacesSpaceIdRouteImport.update({
+    id: '/$spaceId',
+    path: '/$spaceId',
+    getParentRoute: () => ApiAdminProfessionalSpacesRoute,
+  } as any)
+const ApiAdminProductsProductIdRoute =
+  ApiAdminProductsProductIdRouteImport.update({
+    id: '/$productId',
+    path: '/$productId',
+    getParentRoute: () => ApiAdminProductsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/agendamento': typeof AgendamentoRoute
   '/contactos': typeof ContactosRoute
   '/faq': typeof FaqRoute
@@ -89,9 +215,29 @@ export interface FileRoutesByFullPath {
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/produtos': typeof AdminProdutosRoute
+  '/admin/profissionais': typeof AdminProfissionaisRoute
+  '/admin/servicos': typeof AdminServicosRoute
+  '/api/products': typeof ApiProductsRoute
+  '/api/professional-spaces': typeof ApiProfessionalSpacesRoute
+  '/api/professionals': typeof ApiProfessionalsRoute
+  '/api/services': typeof ApiServicesRoute
+  '/api/admin/dashboard': typeof ApiAdminDashboardRoute
+  '/api/admin/login': typeof ApiAdminLoginRoute
+  '/api/admin/logout': typeof ApiAdminLogoutRoute
+  '/api/admin/products': typeof ApiAdminProductsRouteWithChildren
+  '/api/admin/professional-spaces': typeof ApiAdminProfessionalSpacesRouteWithChildren
+  '/api/admin/professionals': typeof ApiAdminProfessionalsRouteWithChildren
+  '/api/admin/services': typeof ApiAdminServicesRouteWithChildren
+  '/api/admin/products/$productId': typeof ApiAdminProductsProductIdRoute
+  '/api/admin/professional-spaces/$spaceId': typeof ApiAdminProfessionalSpacesSpaceIdRoute
+  '/api/admin/professionals/$professionalId': typeof ApiAdminProfessionalsProfessionalIdRoute
+  '/api/admin/services/$serviceId': typeof ApiAdminServicesServiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/agendamento': typeof AgendamentoRoute
   '/contactos': typeof ContactosRoute
   '/faq': typeof FaqRoute
@@ -102,10 +248,30 @@ export interface FileRoutesByTo {
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/produtos': typeof AdminProdutosRoute
+  '/admin/profissionais': typeof AdminProfissionaisRoute
+  '/admin/servicos': typeof AdminServicosRoute
+  '/api/products': typeof ApiProductsRoute
+  '/api/professional-spaces': typeof ApiProfessionalSpacesRoute
+  '/api/professionals': typeof ApiProfessionalsRoute
+  '/api/services': typeof ApiServicesRoute
+  '/api/admin/dashboard': typeof ApiAdminDashboardRoute
+  '/api/admin/login': typeof ApiAdminLoginRoute
+  '/api/admin/logout': typeof ApiAdminLogoutRoute
+  '/api/admin/products': typeof ApiAdminProductsRouteWithChildren
+  '/api/admin/professional-spaces': typeof ApiAdminProfessionalSpacesRouteWithChildren
+  '/api/admin/professionals': typeof ApiAdminProfessionalsRouteWithChildren
+  '/api/admin/services': typeof ApiAdminServicesRouteWithChildren
+  '/api/admin/products/$productId': typeof ApiAdminProductsProductIdRoute
+  '/api/admin/professional-spaces/$spaceId': typeof ApiAdminProfessionalSpacesSpaceIdRoute
+  '/api/admin/professionals/$professionalId': typeof ApiAdminProfessionalsProfessionalIdRoute
+  '/api/admin/services/$serviceId': typeof ApiAdminServicesServiceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/agendamento': typeof AgendamentoRoute
   '/contactos': typeof ContactosRoute
   '/faq': typeof FaqRoute
@@ -116,11 +282,31 @@ export interface FileRoutesById {
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/produtos': typeof AdminProdutosRoute
+  '/admin/profissionais': typeof AdminProfissionaisRoute
+  '/admin/servicos': typeof AdminServicosRoute
+  '/api/products': typeof ApiProductsRoute
+  '/api/professional-spaces': typeof ApiProfessionalSpacesRoute
+  '/api/professionals': typeof ApiProfessionalsRoute
+  '/api/services': typeof ApiServicesRoute
+  '/api/admin/dashboard': typeof ApiAdminDashboardRoute
+  '/api/admin/login': typeof ApiAdminLoginRoute
+  '/api/admin/logout': typeof ApiAdminLogoutRoute
+  '/api/admin/products': typeof ApiAdminProductsRouteWithChildren
+  '/api/admin/professional-spaces': typeof ApiAdminProfessionalSpacesRouteWithChildren
+  '/api/admin/professionals': typeof ApiAdminProfessionalsRouteWithChildren
+  '/api/admin/services': typeof ApiAdminServicesRouteWithChildren
+  '/api/admin/products/$productId': typeof ApiAdminProductsProductIdRoute
+  '/api/admin/professional-spaces/$spaceId': typeof ApiAdminProfessionalSpacesSpaceIdRoute
+  '/api/admin/professionals/$professionalId': typeof ApiAdminProfessionalsProfessionalIdRoute
+  '/api/admin/services/$serviceId': typeof ApiAdminServicesServiceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/agendamento'
     | '/contactos'
     | '/faq'
@@ -131,9 +317,29 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/sobre'
     | '/termos'
+    | '/admin/login'
+    | '/admin/produtos'
+    | '/admin/profissionais'
+    | '/admin/servicos'
+    | '/api/products'
+    | '/api/professional-spaces'
+    | '/api/professionals'
+    | '/api/services'
+    | '/api/admin/dashboard'
+    | '/api/admin/login'
+    | '/api/admin/logout'
+    | '/api/admin/products'
+    | '/api/admin/professional-spaces'
+    | '/api/admin/professionals'
+    | '/api/admin/services'
+    | '/api/admin/products/$productId'
+    | '/api/admin/professional-spaces/$spaceId'
+    | '/api/admin/professionals/$professionalId'
+    | '/api/admin/services/$serviceId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/agendamento'
     | '/contactos'
     | '/faq'
@@ -144,9 +350,29 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/sobre'
     | '/termos'
+    | '/admin/login'
+    | '/admin/produtos'
+    | '/admin/profissionais'
+    | '/admin/servicos'
+    | '/api/products'
+    | '/api/professional-spaces'
+    | '/api/professionals'
+    | '/api/services'
+    | '/api/admin/dashboard'
+    | '/api/admin/login'
+    | '/api/admin/logout'
+    | '/api/admin/products'
+    | '/api/admin/professional-spaces'
+    | '/api/admin/professionals'
+    | '/api/admin/services'
+    | '/api/admin/products/$productId'
+    | '/api/admin/professional-spaces/$spaceId'
+    | '/api/admin/professionals/$professionalId'
+    | '/api/admin/services/$serviceId'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/agendamento'
     | '/contactos'
     | '/faq'
@@ -157,10 +383,30 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/sobre'
     | '/termos'
+    | '/admin/login'
+    | '/admin/produtos'
+    | '/admin/profissionais'
+    | '/admin/servicos'
+    | '/api/products'
+    | '/api/professional-spaces'
+    | '/api/professionals'
+    | '/api/services'
+    | '/api/admin/dashboard'
+    | '/api/admin/login'
+    | '/api/admin/logout'
+    | '/api/admin/products'
+    | '/api/admin/professional-spaces'
+    | '/api/admin/professionals'
+    | '/api/admin/services'
+    | '/api/admin/products/$productId'
+    | '/api/admin/professional-spaces/$spaceId'
+    | '/api/admin/professionals/$professionalId'
+    | '/api/admin/services/$serviceId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AgendamentoRoute: typeof AgendamentoRoute
   ContactosRoute: typeof ContactosRoute
   FaqRoute: typeof FaqRoute
@@ -171,6 +417,17 @@ export interface RootRouteChildren {
   ServicosRoute: typeof ServicosRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
+  ApiProductsRoute: typeof ApiProductsRoute
+  ApiProfessionalSpacesRoute: typeof ApiProfessionalSpacesRoute
+  ApiProfessionalsRoute: typeof ApiProfessionalsRoute
+  ApiServicesRoute: typeof ApiServicesRoute
+  ApiAdminDashboardRoute: typeof ApiAdminDashboardRoute
+  ApiAdminLoginRoute: typeof ApiAdminLoginRoute
+  ApiAdminLogoutRoute: typeof ApiAdminLogoutRoute
+  ApiAdminProductsRoute: typeof ApiAdminProductsRouteWithChildren
+  ApiAdminProfessionalSpacesRoute: typeof ApiAdminProfessionalSpacesRouteWithChildren
+  ApiAdminProfessionalsRoute: typeof ApiAdminProfessionalsRouteWithChildren
+  ApiAdminServicesRoute: typeof ApiAdminServicesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -245,6 +502,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgendamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -252,11 +516,212 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/services': {
+      id: '/api/services'
+      path: '/api/services'
+      fullPath: '/api/services'
+      preLoaderRoute: typeof ApiServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/professionals': {
+      id: '/api/professionals'
+      path: '/api/professionals'
+      fullPath: '/api/professionals'
+      preLoaderRoute: typeof ApiProfessionalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/professional-spaces': {
+      id: '/api/professional-spaces'
+      path: '/api/professional-spaces'
+      fullPath: '/api/professional-spaces'
+      preLoaderRoute: typeof ApiProfessionalSpacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/products': {
+      id: '/api/products'
+      path: '/api/products'
+      fullPath: '/api/products'
+      preLoaderRoute: typeof ApiProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/servicos': {
+      id: '/admin/servicos'
+      path: '/servicos'
+      fullPath: '/admin/servicos'
+      preLoaderRoute: typeof AdminServicosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/profissionais': {
+      id: '/admin/profissionais'
+      path: '/profissionais'
+      fullPath: '/admin/profissionais'
+      preLoaderRoute: typeof AdminProfissionaisRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/produtos': {
+      id: '/admin/produtos'
+      path: '/produtos'
+      fullPath: '/admin/produtos'
+      preLoaderRoute: typeof AdminProdutosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/api/admin/services': {
+      id: '/api/admin/services'
+      path: '/api/admin/services'
+      fullPath: '/api/admin/services'
+      preLoaderRoute: typeof ApiAdminServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/professionals': {
+      id: '/api/admin/professionals'
+      path: '/api/admin/professionals'
+      fullPath: '/api/admin/professionals'
+      preLoaderRoute: typeof ApiAdminProfessionalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/professional-spaces': {
+      id: '/api/admin/professional-spaces'
+      path: '/api/admin/professional-spaces'
+      fullPath: '/api/admin/professional-spaces'
+      preLoaderRoute: typeof ApiAdminProfessionalSpacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/products': {
+      id: '/api/admin/products'
+      path: '/api/admin/products'
+      fullPath: '/api/admin/products'
+      preLoaderRoute: typeof ApiAdminProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/logout': {
+      id: '/api/admin/logout'
+      path: '/api/admin/logout'
+      fullPath: '/api/admin/logout'
+      preLoaderRoute: typeof ApiAdminLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/login': {
+      id: '/api/admin/login'
+      path: '/api/admin/login'
+      fullPath: '/api/admin/login'
+      preLoaderRoute: typeof ApiAdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/dashboard': {
+      id: '/api/admin/dashboard'
+      path: '/api/admin/dashboard'
+      fullPath: '/api/admin/dashboard'
+      preLoaderRoute: typeof ApiAdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/services/$serviceId': {
+      id: '/api/admin/services/$serviceId'
+      path: '/$serviceId'
+      fullPath: '/api/admin/services/$serviceId'
+      preLoaderRoute: typeof ApiAdminServicesServiceIdRouteImport
+      parentRoute: typeof ApiAdminServicesRoute
+    }
+    '/api/admin/professionals/$professionalId': {
+      id: '/api/admin/professionals/$professionalId'
+      path: '/$professionalId'
+      fullPath: '/api/admin/professionals/$professionalId'
+      preLoaderRoute: typeof ApiAdminProfessionalsProfessionalIdRouteImport
+      parentRoute: typeof ApiAdminProfessionalsRoute
+    }
+    '/api/admin/professional-spaces/$spaceId': {
+      id: '/api/admin/professional-spaces/$spaceId'
+      path: '/$spaceId'
+      fullPath: '/api/admin/professional-spaces/$spaceId'
+      preLoaderRoute: typeof ApiAdminProfessionalSpacesSpaceIdRouteImport
+      parentRoute: typeof ApiAdminProfessionalSpacesRoute
+    }
+    '/api/admin/products/$productId': {
+      id: '/api/admin/products/$productId'
+      path: '/$productId'
+      fullPath: '/api/admin/products/$productId'
+      preLoaderRoute: typeof ApiAdminProductsProductIdRouteImport
+      parentRoute: typeof ApiAdminProductsRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminProdutosRoute: typeof AdminProdutosRoute
+  AdminProfissionaisRoute: typeof AdminProfissionaisRoute
+  AdminServicosRoute: typeof AdminServicosRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminLoginRoute: AdminLoginRoute,
+  AdminProdutosRoute: AdminProdutosRoute,
+  AdminProfissionaisRoute: AdminProfissionaisRoute,
+  AdminServicosRoute: AdminServicosRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface ApiAdminProductsRouteChildren {
+  ApiAdminProductsProductIdRoute: typeof ApiAdminProductsProductIdRoute
+}
+
+const ApiAdminProductsRouteChildren: ApiAdminProductsRouteChildren = {
+  ApiAdminProductsProductIdRoute: ApiAdminProductsProductIdRoute,
+}
+
+const ApiAdminProductsRouteWithChildren =
+  ApiAdminProductsRoute._addFileChildren(ApiAdminProductsRouteChildren)
+
+interface ApiAdminProfessionalSpacesRouteChildren {
+  ApiAdminProfessionalSpacesSpaceIdRoute: typeof ApiAdminProfessionalSpacesSpaceIdRoute
+}
+
+const ApiAdminProfessionalSpacesRouteChildren: ApiAdminProfessionalSpacesRouteChildren =
+  {
+    ApiAdminProfessionalSpacesSpaceIdRoute:
+      ApiAdminProfessionalSpacesSpaceIdRoute,
+  }
+
+const ApiAdminProfessionalSpacesRouteWithChildren =
+  ApiAdminProfessionalSpacesRoute._addFileChildren(
+    ApiAdminProfessionalSpacesRouteChildren,
+  )
+
+interface ApiAdminProfessionalsRouteChildren {
+  ApiAdminProfessionalsProfessionalIdRoute: typeof ApiAdminProfessionalsProfessionalIdRoute
+}
+
+const ApiAdminProfessionalsRouteChildren: ApiAdminProfessionalsRouteChildren = {
+  ApiAdminProfessionalsProfessionalIdRoute:
+    ApiAdminProfessionalsProfessionalIdRoute,
+}
+
+const ApiAdminProfessionalsRouteWithChildren =
+  ApiAdminProfessionalsRoute._addFileChildren(
+    ApiAdminProfessionalsRouteChildren,
+  )
+
+interface ApiAdminServicesRouteChildren {
+  ApiAdminServicesServiceIdRoute: typeof ApiAdminServicesServiceIdRoute
+}
+
+const ApiAdminServicesRouteChildren: ApiAdminServicesRouteChildren = {
+  ApiAdminServicesServiceIdRoute: ApiAdminServicesServiceIdRoute,
+}
+
+const ApiAdminServicesRouteWithChildren =
+  ApiAdminServicesRoute._addFileChildren(ApiAdminServicesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   AgendamentoRoute: AgendamentoRoute,
   ContactosRoute: ContactosRoute,
   FaqRoute: FaqRoute,
@@ -267,6 +732,17 @@ const rootRouteChildren: RootRouteChildren = {
   ServicosRoute: ServicosRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
+  ApiProductsRoute: ApiProductsRoute,
+  ApiProfessionalSpacesRoute: ApiProfessionalSpacesRoute,
+  ApiProfessionalsRoute: ApiProfessionalsRoute,
+  ApiServicesRoute: ApiServicesRoute,
+  ApiAdminDashboardRoute: ApiAdminDashboardRoute,
+  ApiAdminLoginRoute: ApiAdminLoginRoute,
+  ApiAdminLogoutRoute: ApiAdminLogoutRoute,
+  ApiAdminProductsRoute: ApiAdminProductsRouteWithChildren,
+  ApiAdminProfessionalSpacesRoute: ApiAdminProfessionalSpacesRouteWithChildren,
+  ApiAdminProfessionalsRoute: ApiAdminProfessionalsRouteWithChildren,
+  ApiAdminServicesRoute: ApiAdminServicesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

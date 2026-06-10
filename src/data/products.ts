@@ -1,5 +1,5 @@
 ﻿import shampoo from "@/assets/product-shampoo.jpg";
-import mask from "@/assets/product-mask.jpg";
+import mask from "@/assets/lomaproducts/mascara1.webp";
 import oil from "@/assets/product-oil.jpg";
 import kit from "@/assets/product-kit.jpg";
 import cream from "@/assets/product-cream.jpg";
