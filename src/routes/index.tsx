@@ -53,7 +53,8 @@ function Index() {
     img: p.image,
     price: p.price,
   }));
-  const testimonials = t("testimonials.items", { returnObjects: true }) as {
+  const testimonialsRaw = t("testimonials.items", { returnObjects: true });
+  const testimonials = (Array.isArray(testimonialsRaw) ? testimonialsRaw : []) as {
     n: string;
     t: string;
   }[];

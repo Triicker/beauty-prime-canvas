@@ -1,10 +1,54 @@
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import type { FormEvent } from "react";
 import { useCart } from "@/store/cart";
 import { X, Minus, Plus, Trash2 } from "lucide-react";
 
 export function CartDrawer() {
   const { t } = useTranslation();
   const { items, open, setOpen, setQty, remove, subtotal, clear } = useCart();
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+
+  async function submitCartRequest(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (items.length === 0 || sending) return;
+
+    setSending(true);
+    setSent(false);
+    setError("");
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const response = await fetch("/api/cart-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: formData.get("name"),
+        email: formData.get("email"),
+        phone: formData.get("phone"),
+        notes: formData.get("notes"),
+        items: items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          qty: item.qty,
+        })),
+      }),
+    }).catch(() => null);
+
+    setSending(false);
+
+    if (!response?.ok) {
+      setError("Não foi possível enviar a lista. Tente novamente.");
+      return;
+    }
+
+    form.reset();
+    clear();
+    setSent(true);
+  }
 
   return (
     <div className={`fixed inset-0 z-[60] pointer-events-none ${open ? "" : ""}`}>
@@ -64,25 +108,55 @@ export function CartDrawer() {
           ))}
         </div>
 
-        <div className="absolute bottom-0 inset-x-0 border-t border-border p-6 bg-background space-y-4">
+        <form
+          onSubmit={submitCartRequest}
+          className="absolute bottom-0 inset-x-0 border-t border-border p-6 bg-background space-y-4"
+        >
           <div className="flex justify-between items-baseline">
             <span className="eyebrow">{t("shop.subtotal")}</span>
             <span className="font-display text-2xl text-gradient-gold">
               {subtotal().toFixed(2)} €
             </span>
           </div>
+          {items.length > 0 && (
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                name="name"
+                required
+                placeholder="Nome"
+                className="col-span-2 bg-transparent border border-border px-3 py-2 text-sm outline-none focus:border-primary"
+              />
+              <input
+                name="email"
+                type="email"
+                required
+                placeholder="Email"
+                className="bg-transparent border border-border px-3 py-2 text-sm outline-none focus:border-primary"
+              />
+              <input
+                name="phone"
+                type="tel"
+                placeholder="Telefone"
+                className="bg-transparent border border-border px-3 py-2 text-sm outline-none focus:border-primary"
+              />
+              <textarea
+                name="notes"
+                rows={2}
+                placeholder="Notas"
+                className="col-span-2 bg-transparent border border-border px-3 py-2 text-sm outline-none focus:border-primary"
+              />
+            </div>
+          )}
           <button
+            type="submit"
             disabled={items.length === 0}
-            onClick={() => {
-              clear();
-              setOpen(false);
-              alert("Demo checkout — visual only");
-            }}
             className="w-full h-12 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.25em] disabled:opacity-40 hover:bg-primary/90 transition"
           >
-            {t("common.checkout")}
+            {sending ? "A enviar..." : t("common.checkout")}
           </button>
-        </div>
+          {sent && <p className="text-sm text-primary text-center">Lista enviada com sucesso.</p>}
+          {error && <p className="text-sm text-destructive text-center">{error}</p>}
+        </form>
       </aside>
     </div>
   );
