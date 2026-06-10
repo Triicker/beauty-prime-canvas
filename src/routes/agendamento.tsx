@@ -1,8 +1,10 @@
 ﻿import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, ArrowRight, ArrowLeft } from "lucide-react";
 import { SectionHeading } from "@/components/SectionHeading";
+import type { ProfessionalRecord } from "@/lib/admin/professionals.server";
+import type { PublicServiceCategory } from "@/lib/admin/services.server";
 
 export const Route = createFileRoute("/agendamento")({
   head: () => ({
@@ -19,14 +21,17 @@ export const Route = createFileRoute("/agendamento")({
 });
 
 function Booking() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const allCategories = t("services.categories", { returnObjects: true }) as {
     name: string;
     slug: string;
     items: { name: string; price: string; time: string }[];
   }[];
-  const services = allCategories.flatMap((cat) => cat.items.map((s) => s.name));
-  const pros = t("booking.professionals", { returnObjects: true }) as string[];
+  const fallbackServices = allCategories.flatMap((cat) => cat.items.map((s) => s.name));
+  const fallbackPros = t("booking.professionals", { returnObjects: true }) as string[];
+  const [dbCategories, setDbCategories] = useState<PublicServiceCategory[]>([]);
+  const [dbPros, setDbPros] = useState<ProfessionalRecord[]>([]);
+  const lang = (i18n.language?.slice(0, 2) ?? "pt") as "pt" | "en" | "fr";
   const [step, setStep] = useState(0);
   const [data, setData] = useState({
     service: "",
@@ -39,6 +44,54 @@ function Booking() {
     notes: "",
   });
   const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    Promise.all([
+      fetch("/api/services").then(async (response) => {
+        if (!response.ok) throw new Error("Falha ao carregar serviços");
+        return (await response.json()) as { categories: PublicServiceCategory[] };
+      }),
+      fetch("/api/professionals").then(async (response) => {
+        if (!response.ok) throw new Error("Falha ao carregar profissionais");
+        return (await response.json()) as { professionals: ProfessionalRecord[] };
+      }),
+    ])
+      .then(([servicesData, professionalsData]) => {
+        if (!active) return;
+        setDbCategories(servicesData.categories);
+        setDbPros(professionalsData.professionals);
+      })
+      .catch(() => {
+        if (!active) return;
+        setDbCategories([]);
+        setDbPros([]);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const services = useMemo(() => {
+    if (dbCategories.length === 0) return fallbackServices;
+
+    return dbCategories.flatMap((category) =>
+      category.services.map((service) =>
+        lang === "en"
+          ? service.nameEn || service.namePt
+          : lang === "fr"
+            ? service.nameFr || service.namePt
+            : service.namePt,
+      ),
+    );
+  }, [dbCategories, fallbackServices, lang]);
+
+  const pros = useMemo(() => {
+    if (dbPros.length === 0) return fallbackPros;
+    return dbPros.map((professional) => professional.name);
+  }, [dbPros, fallbackPros]);
 
   const dates = useMemo(() => {
     const out: { label: string; iso: string; day: string }[] = [];

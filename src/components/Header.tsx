@@ -1,8 +1,8 @@
 ﻿import { Link, useRouterState } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, ShoppingBag, Sun, Moon, ChevronDown } from "lucide-react";
-import logoAsset from "@/assets/logo-loma-new.png.asset.json";
+import { Menu, X, ShoppingBag, Sun, Moon, ChevronDown, CalendarDays } from "lucide-react";
+import logoAsset from "@/assets/logo-lomaa.png";
 import { useCart } from "@/store/cart";
 
 const LANGS = [
@@ -82,28 +82,26 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
-        scrolled || open
-          ? "bg-background/85 backdrop-blur-xl border-b border-border"
-          : "bg-transparent"
-      }`}
+      className={`site-header fixed top-0 inset-x-0 z-50 ${
+        theme === "light" ? "site-header-light" : "site-header-dark"
+      } ${scrolled || open ? "is-solid" : "is-floating"}`}
     >
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 h-20 flex items-center justify-between">
+      <div className="mx-auto max-w-[1480px] px-5 sm:px-8 lg:px-12 h-24 flex items-center justify-between gap-8">
         <Link to="/" aria-label="LOMA — Página inicial" className="flex items-center">
           <img
-            src={logoAsset.url}
+            src={logoAsset}
             alt="LOMA Clinic & Beauty Spa"
-            className="h-12 sm:h-16 w-auto object-contain"
+            className="h-11 sm:h-14 lg:h-18 w-auto object-contain"
           />
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-9">
+        <nav className="hidden lg:flex items-center gap-8 xl:gap-11">
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to}
               activeOptions={{ exact: l.to === "/" }}
-              className="text-[13px] uppercase tracking-[0.22em] text-muted-foreground hover:text-primary transition-colors data-[status=active]:text-primary"
+              className="relative text-[12px] uppercase tracking-[0.12em] text-foreground/86 hover:text-primary transition-colors data-[status=active]:text-primary after:absolute after:left-0 after:-bottom-3 after:h-px after:w-0 after:bg-primary after:transition-all data-[status=active]:after:w-full"
             >
               {l.label}
             </Link>
@@ -168,9 +166,10 @@ export function Header() {
 
           <Link
             to="/agendamento"
-            className="hidden sm:inline-flex items-center px-5 h-10 text-[12px] uppercase tracking-[0.25em] border border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            className="hidden sm:inline-flex items-center gap-3 px-6 h-12 rounded-full text-[12px] uppercase tracking-[0.12em] border border-foreground/70 text-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
           >
             {t("nav.bookCta")}
+            <CalendarDays className="w-4 h-4" />
           </Link>
           <button
             className="lg:hidden p-2 text-foreground"

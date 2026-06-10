@@ -1,7 +1,8 @@
 ﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Sparkles, Play, Heart, Award, Star, Sofa } from "lucide-react";
-import heroImg from "@/assets/hero.jpg";
+import { ArrowRight, Play, Heart, Award, Star, Sofa, CalendarDays } from "lucide-react";
+import heroDarkImg from "@/assets/woman1.jpg";
+import heroLightImg from "@/assets/woman2.png";
 import aboutImg from "@/assets/about-salon.jpg";
 import seal from "@/assets/logo-loma-seal.jpg";
 import sCut from "@/assets/service-cut.jpg";
@@ -60,69 +61,81 @@ function Index() {
   return (
     <>
       {/* HERO */}
-      <section className="relative -mt-20 h-[100svh] min-h-[640px] overflow-hidden">
+      <section className="home-hero relative -mt-24 min-h-[760px] h-[100svh] overflow-hidden">
         <img
-          src={heroImg}
+          src={heroLightImg}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover"
+          className="home-hero-image home-hero-image-light absolute inset-0 w-full h-full object-cover object-[64%_center] md:object-[68%_center]"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/60 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
-        <div className="relative z-10 mx-auto max-w-7xl h-full px-6 sm:px-8 flex items-center">
-          <div className="max-w-2xl">
+        <img
+          src={heroDarkImg}
+          alt=""
+          className="home-hero-image home-hero-image-dark absolute inset-0 w-full h-full object-cover object-[64%_center] md:object-[68%_center]"
+        />
+        <div className="home-hero-overlay" />
+
+        <div className="relative z-10 mx-auto max-w-[1480px] h-full px-6 sm:px-8 lg:px-12 pt-36 lg:pt-40 pb-10 flex flex-col justify-center">
+          <div className="max-w-[760px]">
             <Reveal>
-              <div className="eyebrow mb-6 flex items-center gap-2">
-                <Sparkles className="w-3 h-3" />
+              <div className="eyebrow mb-8 flex items-center gap-3 text-primary">
+                <span className="h-px w-9 bg-primary/80" />
                 {t("home.eyebrow")}
               </div>
             </Reveal>
             <Reveal delay={120}>
-              <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[1.02] whitespace-pre-line text-foreground">
-                {t("home.title").split("\n")[0]}
+              <h1 className="font-display tracking-normal text-5xl sm:text-6xl md:text-7xl xl:text-[78px] 2xl:text-[86px] leading-[0.98] text-foreground">
+                {t("home.heroLine1")}
                 <br />
-                <span className="text-gradient-gold italic font-light">
-                  {t("home.title").split("\n")[1]}
-                </span>
+                <span className="block sm:whitespace-nowrap">
+                  {t("home.heroLine2Start")}{" "}
+                  <span className="text-gradient-gold italic font-light">
+                    {t("home.heroLine2Accent")}
+                  </span>{" "}
+                  {t("home.heroLine2End")}
+                </span>{" "}
               </h1>
             </Reveal>
             <Reveal delay={240}>
-              <p className="mt-7 text-base sm:text-lg text-muted-foreground max-w-lg leading-relaxed">
+              <p className="mt-8 text-base sm:text-lg text-foreground/86 max-w-lg leading-[1.9]">
                 {t("home.subtitle")}
               </p>
             </Reveal>
             <Reveal delay={360}>
-              <div className="mt-10 flex flex-wrap items-center gap-4">
+              <div className="mt-10 flex flex-wrap items-center gap-6">
                 <Link
                   to="/agendamento"
-                  className="group inline-flex items-center gap-3 px-7 h-13 py-4 bg-gradient-gold text-cocoa-deep text-[12px] uppercase tracking-[0.28em] hover:opacity-90 transition-all shadow-elegant"
+                  className="group inline-flex items-center gap-4 px-7 sm:px-9 h-16 rounded-md bg-gradient-gold text-cocoa-deep text-[12px] font-semibold uppercase tracking-[0.16em] hover:opacity-90 transition-all shadow-elegant"
                   style={{ color: "oklch(0.22 0.04 50)" }}
                 >
-                  {t("common.bookNow")}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                  <CalendarDays className="w-5 h-5" />
+                  {t("common.scheduleNow")}
                 </Link>
                 <a
                   href="#video"
-                  className="group inline-flex items-center gap-3 text-primary text-[12px] uppercase tracking-[0.28em]"
+                  className="group inline-flex items-center gap-4 text-foreground text-[12px] font-semibold uppercase tracking-[0.16em]"
                 >
-                  <span className="w-11 h-11 rounded-full border border-primary/60 flex items-center justify-center group-hover:bg-primary/10 transition">
+                  <span className="w-12 h-12 rounded-full border border-foreground/80 flex items-center justify-center group-hover:border-primary group-hover:text-primary transition">
                     <Play className="w-4 h-4 fill-current" />
                   </span>
-                  {t("home.watchVideo")}
+                  {t("shop.watchVideo")}
                 </a>
               </div>
             </Reveal>
             <Reveal delay={480}>
-              <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-5 max-w-2xl">
+              <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-y-6 max-w-[760px]">
                 {[
                   { i: Heart, k: "f1" },
                   { i: Award, k: "f2" },
                   { i: Star, k: "f3" },
                   { i: Sofa, k: "f4" },
-                ].map(({ i: Icon, k }) => (
-                  <div key={k} className="flex items-center gap-3">
-                    <Icon className="w-6 h-6 text-primary shrink-0" strokeWidth={1.4} />
-                    <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-foreground/85 leading-tight">
-                      {t(`home.heroFeatures.${k}`)}
+                ].map(({ i: Icon, k }, index) => (
+                  <div
+                    key={k}
+                    className={`flex items-center gap-3 md:pr-6 ${index > 0 ? "md:border-l md:border-primary/35 md:pl-6" : ""}`}
+                  >
+                    <Icon className="w-7 h-7 text-primary shrink-0" strokeWidth={1.35} />
+                    <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.12em] text-foreground/90 leading-tight">
+                      {t(`shop.heroFeatures.${k}`)}
                     </span>
                   </div>
                 ))}
