@@ -42,7 +42,8 @@ function getEmailConfig() {
   const from = getEnv("EMAIL_FROM");
   const to = getEnv("EMAIL_TO");
   const defaultReplyTo = getEnv("EMAIL_REPLY_TO");
-  const logoUrl = getEnv("EMAIL_LOGO_URL") || "https://midiasave-5c064.web.app/logo-lomaa.png";
+  const logoUrl =
+    getEnv("EMAIL_LOGO_URL") || "https://beauty-prime-canvas.onrender.com/logo-lomaa.png";
 
   if (!apiKey || !from || !to) {
     throw new Error("Email is not configured. Check RESEND_API_KEY, EMAIL_FROM and EMAIL_TO.");
@@ -94,24 +95,33 @@ function buildHtml(input: SendSiteEmailInput, options: { logoUrl: string; footer
     .join("");
 
   return `
-    <div style="margin:0;padding:34px 18px;background:#f8f1e7;font-family:Arial,Helvetica,sans-serif;color:#3a2418;">
-      <div style="max-width:720px;margin:0 auto;background:#fff9f0;border:1px solid #eadfce;box-shadow:0 18px 50px rgba(58,36,24,0.08);">
-        <div style="padding:26px 30px 22px;border-bottom:1px solid #eadfce;background:#fff7ea;text-align:center;">
-          <img src="${escapeHtml(options.logoUrl)}" width="132" alt="LOMA Clinic & Beauty Hair" style="display:block;margin:0 auto 16px;max-width:132px;height:auto;border:0;" />
-          <div style="font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#c99a45;margin-bottom:12px;">LOMA Clinic & Beauty Hair</div>
-          <h1 style="margin:0;font-size:30px;line-height:1.18;font-family:Georgia,'Times New Roman',serif;font-weight:400;color:#3a2418;">${escapeHtml(input.title)}</h1>
-          ${input.intro ? `<p style="margin:16px auto 0;max-width:560px;color:#7a5a45;font-size:15px;line-height:1.65;">${escapeHtml(input.intro)}</p>` : ""}
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
+      <body style="margin:0;padding:0;background:#f8f1e7;">
+        <div style="margin:0;padding:34px 18px;background:#f8f1e7;font-family:Arial,Helvetica,sans-serif;color:#3a2418;">
+          <div style="max-width:720px;margin:0 auto;background:#fff9f0;border:1px solid #eadfce;box-shadow:0 18px 50px rgba(58,36,24,0.08);">
+            <div style="padding:26px 30px 22px;border-bottom:1px solid #eadfce;background:#fff7ea;text-align:center;">
+              <img src="${escapeHtml(options.logoUrl)}" width="180" alt="LOMA Clinic & Beauty Hair" style="display:block;margin:0 auto 16px;max-width:180px;height:auto;border:0;" />
+              <div style="font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#c99a45;margin-bottom:12px;">LOMA Clinic & Beauty Hair</div>
+              <h1 style="margin:0;font-size:30px;line-height:1.18;font-family:Georgia,'Times New Roman',serif;font-weight:400;color:#3a2418;">${escapeHtml(input.title)}</h1>
+              ${input.intro ? `<p style="margin:16px auto 0;max-width:560px;color:#7a5a45;font-size:15px;line-height:1.65;">${escapeHtml(input.intro)}</p>` : ""}
+            </div>
+            <table style="width:100%;border-collapse:collapse;">
+              ${rows}
+            </table>
+            <div style="padding:22px 30px;background:#fff7ea;color:#7a5a45;font-size:12px;line-height:1.65;text-align:center;">
+              ${escapeHtml(options.footer || "Enviado automaticamente pelo site lomaexperience.com.")}
+              <br />
+              <span style="color:#c99a45;">lomaexperience.com</span>
+            </div>
+          </div>
         </div>
-        <table style="width:100%;border-collapse:collapse;">
-          ${rows}
-        </table>
-        <div style="padding:22px 30px;background:#fff7ea;color:#7a5a45;font-size:12px;line-height:1.65;text-align:center;">
-          ${escapeHtml(options.footer || "Enviado automaticamente pelo site lomaexperience.com.")}
-          <br />
-          <span style="color:#c99a45;">lomaexperience.com</span>
-        </div>
-      </div>
-    </div>
+      </body>
+    </html>
   `;
 }
 
