@@ -26,6 +26,8 @@ export const Route = createFileRoute("/contactos")({
 function Contactos() {
   const { t } = useTranslation();
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
   return (
     <section className="py-20">
       <div className="mx-auto max-w-7xl px-6 sm:px-8">
@@ -95,8 +97,33 @@ function Contactos() {
 
           <Reveal delay={150}>
             <form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
+                setSending(true);
+                setSent(false);
+                setError("");
+
+                const form = e.currentTarget;
+                const formData = new FormData(form);
+                const response = await fetch("/api/contact", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    name: formData.get("name"),
+                    email: formData.get("email"),
+                    message: formData.get("message"),
+                    website: formData.get("website"),
+                  }),
+                }).catch(() => null);
+
+                setSending(false);
+
+                if (!response?.ok) {
+                  setError("Não foi possível enviar. Tente novamente.");
+                  return;
+                }
+
+                form.reset();
                 setSent(true);
               }}
               className="border border-border bg-card p-8 space-y-5"
@@ -105,6 +132,7 @@ function Contactos() {
               <label className="block">
                 <span className="eyebrow">{t("booking.name")}</span>
                 <input
+                  name="name"
                   required
                   className="mt-2 w-full bg-transparent border border-border px-4 py-3 text-sm focus:border-primary outline-none"
                 />
@@ -112,23 +140,30 @@ function Contactos() {
               <label className="block">
                 <span className="eyebrow">{t("booking.email")}</span>
                 <input
+                  name="email"
                   type="email"
                   required
                   className="mt-2 w-full bg-transparent border border-border px-4 py-3 text-sm focus:border-primary outline-none"
                 />
               </label>
+              <input name="website" tabIndex={-1} autoComplete="off" className="hidden" />
               <label className="block">
                 <span className="eyebrow">{t("contact.message")}</span>
                 <textarea
+                  name="message"
                   required
                   rows={5}
                   className="mt-2 w-full bg-transparent border border-border px-4 py-3 text-sm focus:border-primary outline-none"
                 />
               </label>
-              <button className="w-full px-6 py-4 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.28em] hover:bg-primary/90 transition">
-                {t("contact.send")}
+              <button
+                disabled={sending}
+                className="w-full px-6 py-4 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.28em] hover:bg-primary/90 transition disabled:opacity-60"
+              >
+                {sending ? "A enviar..." : t("contact.send")}
               </button>
               {sent && <p className="text-sm text-primary">{t("contact.sent")}</p>}
+              {error && <p className="text-sm text-destructive">{error}</p>}
             </form>
           </Reveal>
         </div>

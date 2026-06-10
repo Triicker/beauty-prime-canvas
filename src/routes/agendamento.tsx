@@ -44,6 +44,8 @@ function Booking() {
     notes: "",
   });
   const [done, setDone] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -115,6 +117,28 @@ function Booking() {
     t("booking.yourDetails"),
   ];
   const canNext = [data.service, data.pro, data.date && data.time, data.name && data.email][step];
+
+  async function submitBooking() {
+    if (!canNext || sending) return;
+
+    setSending(true);
+    setError("");
+
+    const response = await fetch("/api/booking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }).catch(() => null);
+
+    setSending(false);
+
+    if (!response?.ok) {
+      setError("Não foi possível enviar o pedido. Tente novamente.");
+      return;
+    }
+
+    setDone(true);
+  }
 
   if (done) {
     return (
@@ -238,6 +262,8 @@ function Booking() {
                 <label key={f.k} className="block">
                   <span className="eyebrow">{f.t}</span>
                   <input
+                    type={f.k === "email" ? "email" : f.k === "phone" ? "tel" : "text"}
+                    required={f.k === "name" || f.k === "email"}
                     value={(data as Record<string, string>)[f.k]}
                     onChange={(e) => setData({ ...data, [f.k]: e.target.value })}
                     className="mt-2 w-full bg-transparent border border-border px-4 py-3 outline-none focus:border-primary text-sm"
@@ -262,6 +288,7 @@ function Booking() {
                   </div>
                 </div>
               </div>
+              {error && <p className="sm:col-span-2 text-sm text-destructive">{error}</p>}
             </div>
           )}
         </div>
@@ -286,11 +313,11 @@ function Booking() {
             </button>
           ) : (
             <button
-              onClick={() => canNext && setDone(true)}
-              disabled={!canNext}
+              onClick={submitBooking}
+              disabled={!canNext || sending}
               className="inline-flex items-center gap-2 px-7 py-3 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.25em] disabled:opacity-30"
             >
-              {t("booking.pay")}
+              {sending ? "A enviar..." : t("booking.pay")}
               <ArrowRight className="w-4 h-4" />
             </button>
           )}

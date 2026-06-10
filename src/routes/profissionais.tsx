@@ -66,6 +66,8 @@ const BENEFIT_ICONS = [
 function ProsPage() {
   const { t, i18n } = useTranslation();
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
   const fallbackSpaces = t("pros.spaces", { returnObjects: true }) as {
     n: string;
     d: string;
@@ -264,31 +266,69 @@ function ProsPage() {
           <SectionHeading eyebrow={t("pros.formEyebrow")} title={t("pros.formTitle")} />
           <Reveal>
             <form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
+                setSending(true);
+                setSent(false);
+                setError("");
+
+                const form = e.currentTarget;
+                const formData = new FormData(form);
+                const response = await fetch("/api/professional-inquiry", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    name: formData.get("name"),
+                    area: formData.get("area"),
+                    phone: formData.get("phone"),
+                    instagram: formData.get("instagram"),
+                    interest: formData.get("interest"),
+                    message: formData.get("message"),
+                  }),
+                }).catch(() => null);
+
+                setSending(false);
+
+                if (!response?.ok) {
+                  setError("Não foi possível enviar. Tente novamente.");
+                  return;
+                }
+
+                form.reset();
                 setSent(true);
               }}
               className="mt-14 border border-border bg-card p-8 sm:p-10 grid sm:grid-cols-2 gap-5"
             >
-              <Field label={t("pros.fName")} required />
-              <Field label={t("pros.fArea")} placeholder={t("pros.fAreaPh")} required />
-              <Field label={t("pros.fPhone")} type="tel" required />
-              <Field label={t("pros.fInsta")} placeholder="@" />
+              <Field name="name" label={t("pros.fName")} required />
+              <Field name="area" label={t("pros.fArea")} placeholder={t("pros.fAreaPh")} required />
+              <Field name="phone" label={t("pros.fPhone")} type="tel" required />
+              <Field name="instagram" label={t("pros.fInsta")} placeholder="@" />
               <div className="sm:col-span-2">
-                <Field label={t("pros.fInterest")} placeholder={t("pros.fInterestPh")} />
+                <Field
+                  name="interest"
+                  label={t("pros.fInterest")}
+                  placeholder={t("pros.fInterestPh")}
+                />
               </div>
               <label className="block sm:col-span-2">
                 <span className="eyebrow">{t("pros.fMessage")}</span>
                 <textarea
+                  name="message"
                   rows={5}
                   className="mt-2 w-full bg-transparent border border-border px-4 py-3 text-sm focus:border-primary outline-none transition"
                 />
               </label>
-              <button className="sm:col-span-2 mt-2 w-full px-6 py-4 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.3em] hover:bg-primary/90 transition">
-                {t("pros.fSubmit")}
+              <button
+                disabled={sending}
+                className="sm:col-span-2 mt-2 w-full px-6 py-4 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.3em] hover:bg-primary/90 transition disabled:opacity-60"
+              >
+                {sending ? "A enviar..." : t("pros.fSubmit")}
               </button>
               {sent && (
                 <p className="sm:col-span-2 text-sm text-primary text-center">{t("pros.fSent")}</p>
+              )}
+              {error && (
+                <p className="sm:col-span-2 text-sm text-destructive text-center">{error}</p>
               )}
             </form>
           </Reveal>
@@ -299,11 +339,13 @@ function ProsPage() {
 }
 
 function Field({
+  name,
   label,
   type = "text",
   placeholder,
   required,
 }: {
+  name: string;
   label: string;
   type?: string;
   placeholder?: string;
@@ -316,6 +358,7 @@ function Field({
         {required && " *"}
       </span>
       <input
+        name={name}
         type={type}
         required={required}
         placeholder={placeholder}

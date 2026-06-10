@@ -1,10 +1,41 @@
-﻿import { Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import type { FormEvent } from "react";
 import { Instagram, Facebook, MapPin, Mail, Phone } from "lucide-react";
 import logo from "@/assets/logo-loma-light.jpg";
 
 export function Footer() {
   const { t } = useTranslation();
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+
+  async function submitNewsletter(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSending(true);
+    setSent(false);
+    setError("");
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const response = await fetch("/api/newsletter", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: formData.get("email") }),
+    }).catch(() => null);
+
+    setSending(false);
+
+    if (!response?.ok) {
+      setError("Não foi possível enviar.");
+      return;
+    }
+
+    form.reset();
+    setSent(true);
+  }
+
   return (
     <footer className="border-t border-border bg-gradient-cocoa">
       <div className="mx-auto max-w-7xl px-6 sm:px-8 py-20 grid gap-14 lg:grid-cols-12">
@@ -82,19 +113,25 @@ export function Footer() {
         <div className="lg:col-span-3">
           <div className="eyebrow mb-5">{t("footer.newsletter")}</div>
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={submitNewsletter}
             className="flex border border-border focus-within:border-primary/50 transition"
           >
             <input
+              name="email"
               type="email"
               required
               placeholder={t("footer.emailPh")}
               className="flex-1 bg-transparent px-4 py-3 text-sm outline-none text-foreground placeholder:text-muted-foreground"
             />
-            <button className="px-4 bg-primary text-primary-foreground text-[11px] uppercase tracking-[0.25em]">
-              {t("footer.subscribe")}
+            <button
+              disabled={sending}
+              className="px-4 bg-primary text-primary-foreground text-[11px] uppercase tracking-[0.25em] disabled:opacity-60"
+            >
+              {sending ? "..." : t("footer.subscribe")}
             </button>
           </form>
+          {sent && <p className="mt-3 text-xs text-primary">Email recebido.</p>}
+          {error && <p className="mt-3 text-xs text-destructive">{error}</p>}
           <div className="flex gap-3 mt-6">
             <a
               href="https://www.instagram.com/lomahairspa/"

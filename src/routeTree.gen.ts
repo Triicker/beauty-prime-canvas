@@ -24,7 +24,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiServicesRouteImport } from './routes/api.services'
 import { Route as ApiProfessionalsRouteImport } from './routes/api.professionals'
 import { Route as ApiProfessionalSpacesRouteImport } from './routes/api.professional-spaces'
+import { Route as ApiProfessionalInquiryRouteImport } from './routes/api.professional-inquiry'
 import { Route as ApiProductsRouteImport } from './routes/api.products'
+import { Route as ApiNewsletterRouteImport } from './routes/api.newsletter'
+import { Route as ApiContactRouteImport } from './routes/api.contact'
+import { Route as ApiCartRequestRouteImport } from './routes/api.cart-request'
+import { Route as ApiBookingRouteImport } from './routes/api.booking'
 import { Route as AdminServicosRouteImport } from './routes/admin.servicos'
 import { Route as AdminProfissionaisRouteImport } from './routes/admin.profissionais'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
@@ -116,9 +121,34 @@ const ApiProfessionalSpacesRoute = ApiProfessionalSpacesRouteImport.update({
   path: '/api/professional-spaces',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiProfessionalInquiryRoute = ApiProfessionalInquiryRouteImport.update({
+  id: '/api/professional-inquiry',
+  path: '/api/professional-inquiry',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProductsRoute = ApiProductsRouteImport.update({
   id: '/api/products',
   path: '/api/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNewsletterRoute = ApiNewsletterRouteImport.update({
+  id: '/api/newsletter',
+  path: '/api/newsletter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiContactRoute = ApiContactRouteImport.update({
+  id: '/api/contact',
+  path: '/api/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCartRequestRoute = ApiCartRequestRouteImport.update({
+  id: '/api/cart-request',
+  path: '/api/cart-request',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBookingRoute = ApiBookingRouteImport.update({
+  id: '/api/booking',
+  path: '/api/booking',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminServicosRoute = AdminServicosRouteImport.update({
@@ -219,7 +249,12 @@ export interface FileRoutesByFullPath {
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/profissionais': typeof AdminProfissionaisRoute
   '/admin/servicos': typeof AdminServicosRoute
+  '/api/booking': typeof ApiBookingRoute
+  '/api/cart-request': typeof ApiCartRequestRoute
+  '/api/contact': typeof ApiContactRoute
+  '/api/newsletter': typeof ApiNewsletterRoute
   '/api/products': typeof ApiProductsRoute
+  '/api/professional-inquiry': typeof ApiProfessionalInquiryRoute
   '/api/professional-spaces': typeof ApiProfessionalSpacesRoute
   '/api/professionals': typeof ApiProfessionalsRoute
   '/api/services': typeof ApiServicesRoute
@@ -252,7 +287,12 @@ export interface FileRoutesByTo {
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/profissionais': typeof AdminProfissionaisRoute
   '/admin/servicos': typeof AdminServicosRoute
+  '/api/booking': typeof ApiBookingRoute
+  '/api/cart-request': typeof ApiCartRequestRoute
+  '/api/contact': typeof ApiContactRoute
+  '/api/newsletter': typeof ApiNewsletterRoute
   '/api/products': typeof ApiProductsRoute
+  '/api/professional-inquiry': typeof ApiProfessionalInquiryRoute
   '/api/professional-spaces': typeof ApiProfessionalSpacesRoute
   '/api/professionals': typeof ApiProfessionalsRoute
   '/api/services': typeof ApiServicesRoute
@@ -286,7 +326,12 @@ export interface FileRoutesById {
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/profissionais': typeof AdminProfissionaisRoute
   '/admin/servicos': typeof AdminServicosRoute
+  '/api/booking': typeof ApiBookingRoute
+  '/api/cart-request': typeof ApiCartRequestRoute
+  '/api/contact': typeof ApiContactRoute
+  '/api/newsletter': typeof ApiNewsletterRoute
   '/api/products': typeof ApiProductsRoute
+  '/api/professional-inquiry': typeof ApiProfessionalInquiryRoute
   '/api/professional-spaces': typeof ApiProfessionalSpacesRoute
   '/api/professionals': typeof ApiProfessionalsRoute
   '/api/services': typeof ApiServicesRoute
@@ -321,7 +366,12 @@ export interface FileRouteTypes {
     | '/admin/produtos'
     | '/admin/profissionais'
     | '/admin/servicos'
+    | '/api/booking'
+    | '/api/cart-request'
+    | '/api/contact'
+    | '/api/newsletter'
     | '/api/products'
+    | '/api/professional-inquiry'
     | '/api/professional-spaces'
     | '/api/professionals'
     | '/api/services'
@@ -354,7 +404,12 @@ export interface FileRouteTypes {
     | '/admin/produtos'
     | '/admin/profissionais'
     | '/admin/servicos'
+    | '/api/booking'
+    | '/api/cart-request'
+    | '/api/contact'
+    | '/api/newsletter'
     | '/api/products'
+    | '/api/professional-inquiry'
     | '/api/professional-spaces'
     | '/api/professionals'
     | '/api/services'
@@ -387,7 +442,12 @@ export interface FileRouteTypes {
     | '/admin/produtos'
     | '/admin/profissionais'
     | '/admin/servicos'
+    | '/api/booking'
+    | '/api/cart-request'
+    | '/api/contact'
+    | '/api/newsletter'
     | '/api/products'
+    | '/api/professional-inquiry'
     | '/api/professional-spaces'
     | '/api/professionals'
     | '/api/services'
@@ -417,7 +477,12 @@ export interface RootRouteChildren {
   ServicosRoute: typeof ServicosRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
+  ApiBookingRoute: typeof ApiBookingRoute
+  ApiCartRequestRoute: typeof ApiCartRequestRoute
+  ApiContactRoute: typeof ApiContactRoute
+  ApiNewsletterRoute: typeof ApiNewsletterRoute
   ApiProductsRoute: typeof ApiProductsRoute
+  ApiProfessionalInquiryRoute: typeof ApiProfessionalInquiryRoute
   ApiProfessionalSpacesRoute: typeof ApiProfessionalSpacesRoute
   ApiProfessionalsRoute: typeof ApiProfessionalsRoute
   ApiServicesRoute: typeof ApiServicesRoute
@@ -537,11 +602,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiProfessionalSpacesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/professional-inquiry': {
+      id: '/api/professional-inquiry'
+      path: '/api/professional-inquiry'
+      fullPath: '/api/professional-inquiry'
+      preLoaderRoute: typeof ApiProfessionalInquiryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/products': {
       id: '/api/products'
       path: '/api/products'
       fullPath: '/api/products'
       preLoaderRoute: typeof ApiProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/newsletter': {
+      id: '/api/newsletter'
+      path: '/api/newsletter'
+      fullPath: '/api/newsletter'
+      preLoaderRoute: typeof ApiNewsletterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/contact': {
+      id: '/api/contact'
+      path: '/api/contact'
+      fullPath: '/api/contact'
+      preLoaderRoute: typeof ApiContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cart-request': {
+      id: '/api/cart-request'
+      path: '/api/cart-request'
+      fullPath: '/api/cart-request'
+      preLoaderRoute: typeof ApiCartRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/booking': {
+      id: '/api/booking'
+      path: '/api/booking'
+      fullPath: '/api/booking'
+      preLoaderRoute: typeof ApiBookingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/servicos': {
@@ -732,7 +832,12 @@ const rootRouteChildren: RootRouteChildren = {
   ServicosRoute: ServicosRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
+  ApiBookingRoute: ApiBookingRoute,
+  ApiCartRequestRoute: ApiCartRequestRoute,
+  ApiContactRoute: ApiContactRoute,
+  ApiNewsletterRoute: ApiNewsletterRoute,
   ApiProductsRoute: ApiProductsRoute,
+  ApiProfessionalInquiryRoute: ApiProfessionalInquiryRoute,
   ApiProfessionalSpacesRoute: ApiProfessionalSpacesRoute,
   ApiProfessionalsRoute: ApiProfessionalsRoute,
   ApiServicesRoute: ApiServicesRoute,
