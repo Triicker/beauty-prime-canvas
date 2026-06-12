@@ -264,6 +264,9 @@ function ProsPage() {
       <section id="contacto" className="py-24 sm:py-32">
         <div className="mx-auto max-w-3xl px-6 sm:px-8">
           <SectionHeading eyebrow={t("pros.formEyebrow")} title={t("pros.formTitle")} />
+          <p className="mx-auto mt-6 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground">
+            {t("pros.formIntro")}
+          </p>
           <Reveal>
             <form
               onSubmit={async (e) => {
@@ -279,11 +282,25 @@ function ProsPage() {
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
                     name: formData.get("name"),
-                    area: formData.get("area"),
+                    email: formData.get("email"),
+                    age: formData.get("age"),
                     phone: formData.get("phone"),
                     instagram: formData.get("instagram"),
-                    interest: formData.get("interest"),
-                    message: formData.get("message"),
+                    area: formData.get("area"),
+                    yearsExperience: formData.get("yearsExperience"),
+                    rentalExperience: formData.get("rentalExperience"),
+                    ownClientBase: formData.get("ownClientBase"),
+                    mainService: formData.get("mainService"),
+                    mostPerformedServices: formData.get("mostPerformedServices"),
+                    workspaceExpectations: formData.get("workspaceExpectations"),
+                    whyLoma: formData.get("whyLoma"),
+                    clientExperienceValue: formData.get("clientExperienceValue"),
+                    positioning: formData.get("positioning"),
+                    organizedSchedule: formData.get("organizedSchedule"),
+                    createsContent: formData.get("createsContent"),
+                    partnershipMeaning: formData.get("partnershipMeaning"),
+                    environmentAvoid: formData.get("environmentAvoid"),
+                    differentiator: formData.get("differentiator"),
                   }),
                 }).catch(() => null);
 
@@ -297,27 +314,62 @@ function ProsPage() {
                 form.reset();
                 setSent(true);
               }}
-              className="mt-14 border border-border bg-card p-8 sm:p-10 grid sm:grid-cols-2 gap-5"
+              className="mt-14 grid gap-5 border border-border bg-card p-8 sm:grid-cols-2 sm:p-10"
             >
               <Field name="name" label={t("pros.fName")} required />
-              <Field name="area" label={t("pros.fArea")} placeholder={t("pros.fAreaPh")} required />
+              <Field name="email" label={t("pros.fEmail")} type="email" required />
+              <Field name="age" label={t("pros.fAge")} type="number" required />
               <Field name="phone" label={t("pros.fPhone")} type="tel" required />
-              <Field name="instagram" label={t("pros.fInsta")} placeholder="@" />
-              <div className="sm:col-span-2">
-                <Field
-                  name="interest"
-                  label={t("pros.fInterest")}
-                  placeholder={t("pros.fInterestPh")}
-                />
-              </div>
-              <label className="block sm:col-span-2">
-                <span className="eyebrow">{t("pros.fMessage")}</span>
-                <textarea
-                  name="message"
-                  rows={5}
-                  className="mt-2 w-full bg-transparent border border-border px-4 py-3 text-sm focus:border-primary outline-none transition"
-                />
-              </label>
+              <Field name="instagram" label={t("pros.fInsta")} placeholder="@" required />
+              <SelectField
+                name="area"
+                label={t("pros.fArea")}
+                options={t("pros.fAreaOptions", { returnObjects: true }) as string[]}
+                required
+              />
+              <Field name="yearsExperience" label={t("pros.fYears")} required />
+              <SelectField
+                name="rentalExperience"
+                label={t("pros.fRental")}
+                options={t("pros.fYesNo", { returnObjects: true }) as string[]}
+                required
+              />
+              <SelectField
+                name="ownClientBase"
+                label={t("pros.fClientBase")}
+                options={t("pros.fClientBaseOptions", { returnObjects: true }) as string[]}
+                required
+              />
+              <SelectField
+                name="organizedSchedule"
+                label={t("pros.fOrganized")}
+                options={t("pros.fYesNo", { returnObjects: true }) as string[]}
+                required
+              />
+              <SelectField
+                name="createsContent"
+                label={t("pros.fContent")}
+                options={t("pros.fYesNo", { returnObjects: true }) as string[]}
+                required
+              />
+              <div className="hidden sm:block" />
+              <TextAreaField name="mainService" label={t("pros.fMainService")} required />
+              <TextAreaField
+                name="mostPerformedServices"
+                label={t("pros.fMostServices")}
+                required
+              />
+              <TextAreaField name="workspaceExpectations" label={t("pros.fWorkspace")} required />
+              <TextAreaField name="whyLoma" label={t("pros.fWhyLoma")} required />
+              <TextAreaField
+                name="clientExperienceValue"
+                label={t("pros.fClientExperience")}
+                required
+              />
+              <TextAreaField name="positioning" label={t("pros.fPositioning")} required />
+              <TextAreaField name="partnershipMeaning" label={t("pros.fPartnership")} required />
+              <TextAreaField name="environmentAvoid" label={t("pros.fAvoid")} required />
+              <TextAreaField name="differentiator" label={t("pros.fDifferentiator")} required />
               <button
                 disabled={sending}
                 className="sm:col-span-2 mt-2 w-full px-6 py-4 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.3em] hover:bg-primary/90 transition disabled:opacity-60"
@@ -363,6 +415,67 @@ function Field({
         required={required}
         placeholder={placeholder}
         className="mt-2 w-full bg-transparent border border-border px-4 py-3 text-sm focus:border-primary outline-none transition placeholder:text-muted-foreground/50"
+      />
+    </label>
+  );
+}
+
+function SelectField({
+  name,
+  label,
+  options,
+  required,
+}: {
+  name: string;
+  label: string;
+  options: string[];
+  required?: boolean;
+}) {
+  return (
+    <label className="block">
+      <span className="eyebrow">
+        {label}
+        {required && " *"}
+      </span>
+      <select
+        name={name}
+        required={required}
+        defaultValue=""
+        className="mt-2 h-[46px] w-full border border-border bg-background px-4 text-sm text-foreground outline-none transition focus:border-primary"
+      >
+        <option value="" disabled>
+          Selecione
+        </option>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function TextAreaField({
+  name,
+  label,
+  required,
+}: {
+  name: string;
+  label: string;
+  required?: boolean;
+}) {
+  return (
+    <label className="block sm:col-span-2">
+      <span className="eyebrow">
+        {label}
+        {required && " *"}
+      </span>
+      <textarea
+        name={name}
+        rows={4}
+        required={required}
+        className="mt-2 w-full border border-border bg-transparent px-4 py-3 text-sm outline-none transition focus:border-primary"
       />
     </label>
   );

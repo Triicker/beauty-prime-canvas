@@ -7,6 +7,7 @@ import {
   Image as ImageIcon,
   LayoutDashboard,
   LogOut,
+  Megaphone,
   Package,
   Scissors,
   Sparkles,
@@ -101,12 +102,13 @@ function AdminPage() {
 
   return (
     <AdminShell user={dashboard.user?.name}>
-      <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
+      <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-7">
         <Metric label="Serviços" value={dashboard.counts.services} icon={Scissors} />
         <Metric label="Produtos" value={dashboard.counts.products} icon={Package} />
         <Metric label="Profissionais" value={dashboard.counts.professionals} icon={UserRound} />
         <Metric label="Espaços" value={dashboard.counts.spaces} icon={Sparkles} />
         <Metric label="Galeria" value={dashboard.counts.gallery} icon={ImageIcon} />
+        <Metric label="Marketing" value={dashboard.counts.marketing} icon={Megaphone} />
         <Metric label="Agenda" value={dashboard.counts.appointments} icon={CalendarCheck} />
         <Metric label="Submissões" value={dashboard.counts.submissions} icon={LayoutDashboard} />
       </div>
@@ -145,15 +147,22 @@ function AdminPage() {
           items={dashboard.rows.gallery}
           empty="Nenhuma imagem de galeria no banco."
         />
+        <AdminList
+          title="Marketing"
+          items={dashboard.rows.marketing}
+          empty="Nenhum banner cadastrado."
+          actionHref="/admin/marketing"
+          actionLabel="Gerenciar"
+        />
         <section className="border border-border bg-card p-7">
           <div className="flex items-center gap-3 text-primary">
             <CalendarCheck className="h-5 w-5" />
-            <span className="text-[11px] uppercase tracking-[0.22em]">Cal.com</span>
+            <span className="text-[11px] uppercase tracking-[0.22em]">Agenda própria</span>
           </div>
           <h2 className="mt-5 font-display text-3xl text-foreground">Agendamentos</h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Acompanhe pedidos sincronizados pelo webhook do Cal.com e ajuste o status interno de
-            atendimento.
+            Acompanhe pedidos feitos pelo site, bloqueie horários por profissional e ajuste o status
+            interno de atendimento.
           </p>
           <Link
             to="/admin/agendamentos"

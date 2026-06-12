@@ -2,7 +2,7 @@
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X, ShoppingBag, Sun, Moon, ChevronDown, CalendarDays } from "lucide-react";
-import logoAsset from "@/assets/logo-lomaa.png";
+import logoAsset from "@/assets/logo-lomaa2.png";
 import { useCart } from "@/store/cart";
 
 const LANGS = [

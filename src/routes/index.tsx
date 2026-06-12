@@ -16,6 +16,7 @@ import g2 from "@/assets/IMG_5368.jpg";
 import g3 from "@/assets/IMG_5722.jpg";
 import g5 from "@/assets/IMG_5978.jpg";
 import { products as allProducts } from "@/data/products";
+import { MarketingCarouselSection } from "@/components/MarketingCarouselSection";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
 
@@ -145,6 +146,8 @@ function Index() {
           </div>
         </div>
       </section>
+
+      <MarketingCarouselSection />
 
       {/* ABOUT */}
       <section className="py-28 md:py-40">

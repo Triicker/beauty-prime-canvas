@@ -19,6 +19,7 @@ type CountRow = {
   professionals: string;
   spaces: string;
   gallery: string;
+  marketing: string;
   appointments: string;
   submissions: string;
 };
@@ -29,6 +30,7 @@ type DashboardRows = {
   professionals: AdminListItem[];
   spaces: AdminListItem[];
   gallery: AdminListItem[];
+  marketing: AdminListItem[];
 };
 
 export type AdminDashboard = {
@@ -45,6 +47,7 @@ const emptyCounts: Record<keyof CountRow, number> = {
   professionals: 0,
   spaces: 0,
   gallery: 0,
+  marketing: 0,
   appointments: 0,
   submissions: 0,
 };
@@ -55,6 +58,7 @@ const emptyRows: DashboardRows = {
   professionals: [],
   spaces: [],
   gallery: [],
+  marketing: [],
 };
 
 function normalizeCounts(row: CountRow | null) {
@@ -117,6 +121,12 @@ export async function getAdminDashboard(request: Request): Promise<AdminDashboar
       (select count(*) from gallery_images) as gallery,
       (
         select case
+          when to_regclass('public.marketing_slides') is null then 0
+          else (select count(*) from marketing_slides)
+        end
+      ) as marketing,
+      (
+        select case
           when to_regclass('public.appointments') is null then 0
           else (select count(*) from appointments)
         end
@@ -124,12 +134,15 @@ export async function getAdminDashboard(request: Request): Promise<AdminDashboar
       (select count(*) from form_submissions) as submissions
   `);
 
-  const [services, products, professionals, spaces, gallery] = await Promise.all([
+  const [services, products, professionals, spaces, gallery, marketing] = await Promise.all([
     listItems("services", "name_pt", "price_label"),
     listItems("products", "name_pt", "category"),
     listItems("professionals", "name", "role_pt"),
     listItems("professional_spaces", "name_pt", null),
     listItems("gallery_images", "coalesce(title_pt, category, 'Imagem')", "category"),
+    Number(counts?.marketing ?? 0) > 0
+      ? listItems("marketing_slides", "title", "button_label")
+      : Promise.resolve(null),
   ]);
 
   return {
@@ -143,6 +156,7 @@ export async function getAdminDashboard(request: Request): Promise<AdminDashboar
       professionals: professionals?.items ?? [],
       spaces: spaces?.items ?? [],
       gallery: gallery?.items ?? [],
+      marketing: marketing?.items ?? [],
     },
   };
 }

@@ -1,5 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarCheck, Clock, Mail, Phone, RefreshCw, UserRound } from "lucide-react";
+import {
+  CalendarCheck,
+  CalendarPlus,
+  Clock,
+  Mail,
+  Phone,
+  RefreshCw,
+  UserRound,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import {
@@ -25,6 +33,7 @@ function formatDate(value: string | null) {
   return new Intl.DateTimeFormat("pt-PT", {
     dateStyle: "medium",
     timeStyle: "short",
+    timeZone: "Europe/Lisbon",
   }).format(new Date(value));
 }
 
@@ -94,8 +103,8 @@ function AdminAppointmentsPage() {
             <div className="eyebrow mb-3">Admin LOMA</div>
             <h1 className="font-display text-4xl text-foreground md:text-5xl">Agendamentos</h1>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Pedidos e marcações sincronizados pelo Cal.com, com status interno para acompanhamento
-              da equipa.
+              Pedidos recebidos pelo site, com bloqueio por profissional e status interno para
+              acompanhamento da equipa.
             </p>
           </div>
           <button
@@ -131,8 +140,8 @@ function AdminAppointmentsPage() {
           {loadError && <p className="p-6 text-sm text-destructive">{loadError}</p>}
           {!isLoading && !loadError && appointments.length === 0 && (
             <p className="p-6 text-sm text-muted-foreground">
-              Nenhum agendamento sincronizado ainda. Depois de configurar o webhook no Cal.com, os
-              novos eventos aparecem aqui.
+              Nenhum agendamento recebido ainda. Quando um cliente concluir o formulário do site, a
+              marcação aparece aqui.
             </p>
           )}
 
@@ -143,7 +152,7 @@ function AdminAppointmentsPage() {
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-primary">
                       <CalendarCheck className="h-4 w-4" />
-                      {appointment.source}
+                      {appointment.source === "site" ? "Site" : appointment.source}
                     </span>
                     <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
                       {statusLabels[appointment.status]}
@@ -180,7 +189,7 @@ function AdminAppointmentsPage() {
                   )}
                 </div>
 
-                <div className="flex items-start lg:justify-end">
+                <div className="flex flex-col gap-3 lg:items-end">
                   <label className="w-full max-w-xs">
                     <span className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                       Status interno
@@ -200,6 +209,17 @@ function AdminAppointmentsPage() {
                       ))}
                     </select>
                   </label>
+                  {appointment.googleCalendarUrl && (
+                    <a
+                      href={appointment.googleCalendarUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex h-10 w-full max-w-xs items-center justify-center gap-2 border border-primary/40 px-4 text-[10px] uppercase tracking-[0.18em] text-primary transition hover:bg-primary hover:text-primary-foreground"
+                    >
+                      <CalendarPlus className="h-4 w-4" />
+                      Google Calendar
+                    </a>
+                  )}
                 </div>
               </article>
             ))}

@@ -50,7 +50,7 @@ function Privacidade() {
             <br />
             Morada: R. da Azenha 6, 2560-474 Silveira, Torres Vedras
             <br />
-            NIF: <em className="opacity-60">[a confirmar]</em>
+            NIF: 233249168
             <br />
             Email:{" "}
             <a
@@ -76,8 +76,8 @@ function Privacidade() {
             <li>Mensagens e notas adicionais fornecidas voluntariamente</li>
           </ul>
           <p className="mt-2">
-            Não recolhemos dados de pagamento — o processamento de pagamentos é feito
-            exclusivamente de forma presencial.
+            Não recolhemos dados de pagamento — o processamento de pagamentos é feito exclusivamente
+            de forma presencial.
           </p>
         </Section>
 
@@ -101,23 +101,24 @@ function Privacidade() {
         <Section title="4. Prazo de Conservação">
           <p>
             Os dados pessoais são conservados pelo período mínimo necessário ao cumprimento da
-            finalidade para que foram recolhidos, não excedendo <strong className="text-foreground">12 meses</strong> após o
-            último contacto ou agendamento, salvo obrigação legal que imponha prazo diferente.
+            finalidade para que foram recolhidos, não excedendo{" "}
+            <strong className="text-foreground">12 meses</strong> após o último contacto ou
+            agendamento, salvo obrigação legal que imponha prazo diferente.
           </p>
         </Section>
 
         <Section title="5. Partilha de Dados com Terceiros">
           <p>
-            Os seus dados pessoais não são vendidos, alugados ou partilhados com terceiros para
-            fins comerciais ou de marketing. Apenas poderão ser comunicados a entidades públicas
-            quando exigido por lei.
+            Os seus dados pessoais não são vendidos, alugados ou partilhados com terceiros para fins
+            comerciais ou de marketing. Apenas poderão ser comunicados a entidades públicas quando
+            exigido por lei.
           </p>
         </Section>
 
         <Section title="6. Armazenamento Local (localStorage)">
           <p>
-            Este site utiliza o armazenamento local do browser (
-            <em>localStorage</em>) — uma tecnologia semelhante aos cookies — para:
+            Este site utiliza o armazenamento local do browser (<em>localStorage</em>) — uma
+            tecnologia semelhante aos cookies — para:
           </p>
           <ul className="list-disc list-inside space-y-1 ml-2">
             <li>Guardar a preferência de idioma (PT / EN / FR)</li>
@@ -172,12 +173,12 @@ function Privacidade() {
               seus dados
             </li>
             <li>
-              <strong className="text-foreground">Portabilidade</strong> — receber os seus dados
-              num formato estruturado e legível
+              <strong className="text-foreground">Portabilidade</strong> — receber os seus dados num
+              formato estruturado e legível
             </li>
             <li>
-              <strong className="text-foreground">Oposição</strong> — opor-se ao tratamento dos
-              seus dados
+              <strong className="text-foreground">Oposição</strong> — opor-se ao tratamento dos seus
+              dados
             </li>
             <li>
               <strong className="text-foreground">Reclamação</strong> — apresentar queixa à{" "}

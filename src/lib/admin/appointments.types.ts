@@ -14,6 +14,8 @@ export type AppointmentRecord = {
   sourceEventId: string | null;
   sourceBookingId: string | null;
   status: AppointmentStatus;
+  serviceId: string | null;
+  professionalId: string | null;
   service: string | null;
   professional: string | null;
   customerName: string | null;
@@ -21,9 +23,11 @@ export type AppointmentRecord = {
   customerPhone: string | null;
   startsAt: string | null;
   endsAt: string | null;
+  durationMinutes: number | null;
   timezone: string | null;
   notes: string | null;
   payload: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
+  googleCalendarUrl: string | null;
 };
