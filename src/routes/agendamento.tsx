@@ -21,6 +21,54 @@ export const Route = createFileRoute("/agendamento")({
 });
 
 function Booking() {
+  const calLink = getCalLink();
+
+  if (calLink) {
+    return <CalBookingPage calLink={calLink} />;
+  }
+
+  return <BookingRequestWizard />;
+}
+
+function getCalLink() {
+  const raw = ((import.meta.env as Record<string, string | undefined>).VITE_CAL_LINK ?? "").trim();
+  if (!raw) return "";
+
+  if (/^https?:\/\//i.test(raw)) return raw;
+  return `https://cal.com/${raw.replace(/^\/+/, "")}`;
+}
+
+function getCalEmbedUrl(calLink: string) {
+  const url = new URL(calLink);
+  url.searchParams.set("embed", "1");
+  return url.toString();
+}
+
+function CalBookingPage({ calLink }: { calLink: string }) {
+  const { t } = useTranslation();
+
+  return (
+    <section className="py-20">
+      <div className="mx-auto max-w-6xl px-6 sm:px-8">
+        <SectionHeading eyebrow={t("booking.eyebrow")} title={t("booking.title")} />
+        <div className="mt-10 overflow-hidden border border-border bg-card shadow-[0_24px_80px_-55px_rgba(58,36,24,0.65)]">
+          <iframe
+            src={getCalEmbedUrl(calLink)}
+            title="Agendamento LOMA no Cal.com"
+            className="block h-[760px] w-full bg-background"
+            loading="lazy"
+          />
+        </div>
+        <p className="mt-5 text-center text-sm leading-relaxed text-muted-foreground">
+          A disponibilidade apresentada é gerida em tempo real. Após escolher o horário, receberá a
+          confirmação conforme as regras da agenda LOMA.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function BookingRequestWizard() {
   const { t, i18n } = useTranslation();
   const allCategories = t("services.categories", { returnObjects: true }) as {
     name: string;

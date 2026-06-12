@@ -34,6 +34,8 @@ import { Route as AdminServicosRouteImport } from './routes/admin.servicos'
 import { Route as AdminProfissionaisRouteImport } from './routes/admin.profissionais'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminAgendamentosRouteImport } from './routes/admin.agendamentos'
+import { Route as ApiCalWebhookRouteImport } from './routes/api.cal.webhook'
 import { Route as ApiAdminServicesRouteImport } from './routes/api.admin.services'
 import { Route as ApiAdminProfessionalsRouteImport } from './routes/api.admin.professionals'
 import { Route as ApiAdminProfessionalSpacesRouteImport } from './routes/api.admin.professional-spaces'
@@ -41,10 +43,12 @@ import { Route as ApiAdminProductsRouteImport } from './routes/api.admin.product
 import { Route as ApiAdminLogoutRouteImport } from './routes/api.admin.logout'
 import { Route as ApiAdminLoginRouteImport } from './routes/api.admin.login'
 import { Route as ApiAdminDashboardRouteImport } from './routes/api.admin.dashboard'
+import { Route as ApiAdminAppointmentsRouteImport } from './routes/api.admin.appointments'
 import { Route as ApiAdminServicesServiceIdRouteImport } from './routes/api.admin.services.$serviceId'
 import { Route as ApiAdminProfessionalsProfessionalIdRouteImport } from './routes/api.admin.professionals.$professionalId'
 import { Route as ApiAdminProfessionalSpacesSpaceIdRouteImport } from './routes/api.admin.professional-spaces.$spaceId'
 import { Route as ApiAdminProductsProductIdRouteImport } from './routes/api.admin.products.$productId'
+import { Route as ApiAdminAppointmentsAppointmentIdRouteImport } from './routes/api.admin.appointments.$appointmentId'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -171,6 +175,16 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAgendamentosRoute = AdminAgendamentosRouteImport.update({
+  id: '/agendamentos',
+  path: '/agendamentos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const ApiCalWebhookRoute = ApiCalWebhookRouteImport.update({
+  id: '/api/cal/webhook',
+  path: '/api/cal/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminServicesRoute = ApiAdminServicesRouteImport.update({
   id: '/api/admin/services',
   path: '/api/admin/services',
@@ -207,6 +221,11 @@ const ApiAdminDashboardRoute = ApiAdminDashboardRouteImport.update({
   path: '/api/admin/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminAppointmentsRoute = ApiAdminAppointmentsRouteImport.update({
+  id: '/api/admin/appointments',
+  path: '/api/admin/appointments',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminServicesServiceIdRoute =
   ApiAdminServicesServiceIdRouteImport.update({
     id: '/$serviceId',
@@ -231,6 +250,12 @@ const ApiAdminProductsProductIdRoute =
     path: '/$productId',
     getParentRoute: () => ApiAdminProductsRoute,
   } as any)
+const ApiAdminAppointmentsAppointmentIdRoute =
+  ApiAdminAppointmentsAppointmentIdRouteImport.update({
+    id: '/$appointmentId',
+    path: '/$appointmentId',
+    getParentRoute: () => ApiAdminAppointmentsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -245,6 +270,7 @@ export interface FileRoutesByFullPath {
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/admin/agendamentos': typeof AdminAgendamentosRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/profissionais': typeof AdminProfissionaisRoute
@@ -258,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/api/professional-spaces': typeof ApiProfessionalSpacesRoute
   '/api/professionals': typeof ApiProfessionalsRoute
   '/api/services': typeof ApiServicesRoute
+  '/api/admin/appointments': typeof ApiAdminAppointmentsRouteWithChildren
   '/api/admin/dashboard': typeof ApiAdminDashboardRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
@@ -265,6 +292,8 @@ export interface FileRoutesByFullPath {
   '/api/admin/professional-spaces': typeof ApiAdminProfessionalSpacesRouteWithChildren
   '/api/admin/professionals': typeof ApiAdminProfessionalsRouteWithChildren
   '/api/admin/services': typeof ApiAdminServicesRouteWithChildren
+  '/api/cal/webhook': typeof ApiCalWebhookRoute
+  '/api/admin/appointments/$appointmentId': typeof ApiAdminAppointmentsAppointmentIdRoute
   '/api/admin/products/$productId': typeof ApiAdminProductsProductIdRoute
   '/api/admin/professional-spaces/$spaceId': typeof ApiAdminProfessionalSpacesSpaceIdRoute
   '/api/admin/professionals/$professionalId': typeof ApiAdminProfessionalsProfessionalIdRoute
@@ -283,6 +312,7 @@ export interface FileRoutesByTo {
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/admin/agendamentos': typeof AdminAgendamentosRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/profissionais': typeof AdminProfissionaisRoute
@@ -296,6 +326,7 @@ export interface FileRoutesByTo {
   '/api/professional-spaces': typeof ApiProfessionalSpacesRoute
   '/api/professionals': typeof ApiProfessionalsRoute
   '/api/services': typeof ApiServicesRoute
+  '/api/admin/appointments': typeof ApiAdminAppointmentsRouteWithChildren
   '/api/admin/dashboard': typeof ApiAdminDashboardRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
@@ -303,6 +334,8 @@ export interface FileRoutesByTo {
   '/api/admin/professional-spaces': typeof ApiAdminProfessionalSpacesRouteWithChildren
   '/api/admin/professionals': typeof ApiAdminProfessionalsRouteWithChildren
   '/api/admin/services': typeof ApiAdminServicesRouteWithChildren
+  '/api/cal/webhook': typeof ApiCalWebhookRoute
+  '/api/admin/appointments/$appointmentId': typeof ApiAdminAppointmentsAppointmentIdRoute
   '/api/admin/products/$productId': typeof ApiAdminProductsProductIdRoute
   '/api/admin/professional-spaces/$spaceId': typeof ApiAdminProfessionalSpacesSpaceIdRoute
   '/api/admin/professionals/$professionalId': typeof ApiAdminProfessionalsProfessionalIdRoute
@@ -322,6 +355,7 @@ export interface FileRoutesById {
   '/servicos': typeof ServicosRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/admin/agendamentos': typeof AdminAgendamentosRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/profissionais': typeof AdminProfissionaisRoute
@@ -335,6 +369,7 @@ export interface FileRoutesById {
   '/api/professional-spaces': typeof ApiProfessionalSpacesRoute
   '/api/professionals': typeof ApiProfessionalsRoute
   '/api/services': typeof ApiServicesRoute
+  '/api/admin/appointments': typeof ApiAdminAppointmentsRouteWithChildren
   '/api/admin/dashboard': typeof ApiAdminDashboardRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
@@ -342,6 +377,8 @@ export interface FileRoutesById {
   '/api/admin/professional-spaces': typeof ApiAdminProfessionalSpacesRouteWithChildren
   '/api/admin/professionals': typeof ApiAdminProfessionalsRouteWithChildren
   '/api/admin/services': typeof ApiAdminServicesRouteWithChildren
+  '/api/cal/webhook': typeof ApiCalWebhookRoute
+  '/api/admin/appointments/$appointmentId': typeof ApiAdminAppointmentsAppointmentIdRoute
   '/api/admin/products/$productId': typeof ApiAdminProductsProductIdRoute
   '/api/admin/professional-spaces/$spaceId': typeof ApiAdminProfessionalSpacesSpaceIdRoute
   '/api/admin/professionals/$professionalId': typeof ApiAdminProfessionalsProfessionalIdRoute
@@ -362,6 +399,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/sobre'
     | '/termos'
+    | '/admin/agendamentos'
     | '/admin/login'
     | '/admin/produtos'
     | '/admin/profissionais'
@@ -375,6 +413,7 @@ export interface FileRouteTypes {
     | '/api/professional-spaces'
     | '/api/professionals'
     | '/api/services'
+    | '/api/admin/appointments'
     | '/api/admin/dashboard'
     | '/api/admin/login'
     | '/api/admin/logout'
@@ -382,6 +421,8 @@ export interface FileRouteTypes {
     | '/api/admin/professional-spaces'
     | '/api/admin/professionals'
     | '/api/admin/services'
+    | '/api/cal/webhook'
+    | '/api/admin/appointments/$appointmentId'
     | '/api/admin/products/$productId'
     | '/api/admin/professional-spaces/$spaceId'
     | '/api/admin/professionals/$professionalId'
@@ -400,6 +441,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/sobre'
     | '/termos'
+    | '/admin/agendamentos'
     | '/admin/login'
     | '/admin/produtos'
     | '/admin/profissionais'
@@ -413,6 +455,7 @@ export interface FileRouteTypes {
     | '/api/professional-spaces'
     | '/api/professionals'
     | '/api/services'
+    | '/api/admin/appointments'
     | '/api/admin/dashboard'
     | '/api/admin/login'
     | '/api/admin/logout'
@@ -420,6 +463,8 @@ export interface FileRouteTypes {
     | '/api/admin/professional-spaces'
     | '/api/admin/professionals'
     | '/api/admin/services'
+    | '/api/cal/webhook'
+    | '/api/admin/appointments/$appointmentId'
     | '/api/admin/products/$productId'
     | '/api/admin/professional-spaces/$spaceId'
     | '/api/admin/professionals/$professionalId'
@@ -438,6 +483,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/sobre'
     | '/termos'
+    | '/admin/agendamentos'
     | '/admin/login'
     | '/admin/produtos'
     | '/admin/profissionais'
@@ -451,6 +497,7 @@ export interface FileRouteTypes {
     | '/api/professional-spaces'
     | '/api/professionals'
     | '/api/services'
+    | '/api/admin/appointments'
     | '/api/admin/dashboard'
     | '/api/admin/login'
     | '/api/admin/logout'
@@ -458,6 +505,8 @@ export interface FileRouteTypes {
     | '/api/admin/professional-spaces'
     | '/api/admin/professionals'
     | '/api/admin/services'
+    | '/api/cal/webhook'
+    | '/api/admin/appointments/$appointmentId'
     | '/api/admin/products/$productId'
     | '/api/admin/professional-spaces/$spaceId'
     | '/api/admin/professionals/$professionalId'
@@ -486,6 +535,7 @@ export interface RootRouteChildren {
   ApiProfessionalSpacesRoute: typeof ApiProfessionalSpacesRoute
   ApiProfessionalsRoute: typeof ApiProfessionalsRoute
   ApiServicesRoute: typeof ApiServicesRoute
+  ApiAdminAppointmentsRoute: typeof ApiAdminAppointmentsRouteWithChildren
   ApiAdminDashboardRoute: typeof ApiAdminDashboardRoute
   ApiAdminLoginRoute: typeof ApiAdminLoginRoute
   ApiAdminLogoutRoute: typeof ApiAdminLogoutRoute
@@ -493,6 +543,7 @@ export interface RootRouteChildren {
   ApiAdminProfessionalSpacesRoute: typeof ApiAdminProfessionalSpacesRouteWithChildren
   ApiAdminProfessionalsRoute: typeof ApiAdminProfessionalsRouteWithChildren
   ApiAdminServicesRoute: typeof ApiAdminServicesRouteWithChildren
+  ApiCalWebhookRoute: typeof ApiCalWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -672,6 +723,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/agendamentos': {
+      id: '/admin/agendamentos'
+      path: '/agendamentos'
+      fullPath: '/admin/agendamentos'
+      preLoaderRoute: typeof AdminAgendamentosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/api/cal/webhook': {
+      id: '/api/cal/webhook'
+      path: '/api/cal/webhook'
+      fullPath: '/api/cal/webhook'
+      preLoaderRoute: typeof ApiCalWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/services': {
       id: '/api/admin/services'
       path: '/api/admin/services'
@@ -721,6 +786,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/appointments': {
+      id: '/api/admin/appointments'
+      path: '/api/admin/appointments'
+      fullPath: '/api/admin/appointments'
+      preLoaderRoute: typeof ApiAdminAppointmentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/services/$serviceId': {
       id: '/api/admin/services/$serviceId'
       path: '/$serviceId'
@@ -749,10 +821,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminProductsProductIdRouteImport
       parentRoute: typeof ApiAdminProductsRoute
     }
+    '/api/admin/appointments/$appointmentId': {
+      id: '/api/admin/appointments/$appointmentId'
+      path: '/$appointmentId'
+      fullPath: '/api/admin/appointments/$appointmentId'
+      preLoaderRoute: typeof ApiAdminAppointmentsAppointmentIdRouteImport
+      parentRoute: typeof ApiAdminAppointmentsRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminAgendamentosRoute: typeof AdminAgendamentosRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminProdutosRoute: typeof AdminProdutosRoute
   AdminProfissionaisRoute: typeof AdminProfissionaisRoute
@@ -760,6 +840,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAgendamentosRoute: AdminAgendamentosRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminProdutosRoute: AdminProdutosRoute,
   AdminProfissionaisRoute: AdminProfissionaisRoute,
@@ -767,6 +848,18 @@ const AdminRouteChildren: AdminRouteChildren = {
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface ApiAdminAppointmentsRouteChildren {
+  ApiAdminAppointmentsAppointmentIdRoute: typeof ApiAdminAppointmentsAppointmentIdRoute
+}
+
+const ApiAdminAppointmentsRouteChildren: ApiAdminAppointmentsRouteChildren = {
+  ApiAdminAppointmentsAppointmentIdRoute:
+    ApiAdminAppointmentsAppointmentIdRoute,
+}
+
+const ApiAdminAppointmentsRouteWithChildren =
+  ApiAdminAppointmentsRoute._addFileChildren(ApiAdminAppointmentsRouteChildren)
 
 interface ApiAdminProductsRouteChildren {
   ApiAdminProductsProductIdRoute: typeof ApiAdminProductsProductIdRoute
@@ -841,6 +934,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiProfessionalSpacesRoute: ApiProfessionalSpacesRoute,
   ApiProfessionalsRoute: ApiProfessionalsRoute,
   ApiServicesRoute: ApiServicesRoute,
+  ApiAdminAppointmentsRoute: ApiAdminAppointmentsRouteWithChildren,
   ApiAdminDashboardRoute: ApiAdminDashboardRoute,
   ApiAdminLoginRoute: ApiAdminLoginRoute,
   ApiAdminLogoutRoute: ApiAdminLogoutRoute,
@@ -848,6 +942,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminProfessionalSpacesRoute: ApiAdminProfessionalSpacesRouteWithChildren,
   ApiAdminProfessionalsRoute: ApiAdminProfessionalsRouteWithChildren,
   ApiAdminServicesRoute: ApiAdminServicesRouteWithChildren,
+  ApiCalWebhookRoute: ApiCalWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

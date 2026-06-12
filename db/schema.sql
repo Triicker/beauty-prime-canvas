@@ -130,6 +130,26 @@ create table if not exists form_submissions (
   created_at timestamptz not null default now()
 );
 
+create table if not exists appointments (
+  id uuid primary key default gen_random_uuid(),
+  source text not null default 'site',
+  source_event_id text unique,
+  source_booking_id text,
+  status text not null default 'pending',
+  service text,
+  professional text,
+  customer_name text,
+  customer_email text,
+  customer_phone text,
+  starts_at timestamptz,
+  ends_at timestamptz,
+  timezone text,
+  notes text,
+  payload jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create index if not exists idx_admin_sessions_user_id on admin_sessions(user_id);
 create index if not exists idx_admin_sessions_expires_at on admin_sessions(expires_at);
 create index if not exists idx_services_category_id on services(category_id);
@@ -139,6 +159,9 @@ create index if not exists idx_professionals_visible_order on professionals(is_v
 create index if not exists idx_professional_spaces_visible_order on professional_spaces(is_visible, sort_order);
 create index if not exists idx_gallery_images_visible_order on gallery_images(is_visible, sort_order);
 create index if not exists idx_form_submissions_type_created_at on form_submissions(type, created_at desc);
+create index if not exists idx_appointments_starts_at on appointments(starts_at desc);
+create index if not exists idx_appointments_status on appointments(status);
+create index if not exists idx_appointments_customer_email on appointments(customer_email);
 
 create or replace function set_updated_at()
 returns trigger as $$
@@ -181,4 +204,9 @@ for each row execute function set_updated_at();
 drop trigger if exists trg_gallery_images_updated_at on gallery_images;
 create trigger trg_gallery_images_updated_at
 before update on gallery_images
+for each row execute function set_updated_at();
+
+drop trigger if exists trg_appointments_updated_at on appointments;
+create trigger trg_appointments_updated_at
+before update on appointments
 for each row execute function set_updated_at();

@@ -19,6 +19,7 @@ type CountRow = {
   professionals: string;
   spaces: string;
   gallery: string;
+  appointments: string;
   submissions: string;
 };
 
@@ -44,6 +45,7 @@ const emptyCounts: Record<keyof CountRow, number> = {
   professionals: 0,
   spaces: 0,
   gallery: 0,
+  appointments: 0,
   submissions: 0,
 };
 
@@ -64,6 +66,7 @@ function normalizeCounts(row: CountRow | null) {
     professionals: Number(row.professionals),
     spaces: Number(row.spaces),
     gallery: Number(row.gallery),
+    appointments: Number(row.appointments),
     submissions: Number(row.submissions),
   };
 }
@@ -112,6 +115,12 @@ export async function getAdminDashboard(request: Request): Promise<AdminDashboar
       (select count(*) from professionals) as professionals,
       (select count(*) from professional_spaces) as spaces,
       (select count(*) from gallery_images) as gallery,
+      (
+        select case
+          when to_regclass('public.appointments') is null then 0
+          else (select count(*) from appointments)
+        end
+      ) as appointments,
       (select count(*) from form_submissions) as submissions
   `);
 

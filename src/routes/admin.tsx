@@ -1,6 +1,7 @@
 import { Outlet, createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
+  CalendarCheck,
   Eye,
   EyeOff,
   Image as ImageIcon,
@@ -106,6 +107,7 @@ function AdminPage() {
         <Metric label="Profissionais" value={dashboard.counts.professionals} icon={UserRound} />
         <Metric label="Espaços" value={dashboard.counts.spaces} icon={Sparkles} />
         <Metric label="Galeria" value={dashboard.counts.gallery} icon={ImageIcon} />
+        <Metric label="Agenda" value={dashboard.counts.appointments} icon={CalendarCheck} />
         <Metric label="Submissões" value={dashboard.counts.submissions} icon={LayoutDashboard} />
       </div>
 
@@ -143,6 +145,23 @@ function AdminPage() {
           items={dashboard.rows.gallery}
           empty="Nenhuma imagem de galeria no banco."
         />
+        <section className="border border-border bg-card p-7">
+          <div className="flex items-center gap-3 text-primary">
+            <CalendarCheck className="h-5 w-5" />
+            <span className="text-[11px] uppercase tracking-[0.22em]">Cal.com</span>
+          </div>
+          <h2 className="mt-5 font-display text-3xl text-foreground">Agendamentos</h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            Acompanhe pedidos sincronizados pelo webhook do Cal.com e ajuste o status interno de
+            atendimento.
+          </p>
+          <Link
+            to="/admin/agendamentos"
+            className="mt-7 inline-flex h-11 items-center justify-center bg-primary px-6 text-[12px] uppercase tracking-[0.22em] text-primary-foreground"
+          >
+            Ver agenda
+          </Link>
+        </section>
       </div>
     </AdminShell>
   );
