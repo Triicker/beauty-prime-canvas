@@ -189,7 +189,7 @@ function Index() {
       </section>
 
       {/* SERVICES */}
-      <section className="py-24 md:py-32 bg-gradient-cocoa">
+      <section className="services-showcase py-24 md:py-32">
         <div className="mx-auto max-w-7xl px-6 sm:px-8">
           <Reveal>
             <SectionHeading eyebrow={t("home.servicesEyebrow")} title={t("home.servicesTitle")} />
@@ -199,7 +199,7 @@ function Index() {
               <Reveal key={s.name} delay={i * 80}>
                 <Link
                   to="/servicos"
-                  className="group relative block aspect-[4/5] overflow-hidden hover-lift"
+                  className="service-showcase-card group relative block aspect-[4/5] overflow-hidden hover-lift"
                 >
                   <img
                     src={s.img}
@@ -207,7 +207,7 @@ function Index() {
                     loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                  <div className="service-showcase-card-overlay absolute inset-0" />
                   <div className="absolute inset-x-0 bottom-0 p-6">
                     <div className="eyebrow mb-2">0{i + 1}</div>
                     <div className="font-display text-2xl md:text-3xl text-foreground">

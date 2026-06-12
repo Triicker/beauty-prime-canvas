@@ -20,7 +20,7 @@ export function Header() {
     if (typeof document !== "undefined") {
       return document.documentElement.classList.contains("theme-dark") ? "dark" : "light";
     }
-    return "dark";
+    return "light";
   });
   const langRef = useRef<HTMLDivElement>(null);
   const { pathname } = useRouterState({ select: (s) => s.location });

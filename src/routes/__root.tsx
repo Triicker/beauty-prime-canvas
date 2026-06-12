@@ -162,7 +162,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
         {/* Restore theme before first paint to avoid flash */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('loma-theme');if(t!=='light')document.documentElement.classList.add('theme-dark');}catch(e){document.documentElement.classList.add('theme-dark');}})();`,
+            __html: `(function(){document.documentElement.classList.remove('theme-dark');})();`,
           }}
         />
       </head>
