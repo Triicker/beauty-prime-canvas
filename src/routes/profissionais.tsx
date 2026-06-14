@@ -20,7 +20,7 @@ import heroImg from "@/assets/pros-hero.jpg";
 import stationImg from "@/assets/pros-station.jpg";
 import nailImg from "@/assets/pros-nail.jpg";
 import estheticImg from "@/assets/pros-esthetic.jpg";
-import loungeImg from "@/assets/pros-lounge.jpg";
+import loungeImg from "@/assets/pros-lounge.png";
 import type { ProfessionalSpaceRecord } from "@/lib/admin/professionals.server";
 
 export const Route = createFileRoute("/profissionais")({

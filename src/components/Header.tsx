@@ -1,7 +1,17 @@
 ﻿import { Link, useRouterState } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, ShoppingBag, Sun, Moon, ChevronDown, CalendarDays } from "lucide-react";
+import {
+  Menu,
+  X,
+  ShoppingBag,
+  Sun,
+  Moon,
+  ChevronDown,
+  CalendarDays,
+  Phone,
+  Instagram,
+} from "lucide-react";
 import logoAsset from "@/assets/logo-lomaa2.png";
 import { useCart } from "@/store/cart";
 
@@ -91,7 +101,7 @@ export function Header() {
           <img
             src={logoAsset}
             alt="LOMA Clinic & Beauty Spa"
-            className="h-11 sm:h-14 lg:h-18 w-auto object-contain"
+            className="site-header-logo h-11 sm:h-14 lg:h-18 w-auto object-contain"
           />
         </Link>
 
@@ -144,7 +154,7 @@ export function Header() {
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 text-muted-foreground hover:text-primary transition"
+            className="hidden sm:inline-flex p-2 text-muted-foreground hover:text-primary transition"
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           >
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -153,7 +163,7 @@ export function Header() {
           {/* Cart */}
           <button
             onClick={() => setCartOpen(true)}
-            className="relative p-2 text-muted-foreground hover:text-primary transition"
+            className="relative hidden sm:inline-flex p-2 text-muted-foreground hover:text-primary transition"
             aria-label="Open cart"
           >
             <ShoppingBag className="w-5 h-5" />
@@ -164,6 +174,24 @@ export function Header() {
             )}
           </button>
 
+          <a
+            href="tel:+351913016182"
+            className="site-header-mobile-icon sm:hidden"
+            aria-label="Telefonar para LOMA"
+          >
+            <Phone className="w-5 h-5" strokeWidth={1.8} />
+          </a>
+
+          <a
+            href="https://www.instagram.com/lomahairspa/"
+            target="_blank"
+            rel="noreferrer"
+            className="site-header-mobile-icon sm:hidden"
+            aria-label="Instagram da LOMA"
+          >
+            <Instagram className="w-5 h-5" strokeWidth={1.8} />
+          </a>
+
           <Link
             to="/agendamento"
             className="hidden sm:inline-flex items-center gap-3 px-6 h-12 rounded-full text-[12px] uppercase tracking-[0.12em] border border-foreground/70 text-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
@@ -172,7 +200,7 @@ export function Header() {
             <CalendarDays className="w-4 h-4" />
           </Link>
           <button
-            className="lg:hidden p-2 text-foreground"
+            className="site-header-mobile-menu-button lg:hidden p-2 text-foreground"
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
           >

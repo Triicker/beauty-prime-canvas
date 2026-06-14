@@ -63,7 +63,7 @@ export function CartDrawer() {
           <div>
             <div className="eyebrow">{t("shop.cart")}</div>
             <div className="font-display text-2xl mt-1">
-              {items.length} {items.length === 1 ? "item" : "items"}
+              {items.length} {t(items.length === 1 ? "shop.item" : "shop.items")}
             </div>
           </div>
           <button
