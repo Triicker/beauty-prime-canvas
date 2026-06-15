@@ -43,7 +43,7 @@ function getEmailConfig() {
   const to = getEnv("EMAIL_TO");
   const defaultReplyTo = getEnv("EMAIL_REPLY_TO");
   const logoUrl =
-    getEnv("EMAIL_LOGO_URL") || "https://beauty-prime-canvas.onrender.com/logo-lomaa.png";
+    getEnv("EMAIL_LOGO_URL") || "https://beauty-prime-canvas.onrender.com/logo-lomaa2.png";
 
   if (!apiKey || !from || !to) {
     throw new Error("Email is not configured. Check RESEND_API_KEY, EMAIL_FROM and EMAIL_TO.");

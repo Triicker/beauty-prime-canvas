@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
 import { listBookingAvailability } from "@/lib/admin/appointments.server";
+import { enforceRateLimit, publicFormRateLimits } from "@/lib/security/rate-limit.server";
 
 const availabilitySchema = z.object({
   serviceId: z.string().uuid(),
@@ -26,6 +27,12 @@ export const Route = createFileRoute("/api/booking/availability")({
             { status: 400 },
           );
         }
+
+        const rateLimited = await enforceRateLimit(
+          request,
+          publicFormRateLimits.bookingAvailability,
+        );
+        if (rateLimited) return rateLimited;
 
         const slots = await listBookingAvailability(parsed.data);
         return Response.json({ slots });

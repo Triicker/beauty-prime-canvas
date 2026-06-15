@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
 import { sendSiteEmail } from "@/lib/email/mailer.server";
+import { enforceRateLimit, publicFormRateLimits } from "@/lib/security/rate-limit.server";
 
 const professionalInquirySchema = z.object({
   name: z.string().trim().min(2),
@@ -39,6 +40,12 @@ export const Route = createFileRoute("/api/professional-inquiry")({
             { status: 400 },
           );
         }
+
+        const rateLimited = await enforceRateLimit(
+          request,
+          publicFormRateLimits.professionalInquiry,
+        );
+        if (rateLimited) return rateLimited;
 
         const result = await sendSiteEmail({
           type: "professional_inquiry",

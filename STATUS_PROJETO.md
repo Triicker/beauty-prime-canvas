@@ -92,10 +92,11 @@ Checklist completo do estado atual do site, com o que está funcional, o que pre
 | Confirmação ao cliente | ✅     | Habilitada por formulário com `confirmation.enabled = true` |
 | Registro no banco      | ✅     | Toda submissão operacional entra em `form_submissions`      |
 | Logo no email          | ✅     | `EMAIL_LOGO_URL` ou fallback do projeto                     |
+| Rate limit público     | ✅     | PostgreSQL em `public_rate_limits` antes de email/gravação  |
 
-Variáveis esperadas no Render: `DATABASE_URL`, `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_TO`, `EMAIL_REPLY_TO`, `EMAIL_LOGO_URL`, `NODE_ENV`.
+Variáveis esperadas no Render: `DATABASE_URL`, `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_TO`, `EMAIL_REPLY_TO`, `EMAIL_LOGO_URL`, `RATE_LIMIT_SALT`, `NODE_ENV`.
 
-Regra para próximas alterações: manter envio server-side em rotas `src/routes/api.*.tsx`, validar entrada com `zod`, usar `sendSiteEmail` e guardar o payload completo em `form_submissions`.
+Regra para próximas alterações: manter envio server-side em rotas `src/routes/api.*.tsx`, validar entrada com `zod`, aplicar `enforceRateLimit` em endpoint público, usar `sendSiteEmail` e guardar o payload completo em `form_submissions`.
 
 ### Formulários
 
@@ -106,19 +107,41 @@ Regra para próximas alterações: manter envio server-side em rotas `src/routes
 | Formulário de profissionais                | `/profissionais` | ✅ (`required`)                 | ✅      | Candidatura completa enviada via Resend e salva em `form_submissions`      |
 | Newsletter (footer)                        | Global           | ✅ (`required`, `type="email"`) | ✅      | Envia inscrição via Resend e salva em `form_submissions`                   |
 
-> **Regra atual:** formulários operacionais devem usar rotas `src/routes/api.*.tsx`, validação com `zod` e `sendSiteEmail` em `src/lib/email/mailer.server.ts`. O helper envia email interno, confirmação ao cliente quando habilitada e registra a submissão em `form_submissions`.
+> **Regra atual:** formulários operacionais devem usar rotas `src/routes/api.*.tsx`, validação com `zod`, `enforceRateLimit` para rotas públicas e `sendSiteEmail` em `src/lib/email/mailer.server.ts`. O helper envia email interno, confirmação ao cliente quando habilitada e registra a submissão em `form_submissions`.
+
+### Admin operacional
+
+| Área                      | Estado | Observação                                                                 |
+| ------------------------- | ------ | -------------------------------------------------------------------------- |
+| Dashboard inicial         | ✅     | Mostra agendamentos de hoje, próximos, pendentes, mensagens e newsletter   |
+| Produtos mais solicitados | ✅     | Calculado a partir dos pedidos de carrinho salvos em `form_submissions`    |
+| Filtros de agendamento    | ✅     | Data, profissional, serviço e status                                       |
+| Ações rápidas             | ✅     | Confirmar, cancelar, reagendar, copiar contacto, abrir WhatsApp e reenviar |
+| Histórico de agenda       | ✅     | `appointment_events` registra criação, status, reagendamento e reenvio     |
+
+### Documentação para Operação
+
+| Documento                           | Estado | Uso                                                                                             |
+| ----------------------------------- | ------ | ----------------------------------------------------------------------------------------------- |
+| `docs/manual-admin-cliente-loma.md` | ✅     | Manual da cliente para operar produtos, serviços, profissionais, banners, agenda e candidaturas |
+| `docs/render-admin-setup.md`        | ✅     | Setup técnico do Render/PostgreSQL/admin                                                        |
+| `docs/booking-admin-setup.md`       | ✅     | Setup técnico da agenda própria                                                                 |
+| `docs/proximos-passos-loma.md`      | ✅     | Recomendações de segurança, design e próximas funcionalidades                                   |
 
 ### Agendamento (wizard de 3 passos)
 
-| Passo                             | Funcionalidade                          | Estado | Observação                                                |
-| --------------------------------- | --------------------------------------- | ------ | --------------------------------------------------------- |
-| Passo 1 — Escolha de Serviço      | Listagem clicável                       | ✅     | Serviços visíveis vêm do PostgreSQL                       |
-| Passo 2 — Escolha de Profissional | Listagem clicável                       | ✅     | Profissionais visíveis vêm do PostgreSQL                  |
-| Passo 3 — Data/Hora               | Grid de datas + horários disponíveis    | ✅     | Disponibilidade consultada em `/api/booking/availability` |
-| Passo 4 — Dados pessoais          | Campos nome/email/telefone/notas        | ✅     | Validação básica                                          |
-| Confirmação visual                | Ecrã de confirmação após submissão      | ✅     |                                                           |
-| Notificação real                  | Email de confirmação para cliente/LOMA  | ✅     | Resend via `sendSiteEmail`                                |
-| Disponibilidade real              | Bloqueio por profissional no PostgreSQL | ✅     | Mesmo horário permitido para profissionais diferentes     |
+| Passo                             | Funcionalidade                          | Estado | Observação                                                  |
+| --------------------------------- | --------------------------------------- | ------ | ----------------------------------------------------------- |
+| Passo 1 — Escolha de Serviço      | Listagem clicável                       | ✅     | Serviços visíveis vêm do PostgreSQL                         |
+| Passo 2 — Escolha de Profissional | Listagem clicável                       | ✅     | Profissionais visíveis vêm do PostgreSQL                    |
+| Passo 3 — Data/Hora               | Grid de datas + horários disponíveis    | ✅     | Disponibilidade consultada em `/api/booking/availability`   |
+| Passo 4 — Dados pessoais          | Campos nome/email/telefone/notas        | ✅     | Validação básica                                            |
+| Confirmação visual                | Ecrã de confirmação após submissão      | ✅     |                                                             |
+| Notificação real                  | Email de confirmação para cliente/LOMA  | ✅     | Resend via `sendSiteEmail`                                  |
+| Disponibilidade real              | Bloqueio por profissional no PostgreSQL | ✅     | Mesmo horário permitido para profissionais diferentes       |
+| Fuso horário                      | Europe/Lisbon                           | ✅     | Servidor grava `timestamptz` e exibe em horário de Portugal |
+| Proteção contra conflito          | Transação + constraint no PostgreSQL    | ✅     | Evita dupla marcação simultânea para o mesmo profissional   |
+| Validações server-side            | Duração, passado e expediente           | ✅     | Impede horário inválido antes de gravar                     |
 
 ### Carrinho (Loja)
 
@@ -229,12 +252,12 @@ Regra para próximas alterações: manter envio server-side em rotas `src/routes
 | Item                              | Estado | Observação                                                                                                         |
 | --------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------ |
 | Banner de cookies / consentimento | ✅     | `src/components/CookieBanner.tsx` — armazenamento local, botões aceitar/recusar, link para política de privacidade |
-| Política de Privacidade           | ✅     | `/privacidade` — página completa RGPD em português; morada preenchida; aguarda NIF                                 |
-| Termos e Condições                | ✅     | `/termos` — página completa com política de agendamento, loja, PI, lei portuguesa; morada preenchida; aguarda NIF  |
+| Política de Privacidade           | ✅     | `/privacidade` — página completa RGPD em português; morada e NIF preenchidos                                       |
+| Termos e Condições                | ✅     | `/termos` — página completa com política de agendamento, loja, PI, lei portuguesa; morada e NIF preenchidos        |
 | Links legais no Footer            | ✅     | Privacidade · Termos — copyright bar                                                                               |
 | Sitemap atualizado                | ✅     | `/privacidade` e `/termos` adicionados ao `public/sitemap.xml`                                                     |
 
-> **⚠️ Ação necessária:** Preencher `[a confirmar]` (NIF) nos ficheiros `src/routes/privacidade.tsx` e `src/routes/termos.tsx` quando disponível.
+> **NIF preenchido:** `233249168` já está aplicado em `src/routes/privacidade.tsx` e `src/routes/termos.tsx`.
 
 ---
 
@@ -243,7 +266,7 @@ Regra para próximas alterações: manter envio server-side em rotas `src/routes
 | Item                                       | Necessário para                                | Prioridade                                          |
 | ------------------------------------------ | ---------------------------------------------- | --------------------------------------------------- |
 | Morada exata completa                      | Contactos, Footer, RGPD (privacidade e termos) | ✅ R. da Azenha 6, 2560-474 Silveira, Torres Vedras |
-| NIF da empresa                             | Política de Privacidade, Termos e Condições    | 🔴 Alta — `[a confirmar]`                           |
+| NIF da empresa                             | Política de Privacidade, Termos e Condições    | ✅ 233249168                                        |
 | Confirmação de preços dos serviços         | Serviços, Agendamento                          | 🟠 Média                                            |
 | Fotos dos produtos reais                   | Loja                                           | 🟡 Baixa                                            |
 | ~~Domínio final (para canonical, og:url)~~ | ~~SEO global~~                                 | ✅ Confirmado: `lomaexperience.com`                 |
@@ -275,7 +298,7 @@ Regra para próximas alterações: manter envio server-side em rotas `src/routes
 - [x] ~~Página de Política de Privacidade~~ ✅
 - [x] ~~Página de Termos e Condições~~ ✅
 - [x] ~~Preencher morada completa nas páginas /privacidade e /termos~~ ✅ R. da Azenha 6, 2560-474 Silveira
-- [ ] Preencher NIF nas páginas /privacidade e /termos
+- [x] Preencher NIF nas páginas /privacidade e /termos
 
 ---
 
@@ -295,16 +318,16 @@ Regra para próximas alterações: manter envio server-side em rotas `src/routes
 
 ## RESUMO EXECUTIVO
 
-| Área                                           | Estado Geral                                                                   |
-| ---------------------------------------------- | ------------------------------------------------------------------------------ |
-| UI / Visual                                    | ✅ Completo                                                                    |
-| Navegação e rotas                              | ✅ Completo                                                                    |
-| Conteúdo / i18n                                | ✅ 98% (morada real inserida; apenas NIF pendente)                             |
-| Interações UI (formulários, carrinho, galeria) | ✅ Funcionais no frontend                                                      |
-| Backend / integrações reais                    | ✅ PostgreSQL Render, admin CRUD, agenda própria e emails Resend               |
-| SEO básico                                     | ⚠️ Bom mas com inconsistências a corrigir                                      |
-| SEO avançado (sitemap, schema)                 | ✅ Sitemap 11 rotas, robots.txt, JSON-LD                                       |
-| Legal (RGPD)                                   | ✅ Banner + Privacidade + Termos implementados; morada preenchida; aguarda NIF |
-| Deploy                                         | ✅ Configuração Cloudflare Workers pronta                                      |
+| Área                                           | Estado Geral                                                             |
+| ---------------------------------------------- | ------------------------------------------------------------------------ |
+| UI / Visual                                    | ✅ Completo                                                              |
+| Navegação e rotas                              | ✅ Completo                                                              |
+| Conteúdo / i18n                                | ✅ 99% (morada real e NIF preenchidos; revisão comercial final pendente) |
+| Interações UI (formulários, carrinho, galeria) | ✅ Funcionais no frontend                                                |
+| Backend / integrações reais                    | ✅ PostgreSQL Render, admin CRUD, agenda própria e emails Resend         |
+| SEO básico                                     | ⚠️ Bom mas com inconsistências a corrigir                                |
+| SEO avançado (sitemap, schema)                 | ✅ Sitemap 11 rotas, robots.txt, JSON-LD                                 |
+| Legal (RGPD)                                   | ✅ Banner + Privacidade + Termos implementados; morada e NIF preenchidos |
+| Deploy                                         | ✅ Configuração Cloudflare Workers pronta                                |
 
-> **Estimativa:** O site está ~90% pronto para lançamento. As integrações principais de formulários, email, admin, produtos e agenda já existem; os pontos pendentes maiores são NIF, revisão final de conteúdo, otimização de imagens e eventuais integrações futuras como pagamento/lista real de newsletter.
+> **Estimativa:** O site está ~92% pronto para lançamento. As integrações principais de formulários, email, admin, produtos e agenda já existem; os pontos pendentes maiores são revisão final de conteúdo, otimização de imagens e eventuais integrações futuras como pagamento/lista real de newsletter.

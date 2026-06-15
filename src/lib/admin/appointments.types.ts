@@ -30,4 +30,14 @@ export type AppointmentRecord = {
   createdAt: string;
   updatedAt: string;
   googleCalendarUrl: string | null;
+  events: AppointmentEventRecord[];
+};
+
+export type AppointmentEventRecord = {
+  id: string;
+  type: string;
+  actor: string;
+  message: string;
+  payload: Record<string, unknown>;
+  createdAt: string;
 };

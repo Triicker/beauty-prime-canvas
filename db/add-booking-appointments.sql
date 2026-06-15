@@ -2,6 +2,8 @@
 -- Rode no DBeaver conectado ao banco do Render.
 -- Pode rodar novamente: usa if not exists e alter table defensivo.
 
+create extension if not exists btree_gist;
+
 create table if not exists appointments (
   id uuid primary key default gen_random_uuid(),
   source text not null default 'site',
@@ -23,6 +25,16 @@ create table if not exists appointments (
   payload jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
+);
+
+create table if not exists appointment_events (
+  id uuid primary key default gen_random_uuid(),
+  appointment_id uuid not null references appointments(id) on delete cascade,
+  type text not null,
+  actor text not null default 'system',
+  message text not null,
+  payload jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
 );
 
 alter table appointments add column if not exists source text not null default 'site';
@@ -54,6 +66,47 @@ create unique index if not exists idx_appointments_source_event_id
 create index if not exists idx_appointments_professional_starts_at
   on appointments(professional_id, starts_at)
   where status in ('pending', 'confirmed');
+create index if not exists idx_appointment_events_appointment_created_at
+  on appointment_events(appointment_id, created_at desc);
+
+alter table appointments
+  drop constraint if exists chk_appointments_status;
+alter table appointments
+  add constraint chk_appointments_status
+  check (status in ('pending', 'confirmed', 'reschedule', 'cancelled', 'completed'));
+
+alter table appointments
+  drop constraint if exists chk_appointments_duration;
+alter table appointments
+  add constraint chk_appointments_duration
+  check (duration_minutes is null or duration_minutes between 15 and 480);
+
+alter table appointments
+  drop constraint if exists chk_appointments_timezone;
+alter table appointments
+  add constraint chk_appointments_timezone
+  check (timezone is null or timezone = 'Europe/Lisbon');
+
+alter table appointments
+  drop constraint if exists chk_appointments_time_order;
+alter table appointments
+  add constraint chk_appointments_time_order
+  check (starts_at is null or ends_at is null or starts_at < ends_at);
+
+alter table appointments
+  drop constraint if exists appointments_no_professional_overlap;
+alter table appointments
+  add constraint appointments_no_professional_overlap
+  exclude using gist (
+    professional_id with =,
+    tstzrange(starts_at, ends_at, '[)') with &&
+  )
+  where (
+    professional_id is not null
+    and starts_at is not null
+    and ends_at is not null
+    and status in ('pending', 'confirmed')
+  );
 
 create or replace function set_updated_at()
 returns trigger as $$

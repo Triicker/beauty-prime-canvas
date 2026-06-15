@@ -1,9 +1,18 @@
 import "@tanstack/react-start/server-only";
 
-import { query, queryOne } from "./db.server";
-import type { AppointmentRecord, AppointmentStatus } from "./appointments.types";
+import type { PoolClient } from "pg";
+
+import { getPool, query, queryOne } from "./db.server";
+import type {
+  AppointmentEventRecord,
+  AppointmentRecord,
+  AppointmentStatus,
+} from "./appointments.types";
 
 export const BOOKING_TIMEZONE = "Europe/Lisbon";
+const BOOKING_OPEN_TIME = "09:30";
+const BOOKING_CLOSE_TIME = "19:00";
+const BOOKING_ACTIVE_STATUSES = ["pending", "confirmed"] as const;
 
 export const BOOKING_TIMES = [
   "09:30",
@@ -63,6 +72,16 @@ type AppointmentRow = {
   updated_at: string;
 };
 
+type AppointmentEventRow = {
+  id: string;
+  appointment_id: string;
+  type: string;
+  actor: string;
+  message: string;
+  payload: Record<string, unknown>;
+  created_at: string;
+};
+
 type BookingServiceRow = {
   id: string;
   name_pt: string;
@@ -74,7 +93,16 @@ type BookingProfessionalRow = {
   name: string;
 };
 
-function normalizeAppointment(row: AppointmentRow): AppointmentRecord {
+type AppointmentPatchInput = {
+  status?: AppointmentStatus;
+  date?: string;
+  time?: string;
+};
+
+function normalizeAppointment(
+  row: AppointmentRow,
+  events: AppointmentEventRecord[] = [],
+): AppointmentRecord {
   return {
     id: row.id,
     source: row.source,
@@ -106,12 +134,31 @@ function normalizeAppointment(row: AppointmentRow): AppointmentRecord {
       endsAt: row.ends_at,
       notes: row.notes,
     }),
+    events,
+  };
+}
+
+function normalizeAppointmentEvent(row: AppointmentEventRow): AppointmentEventRecord {
+  return {
+    id: row.id,
+    type: row.type,
+    actor: row.actor,
+    message: row.message,
+    payload: row.payload,
+    createdAt: row.created_at,
   };
 }
 
 async function hasAppointmentsTable() {
   const row = await queryOne<{ exists: boolean }>(
     "select to_regclass('public.appointments') is not null as exists",
+  );
+  return Boolean(row?.exists);
+}
+
+async function hasAppointmentEventsTable() {
+  const row = await queryOne<{ exists: boolean }>(
+    "select to_regclass('public.appointment_events') is not null as exists",
   );
   return Boolean(row?.exists);
 }
@@ -134,6 +181,14 @@ export function parseDurationMinutes(label?: string | null) {
 
   const firstNumber = normalized.match(/\d+/);
   return firstNumber ? Number(firstNumber[0]) : 60;
+}
+
+function validateDurationMinutes(duration: number) {
+  if (!Number.isFinite(duration) || duration < 15 || duration > 8 * 60) {
+    throw new Error("Duração do serviço inválida.");
+  }
+
+  return duration;
 }
 
 function getTimeZoneParts(date: Date, timeZone: string) {
@@ -167,6 +222,64 @@ function makeZonedDate(date: string, time: string, timeZone = BOOKING_TIMEZONE) 
   const desiredAsUtc = Date.UTC(year, month - 1, day, hour, minute, 0);
 
   return new Date(desiredAsUtc - (zoneAsUtc - utcGuess.getTime()));
+}
+
+function isValidIsoDate(value: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [year, month, day] = value.split("-").map(Number);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  return (
+    parsed.getUTCFullYear() === year &&
+    parsed.getUTCMonth() === month - 1 &&
+    parsed.getUTCDate() === day
+  );
+}
+
+function toMinutes(time: string) {
+  const [hour, minute] = time.split(":").map(Number);
+  return hour * 60 + minute;
+}
+
+function getLisbonWeekday(date: Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: BOOKING_TIMEZONE,
+    weekday: "short",
+  }).format(date);
+}
+
+function validateBookingDateTime(date: string, time: string) {
+  if (!isValidIsoDate(date)) {
+    throw new Error("Data inválida.");
+  }
+
+  if (!BOOKING_TIMES.includes(time)) {
+    throw new Error("Horário fora das opções disponíveis.");
+  }
+}
+
+function validateBookingWindow(input: {
+  date: string;
+  time: string;
+  startsAt: Date;
+  endsAt: Date;
+}) {
+  validateBookingDateTime(input.date, input.time);
+
+  if (input.startsAt.getTime() <= Date.now()) {
+    throw new Error("Não é possível agendar em horário passado.");
+  }
+
+  const weekday = getLisbonWeekday(input.startsAt);
+  if (weekday === "Sun" || weekday === "Mon") {
+    throw new Error("O salão está encerrado neste dia.");
+  }
+
+  const startMinutes = toMinutes(input.time);
+  const endMinutes = startMinutes + Math.round((input.endsAt.getTime() - input.startsAt.getTime()) / 60_000);
+
+  if (startMinutes < toMinutes(BOOKING_OPEN_TIME) || endMinutes > toMinutes(BOOKING_CLOSE_TIME)) {
+    throw new Error("Horário fora do expediente.");
+  }
 }
 
 function toSqlTimestamptz(date: Date) {
@@ -235,27 +348,167 @@ async function getBookingProfessional(id: string) {
   );
 }
 
+async function queryOneWithClient<T>(
+  client: PoolClient,
+  text: string,
+  params: readonly unknown[] = [],
+) {
+  const result = await client.query<T>(text, [...params]);
+  return result.rows[0] ?? null;
+}
+
 async function hasProfessionalConflict(
   professionalId: string,
   startsAt: Date,
   endsAt: Date,
   excludeId?: string,
+  client?: PoolClient,
 ) {
-  const row = await queryOne<{ count: string }>(
-    `
-      select count(*) as count
-      from appointments
-      where professional_id = $1
-        and status in ('pending', 'confirmed')
-        and ($2::timestamptz, $3::timestamptz) overlaps (starts_at, ends_at)
-        ${excludeId ? "and id <> $4" : ""}
-    `,
-    excludeId
-      ? [professionalId, toSqlTimestamptz(startsAt), toSqlTimestamptz(endsAt), excludeId]
-      : [professionalId, toSqlTimestamptz(startsAt), toSqlTimestamptz(endsAt)],
-  );
+  const sql = `
+    select count(*) as count
+    from appointments
+    where professional_id = $1
+      and status = any($4::text[])
+      and starts_at is not null
+      and ends_at is not null
+      and tstzrange(starts_at, ends_at, '[)') && tstzrange($2::timestamptz, $3::timestamptz, '[)')
+      ${excludeId ? "and id <> $5" : ""}
+  `;
+
+  const params = excludeId
+    ? [
+        professionalId,
+        toSqlTimestamptz(startsAt),
+        toSqlTimestamptz(endsAt),
+        [...BOOKING_ACTIVE_STATUSES],
+        excludeId,
+      ]
+    : [
+        professionalId,
+        toSqlTimestamptz(startsAt),
+        toSqlTimestamptz(endsAt),
+        [...BOOKING_ACTIVE_STATUSES],
+      ];
+
+  const row = client
+    ? await queryOneWithClient<{ count: string }>(client, sql, params)
+    : await queryOne<{ count: string }>(sql, params);
 
   return Number(row?.count ?? 0) > 0;
+}
+
+async function lockProfessionalSchedule(client: PoolClient, professionalId: string) {
+  await client.query("select pg_advisory_xact_lock(hashtext($1))", [
+    `loma-appointment:${professionalId}`,
+  ]);
+}
+
+function isBookingConstraintError(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: string }).code === "23P01"
+  );
+}
+
+function buildAppointmentWindow(date: string, time: string, duration: number) {
+  validateBookingDateTime(date, time);
+
+  const startsAt = makeZonedDate(date, time);
+  const endsAt = new Date(startsAt.getTime() + duration * 60_000);
+
+  validateBookingWindow({ date, time, startsAt, endsAt });
+
+  return { startsAt, endsAt };
+}
+
+async function getAppointmentForUpdate(client: PoolClient, id: string) {
+  return queryOneWithClient<AppointmentRow>(
+    client,
+    `
+      select *
+      from appointments
+      where id = $1
+      for update
+    `,
+    [id],
+  );
+}
+
+async function insertAppointmentEvent(
+  input: {
+    appointmentId: string;
+    type: string;
+    actor?: string;
+    message: string;
+    payload?: Record<string, unknown>;
+  },
+  client?: PoolClient,
+) {
+  const sql = `
+    insert into appointment_events (appointment_id, type, actor, message, payload)
+    values ($1, $2, $3, $4, $5::jsonb)
+  `;
+  const params = [
+    input.appointmentId,
+    input.type,
+    input.actor ?? "system",
+    input.message,
+    JSON.stringify(input.payload ?? {}),
+  ];
+
+  try {
+    if (client) {
+      await client.query(sql, params);
+    } else {
+      await query(sql, params);
+    }
+  } catch (error) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "42P01"
+    ) {
+      return;
+    }
+
+    throw error;
+  }
+}
+
+async function listAppointmentEvents(appointmentIds: string[]) {
+  if (appointmentIds.length === 0 || !(await hasAppointmentEventsTable())) {
+    return new Map<string, AppointmentEventRecord[]>();
+  }
+
+  const rows = await query<AppointmentEventRow>(
+    `
+      select
+        id,
+        appointment_id,
+        type,
+        actor,
+        message,
+        payload,
+        created_at::text
+      from appointment_events
+      where appointment_id = any($1::uuid[])
+      order by created_at desc
+    `,
+    [appointmentIds],
+  );
+
+  const grouped = new Map<string, AppointmentEventRecord[]>();
+
+  for (const row of rows) {
+    const items = grouped.get(row.appointment_id) ?? [];
+    items.push(normalizeAppointmentEvent(row));
+    grouped.set(row.appointment_id, items);
+  }
+
+  return grouped;
 }
 
 export async function listBookingAvailability(input: {
@@ -267,12 +520,21 @@ export async function listBookingAvailability(input: {
   const professional = await getBookingProfessional(input.professionalId);
   if (!service || !professional) return [];
 
-  const duration = parseDurationMinutes(service.duration_label);
+  const duration = validateDurationMinutes(parseDurationMinutes(service.duration_label));
 
   const slots = await Promise.all(
     BOOKING_TIMES.map(async (time) => {
-      const start = makeZonedDate(input.date, time);
-      const end = new Date(start.getTime() + duration * 60_000);
+      let start: Date;
+      let end: Date;
+
+      try {
+        const window = buildAppointmentWindow(input.date, time, duration);
+        start = window.startsAt;
+        end = window.endsAt;
+      } catch {
+        return { time, available: false };
+      }
+
       const available = !(await hasProfessionalConflict(input.professionalId, start, end));
       return { time, available };
     }),
@@ -289,13 +551,8 @@ export async function createAppointmentFromBooking(input: BookingRequestInput) {
     throw new Error("Serviço ou profissional inválido.");
   }
 
-  const duration = parseDurationMinutes(service.duration_label);
-  const startsAt = makeZonedDate(input.date, input.time);
-  const endsAt = new Date(startsAt.getTime() + duration * 60_000);
-
-  if (await hasProfessionalConflict(input.professionalId, startsAt, endsAt)) {
-    throw new Error("Horário indisponível para este profissional.");
-  }
+  const duration = validateDurationMinutes(parseDurationMinutes(service.duration_label));
+  const { startsAt, endsAt } = buildAppointmentWindow(input.date, input.time, duration);
 
   const payload = {
     ...input,
@@ -304,63 +561,104 @@ export async function createAppointmentFromBooking(input: BookingRequestInput) {
     durationMinutes: duration,
   };
 
-  const row = await queryOne<AppointmentRow>(
-    `
-      insert into appointments (
-        source,
-        status,
-        service_id,
-        professional_id,
-        service,
-        professional,
-        customer_name,
-        customer_email,
-        customer_phone,
-        starts_at,
-        ends_at,
-        duration_minutes,
-        timezone,
-        notes,
-        payload
-      )
-      values (
-        'site',
-        'pending',
-        $1,
-        $2,
-        $3,
-        $4,
-        $5,
-        $6,
-        $7,
-        $8::timestamptz,
-        $9::timestamptz,
-        $10,
-        $11,
-        $12,
-        $13::jsonb
-      )
-      returning *
-    `,
-    [
-      service.id,
-      professional.id,
-      service.name_pt,
-      professional.name,
-      input.name,
-      input.email,
-      input.phone ?? null,
-      toSqlTimestamptz(startsAt),
-      toSqlTimestamptz(endsAt),
-      duration,
-      BOOKING_TIMEZONE,
-      input.notes ?? null,
-      JSON.stringify(payload),
-    ],
-  );
+  const client = await getPool().connect();
 
-  if (!row) throw new Error("Agendamento não foi criado.");
-  return normalizeAppointment(row);
+  try {
+    await client.query("begin");
+    await lockProfessionalSchedule(client, professional.id);
+
+    if (await hasProfessionalConflict(professional.id, startsAt, endsAt, undefined, client)) {
+      throw new Error("Horário indisponível para este profissional.");
+    }
+
+    const row = await queryOneWithClient<AppointmentRow>(
+      client,
+      `
+        insert into appointments (
+          source,
+          status,
+          service_id,
+          professional_id,
+          service,
+          professional,
+          customer_name,
+          customer_email,
+          customer_phone,
+          starts_at,
+          ends_at,
+          duration_minutes,
+          timezone,
+          notes,
+          payload
+        )
+        values (
+          'site',
+          'pending',
+          $1,
+          $2,
+          $3,
+          $4,
+          $5,
+          $6,
+          $7,
+          $8::timestamptz,
+          $9::timestamptz,
+          $10,
+          $11,
+          $12,
+          $13::jsonb
+        )
+        returning *
+      `,
+      [
+        service.id,
+        professional.id,
+        service.name_pt,
+        professional.name,
+        input.name,
+        input.email,
+        input.phone ?? null,
+        toSqlTimestamptz(startsAt),
+        toSqlTimestamptz(endsAt),
+        duration,
+        BOOKING_TIMEZONE,
+        input.notes ?? null,
+        JSON.stringify(payload),
+      ],
+    );
+
+    if (!row) throw new Error("Agendamento não foi criado.");
+
+    await insertAppointmentEvent(
+      {
+        appointmentId: row.id,
+        type: "created",
+        actor: "client",
+        message: "Agendamento criado pelo cliente.",
+        payload: {
+          status: row.status,
+          startsAt: row.starts_at,
+          endsAt: row.ends_at,
+          service: row.service,
+          professional: row.professional,
+        },
+      },
+      client,
+    );
+
+    await client.query("commit");
+    return normalizeAppointment(row);
+  } catch (error) {
+    await client.query("rollback").catch(() => undefined);
+
+    if (isBookingConstraintError(error)) {
+      throw new Error("Horário indisponível para este profissional.");
+    }
+
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 export async function listAdminAppointments() {
@@ -373,21 +671,159 @@ export async function listAdminAppointments() {
     limit 200
   `);
 
-  return rows.map(normalizeAppointment);
+  const events = await listAppointmentEvents(rows.map((row) => row.id));
+  return rows.map((row) => normalizeAppointment(row, events.get(row.id) ?? []));
 }
 
 export async function updateAppointmentStatus(id: string, status: AppointmentStatus) {
+  return updateAdminAppointment(id, { status });
+}
+
+export async function updateAdminAppointment(id: string, input: AppointmentPatchInput) {
+  if (!(await hasAppointmentsTable())) return null;
+
+  const client = await getPool().connect();
+
+  try {
+    await client.query("begin");
+
+    const current = await getAppointmentForUpdate(client, id);
+    if (!current) {
+      await client.query("rollback");
+      return null;
+    }
+
+    const nextStatus = input.status ?? current.status;
+    const previousStatus = current.status;
+    const previousStartsAt = current.starts_at;
+    let startsAt = current.starts_at ? new Date(current.starts_at) : null;
+    let endsAt = current.ends_at ? new Date(current.ends_at) : null;
+    let duration = current.duration_minutes ?? 60;
+
+    if (input.date || input.time) {
+      if (!input.date || !input.time) {
+        throw new Error("Informe data e hora para reagendar.");
+      }
+
+      if (!current.professional_id) {
+        throw new Error("Agendamento sem profissional não pode ser reagendado.");
+      }
+
+      await lockProfessionalSchedule(client, current.professional_id);
+
+      duration = validateDurationMinutes(current.duration_minutes ?? 60);
+      const window = buildAppointmentWindow(input.date, input.time, duration);
+      startsAt = window.startsAt;
+      endsAt = window.endsAt;
+
+      if (await hasProfessionalConflict(current.professional_id, startsAt, endsAt, id, client)) {
+        throw new Error("Horário indisponível para este profissional.");
+      }
+    }
+
+    const nextPayload = {
+      ...current.payload,
+      adminUpdatedAt: new Date().toISOString(),
+      adminRescheduledTo:
+        input.date && input.time ? { date: input.date, time: input.time } : undefined,
+    };
+
+    const row = await queryOneWithClient<AppointmentRow>(
+      client,
+      `
+        update appointments
+        set
+          status = $2,
+          starts_at = $3::timestamptz,
+          ends_at = $4::timestamptz,
+          duration_minutes = $5,
+          timezone = $6,
+          payload = $7::jsonb
+        where id = $1
+        returning *
+      `,
+      [
+        id,
+        nextStatus,
+        startsAt ? toSqlTimestamptz(startsAt) : null,
+        endsAt ? toSqlTimestamptz(endsAt) : null,
+        duration,
+        BOOKING_TIMEZONE,
+        JSON.stringify(nextPayload),
+      ],
+    );
+
+    if (!row) throw new Error("Agendamento não foi atualizado.");
+
+    if (input.status && input.status !== previousStatus) {
+      await insertAppointmentEvent(
+        {
+          appointmentId: id,
+          type: "status_changed",
+          actor: "admin",
+          message: `Status alterado de ${previousStatus} para ${input.status}.`,
+          payload: { previousStatus, nextStatus: input.status },
+        },
+        client,
+      );
+    }
+
+    if (input.date && input.time && row.starts_at !== previousStartsAt) {
+      await insertAppointmentEvent(
+        {
+          appointmentId: id,
+          type: "rescheduled",
+          actor: "admin",
+          message: "Horário alterado pelo admin.",
+          payload: {
+            previousStartsAt,
+            nextStartsAt: row.starts_at,
+            nextEndsAt: row.ends_at,
+          },
+        },
+        client,
+      );
+    }
+
+    await client.query("commit");
+    const events = await listAppointmentEvents([row.id]);
+    return normalizeAppointment(row, events.get(row.id) ?? []);
+  } catch (error) {
+    await client.query("rollback").catch(() => undefined);
+
+    if (isBookingConstraintError(error)) {
+      throw new Error("Horário indisponível para este profissional.");
+    }
+
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+export async function getAdminAppointment(id: string) {
   if (!(await hasAppointmentsTable())) return null;
 
   const row = await queryOne<AppointmentRow>(
     `
-      update appointments
-      set status = $2
+      select *
+      from appointments
       where id = $1
-      returning *
     `,
-    [id, status],
+    [id],
   );
 
-  return row ? normalizeAppointment(row) : null;
+  if (!row) return null;
+  const events = await listAppointmentEvents([row.id]);
+  return normalizeAppointment(row, events.get(row.id) ?? []);
+}
+
+export async function markAppointmentEmailResent(id: string, payload: Record<string, unknown>) {
+  await insertAppointmentEvent({
+    appointmentId: id,
+    type: "email_resent",
+    actor: "admin",
+    message: "Email de confirmação reenviado pelo admin.",
+    payload,
+  });
 }

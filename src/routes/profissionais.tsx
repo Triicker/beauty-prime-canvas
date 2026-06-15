@@ -129,32 +129,61 @@ function ProsPage() {
   return (
     <div className="overflow-hidden">
       {/* HERO */}
-      <section className="relative min-h-[92vh] flex items-center">
-        <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/55 to-background" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,oklch(0.22_0.04_50/0.75)_100%)]" />
-        <div className="relative mx-auto max-w-6xl px-6 sm:px-8 py-32 text-center">
+      <section className="pros-hero-section relative min-h-[92vh] flex items-center overflow-hidden">
+        <img
+          src={heroImg}
+          alt=""
+          className="pros-hero-image absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="pros-hero-soft-overlay absolute inset-0" />
+        <div className="pros-hero-vignette absolute inset-0" />
+        <div className="pros-hero-frame-line" aria-hidden="true" />
+        <div className="pros-hero-content relative mx-auto max-w-[1480px] px-6 sm:px-8 lg:px-12 py-32">
           <Reveal>
-            <div className="eyebrow mb-6">{t("pros.eyebrow")}</div>
-            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] leading-[0.98] tracking-tight">
-              <span className="text-gradient-gold">{t("pros.hTitle")}</span>
-            </h1>
-            <p className="mt-8 max-w-2xl mx-auto text-base sm:text-lg text-muted-foreground leading-relaxed">
-              {t("pros.hSub")}
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="#contacto"
-                className="px-8 h-14 inline-flex items-center justify-center bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.28em] hover:bg-primary/90 transition"
-              >
-                {t("pros.ctaInfo")}
-              </a>
-              <a
-                href="#contacto"
-                className="px-8 h-14 inline-flex items-center justify-center border border-primary/40 text-primary text-[12px] uppercase tracking-[0.28em] hover:bg-primary hover:text-primary-foreground transition"
-              >
-                {t("pros.ctaVisit")}
-              </a>
+            <div className="pros-hero-copy">
+              <div className="pros-hero-eyebrow eyebrow mb-5">{t("pros.eyebrow")}</div>
+              <div className="pros-hero-divider" aria-hidden="true">
+                <span />
+                <span className="pros-hero-divider-mark">✦</span>
+                <span />
+              </div>
+              <h1 className="pros-hero-title font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] leading-[0.98] tracking-normal">
+                <span className="text-gradient-gold">{t("pros.hTitle")}</span>
+              </h1>
+              <p className="pros-hero-subtitle mt-8 max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed">
+                {t("pros.hSub")}
+              </p>
+              <div className="pros-hero-actions mt-10 flex flex-col sm:flex-row gap-4">
+                <a
+                  href="#contacto"
+                  className="pros-hero-primary px-8 h-14 inline-flex items-center justify-center gap-4 bg-primary text-primary-foreground text-[12px] uppercase tracking-[0.28em] hover:bg-primary/90 transition"
+                >
+                  {t("pros.ctaInfo")}
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+                <a
+                  href="#contacto"
+                  className="pros-hero-secondary px-8 h-14 inline-flex items-center justify-center gap-4 border border-primary/40 text-primary text-[12px] uppercase tracking-[0.28em] hover:bg-primary hover:text-primary-foreground transition"
+                >
+                  {t("pros.ctaVisit")}
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              </div>
+              <div className="pros-hero-benefits" aria-label="Diferenciais LOMA para profissionais">
+                {[
+                  { icon: Crown, label: "Ambiente premium" },
+                  { icon: Sparkles, label: "Liberdade e flexibilidade" },
+                  { icon: TrendingUp, label: "Crescimento profissional" },
+                ].map(({ icon: Icon, label }, index) => (
+                  <div className="pros-hero-benefit" key={label}>
+                    <span>
+                      <Icon className="w-5 h-5" strokeWidth={1.45} />
+                    </span>
+                    <strong>{label}</strong>
+                    {index < 2 && <i aria-hidden="true" />}
+                  </div>
+                ))}
+              </div>
             </div>
           </Reveal>
         </div>

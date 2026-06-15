@@ -9,7 +9,9 @@ Este roteiro substitui o Cal.com por uma agenda propria do site, usando o Postgr
 - O cliente escolhe servico, profissional, data e horario.
 - O backend salva a marcacao na tabela `appointments`.
 - O admin ve as marcacoes em `/admin/agendamentos`.
-- O admin pode alterar o status interno e abrir um link para adicionar o evento ao Google Calendar.
+- O admin pode filtrar, confirmar, cancelar, reagendar, copiar contacto, abrir WhatsApp,
+  reenviar email de confirmacao e abrir um link para adicionar o evento ao Google Calendar.
+- Cada acao importante fica registrada em `appointment_events`.
 
 ## Regra de disponibilidade
 
@@ -20,6 +22,12 @@ Exemplo:
 - Se Ana tem Corte as 10:00, Ana fica bloqueada nesse intervalo.
 - Se Maria estiver livre as 10:00, outro cliente ainda pode marcar com Maria.
 - O tempo bloqueado vem do campo `duration_label` do servico.
+- O servidor valida sempre a duracao real do servico no banco.
+- A marcacao e gravada com timezone `Europe/Lisbon`.
+- Horarios passados, dias fechados e horarios fora do expediente sao recusados.
+- A criacao usa transacao no PostgreSQL e trava por profissional para evitar duas reservas
+  simultaneas no mesmo horario.
+- A constraint `appointments_no_professional_overlap` reforca essa regra no proprio banco.
 
 ## Banco
 
@@ -39,6 +47,17 @@ Esse script cria ou atualiza a tabela `appointments` com:
 - dados do cliente
 - status interno
 - payload original
+
+Tambem cria:
+
+- `appointment_events` para historico de alteracoes;
+- constraints de status, duracao, timezone e ordem de horario;
+- extensao `btree_gist`, necessaria para bloquear sobreposicao de horarios;
+- constraint de sobreposicao por `professional_id`.
+
+Se a constraint de sobreposicao falhar ao rodar o SQL, existem registros conflitantes no banco.
+Nesse caso, corrija ou cancele os agendamentos duplicados para o mesmo profissional/horario e rode
+o script novamente.
 
 ## Variaveis no Render
 
@@ -74,6 +93,8 @@ npm run dev
 5. Envie o pedido.
 6. Confira no DBeaver a tabela `appointments`.
 7. Acesse `/admin/agendamentos` e valide se a marcacao apareceu.
+8. Teste confirmar, cancelar, reagendar e reenviar email.
+9. Confira o historico na tabela `appointment_events` ou na propria tela admin.
 
 ## Proximo refinamento recomendado
 

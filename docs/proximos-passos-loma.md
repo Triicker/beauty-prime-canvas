@@ -10,6 +10,7 @@ Este documento resume melhorias recomendadas para evoluir o site com seguranca, 
 - Evitar editar dados diretamente no banco quando ja existir CRUD no admin; usar SQL apenas para migracoes ou cargas em massa.
 - Ativar monitoramento de erros do Render e revisar logs apos cada deploy.
 - Validar dominio final (`lomaexperience.com`) depois de alteracoes de DNS com `curl -I`, procurando resposta do Render.
+- Manter `db/add-public-rate-limits.sql` e `db/add-booking-appointments.sql` aplicados no banco do Render antes de publicar funcionalidades novas de formulario ou agenda.
 
 ## Design e conteudo
 
@@ -23,8 +24,9 @@ Este documento resume melhorias recomendadas para evoluir o site com seguranca, 
 ## Funcionalidades
 
 - Implementar CRUD de testemunhos com importacao/curadoria de avaliacoes do Google Business Profile.
-- Criar painel de agenda com filtros por profissional, servico, status e intervalo de datas.
+- Evoluir a agenda para disponibilidade configuravel por profissional, com folgas, bloqueios manuais e horarios especiais.
 - Adicionar exportacao CSV para pedidos do carrinho, candidaturas profissionais e agendamentos.
+- Criar auditoria mais ampla para produtos, servicos e banners, semelhante ao historico de agendamentos.
 - Criar campos de SEO por pagina no admin, se o cliente precisar alterar titulos e descricoes sem codigo.
 - Adicionar uma area simples de "destaques da home" para escolher manualmente produtos, servicos, banners e depoimentos.
 

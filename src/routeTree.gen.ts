@@ -53,6 +53,7 @@ import { Route as ApiAdminProfessionalSpacesSpaceIdRouteImport } from './routes/
 import { Route as ApiAdminProductsProductIdRouteImport } from './routes/api.admin.products.$productId'
 import { Route as ApiAdminMarketingSlidesSlideIdRouteImport } from './routes/api.admin.marketing-slides.$slideId'
 import { Route as ApiAdminAppointmentsAppointmentIdRouteImport } from './routes/api.admin.appointments.$appointmentId'
+import { Route as ApiAdminAppointmentsAppointmentIdEmailRouteImport } from './routes/api.admin.appointments.$appointmentId.email'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -281,6 +282,12 @@ const ApiAdminAppointmentsAppointmentIdRoute =
     path: '/$appointmentId',
     getParentRoute: () => ApiAdminAppointmentsRoute,
   } as any)
+const ApiAdminAppointmentsAppointmentIdEmailRoute =
+  ApiAdminAppointmentsAppointmentIdEmailRouteImport.update({
+    id: '/email',
+    path: '/email',
+    getParentRoute: () => ApiAdminAppointmentsAppointmentIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -321,12 +328,13 @@ export interface FileRoutesByFullPath {
   '/api/admin/professionals': typeof ApiAdminProfessionalsRouteWithChildren
   '/api/admin/services': typeof ApiAdminServicesRouteWithChildren
   '/api/booking/availability': typeof ApiBookingAvailabilityRoute
-  '/api/admin/appointments/$appointmentId': typeof ApiAdminAppointmentsAppointmentIdRoute
+  '/api/admin/appointments/$appointmentId': typeof ApiAdminAppointmentsAppointmentIdRouteWithChildren
   '/api/admin/marketing-slides/$slideId': typeof ApiAdminMarketingSlidesSlideIdRoute
   '/api/admin/products/$productId': typeof ApiAdminProductsProductIdRoute
   '/api/admin/professional-spaces/$spaceId': typeof ApiAdminProfessionalSpacesSpaceIdRoute
   '/api/admin/professionals/$professionalId': typeof ApiAdminProfessionalsProfessionalIdRoute
   '/api/admin/services/$serviceId': typeof ApiAdminServicesServiceIdRoute
+  '/api/admin/appointments/$appointmentId/email': typeof ApiAdminAppointmentsAppointmentIdEmailRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -367,12 +375,13 @@ export interface FileRoutesByTo {
   '/api/admin/professionals': typeof ApiAdminProfessionalsRouteWithChildren
   '/api/admin/services': typeof ApiAdminServicesRouteWithChildren
   '/api/booking/availability': typeof ApiBookingAvailabilityRoute
-  '/api/admin/appointments/$appointmentId': typeof ApiAdminAppointmentsAppointmentIdRoute
+  '/api/admin/appointments/$appointmentId': typeof ApiAdminAppointmentsAppointmentIdRouteWithChildren
   '/api/admin/marketing-slides/$slideId': typeof ApiAdminMarketingSlidesSlideIdRoute
   '/api/admin/products/$productId': typeof ApiAdminProductsProductIdRoute
   '/api/admin/professional-spaces/$spaceId': typeof ApiAdminProfessionalSpacesSpaceIdRoute
   '/api/admin/professionals/$professionalId': typeof ApiAdminProfessionalsProfessionalIdRoute
   '/api/admin/services/$serviceId': typeof ApiAdminServicesServiceIdRoute
+  '/api/admin/appointments/$appointmentId/email': typeof ApiAdminAppointmentsAppointmentIdEmailRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -414,12 +423,13 @@ export interface FileRoutesById {
   '/api/admin/professionals': typeof ApiAdminProfessionalsRouteWithChildren
   '/api/admin/services': typeof ApiAdminServicesRouteWithChildren
   '/api/booking/availability': typeof ApiBookingAvailabilityRoute
-  '/api/admin/appointments/$appointmentId': typeof ApiAdminAppointmentsAppointmentIdRoute
+  '/api/admin/appointments/$appointmentId': typeof ApiAdminAppointmentsAppointmentIdRouteWithChildren
   '/api/admin/marketing-slides/$slideId': typeof ApiAdminMarketingSlidesSlideIdRoute
   '/api/admin/products/$productId': typeof ApiAdminProductsProductIdRoute
   '/api/admin/professional-spaces/$spaceId': typeof ApiAdminProfessionalSpacesSpaceIdRoute
   '/api/admin/professionals/$professionalId': typeof ApiAdminProfessionalsProfessionalIdRoute
   '/api/admin/services/$serviceId': typeof ApiAdminServicesServiceIdRoute
+  '/api/admin/appointments/$appointmentId/email': typeof ApiAdminAppointmentsAppointmentIdEmailRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -468,6 +478,7 @@ export interface FileRouteTypes {
     | '/api/admin/professional-spaces/$spaceId'
     | '/api/admin/professionals/$professionalId'
     | '/api/admin/services/$serviceId'
+    | '/api/admin/appointments/$appointmentId/email'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -514,6 +525,7 @@ export interface FileRouteTypes {
     | '/api/admin/professional-spaces/$spaceId'
     | '/api/admin/professionals/$professionalId'
     | '/api/admin/services/$serviceId'
+    | '/api/admin/appointments/$appointmentId/email'
   id:
     | '__root__'
     | '/'
@@ -560,6 +572,7 @@ export interface FileRouteTypes {
     | '/api/admin/professional-spaces/$spaceId'
     | '/api/admin/professionals/$professionalId'
     | '/api/admin/services/$serviceId'
+    | '/api/admin/appointments/$appointmentId/email'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -906,6 +919,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminAppointmentsAppointmentIdRouteImport
       parentRoute: typeof ApiAdminAppointmentsRoute
     }
+    '/api/admin/appointments/$appointmentId/email': {
+      id: '/api/admin/appointments/$appointmentId/email'
+      path: '/email'
+      fullPath: '/api/admin/appointments/$appointmentId/email'
+      preLoaderRoute: typeof ApiAdminAppointmentsAppointmentIdEmailRouteImport
+      parentRoute: typeof ApiAdminAppointmentsAppointmentIdRoute
+    }
   }
 }
 
@@ -941,13 +961,28 @@ const ApiBookingRouteWithChildren = ApiBookingRoute._addFileChildren(
   ApiBookingRouteChildren,
 )
 
+interface ApiAdminAppointmentsAppointmentIdRouteChildren {
+  ApiAdminAppointmentsAppointmentIdEmailRoute: typeof ApiAdminAppointmentsAppointmentIdEmailRoute
+}
+
+const ApiAdminAppointmentsAppointmentIdRouteChildren: ApiAdminAppointmentsAppointmentIdRouteChildren =
+  {
+    ApiAdminAppointmentsAppointmentIdEmailRoute:
+      ApiAdminAppointmentsAppointmentIdEmailRoute,
+  }
+
+const ApiAdminAppointmentsAppointmentIdRouteWithChildren =
+  ApiAdminAppointmentsAppointmentIdRoute._addFileChildren(
+    ApiAdminAppointmentsAppointmentIdRouteChildren,
+  )
+
 interface ApiAdminAppointmentsRouteChildren {
-  ApiAdminAppointmentsAppointmentIdRoute: typeof ApiAdminAppointmentsAppointmentIdRoute
+  ApiAdminAppointmentsAppointmentIdRoute: typeof ApiAdminAppointmentsAppointmentIdRouteWithChildren
 }
 
 const ApiAdminAppointmentsRouteChildren: ApiAdminAppointmentsRouteChildren = {
   ApiAdminAppointmentsAppointmentIdRoute:
-    ApiAdminAppointmentsAppointmentIdRoute,
+    ApiAdminAppointmentsAppointmentIdRouteWithChildren,
 }
 
 const ApiAdminAppointmentsRouteWithChildren =

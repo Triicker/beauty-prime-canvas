@@ -498,7 +498,7 @@
     eyebrow: "Visite-nos",
     title: "Estamos à sua espera",
     address: "R. da Azenha 6, 2560-474 Silveira, Torres Vedras",
-    hours: "Seg–Sáb · 10h às 20h",
+    hours: "Seg–Sáb · 9h às 19h",
     formTitle: "Envie-nos uma mensagem",
     message: "Mensagem",
     send: "Enviar Mensagem",

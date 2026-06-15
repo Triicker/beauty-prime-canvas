@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
 import { sendSiteEmail } from "@/lib/email/mailer.server";
+import { enforceRateLimit, publicFormRateLimits } from "@/lib/security/rate-limit.server";
 
 const cartItemSchema = z.object({
   id: z.string(),
@@ -31,6 +32,9 @@ export const Route = createFileRoute("/api/cart-request")({
             { status: 400 },
           );
         }
+
+        const rateLimited = await enforceRateLimit(request, publicFormRateLimits.cartRequest);
+        if (rateLimited) return rateLimited;
 
         const subtotal = parsed.data.items.reduce((sum, item) => sum + item.price * item.qty, 0);
         const productLines = parsed.data.items.map(

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { createAppointmentFromBooking } from "@/lib/admin/appointments.server";
 import { sendSiteEmail } from "@/lib/email/mailer.server";
+import { enforceRateLimit, publicFormRateLimits } from "@/lib/security/rate-limit.server";
 
 const bookingSchema = z.object({
   serviceId: z.string().uuid(),
@@ -28,6 +29,9 @@ export const Route = createFileRoute("/api/booking")({
             { status: 400 },
           );
         }
+
+        const rateLimited = await enforceRateLimit(request, publicFormRateLimits.booking);
+        if (rateLimited) return rateLimited;
 
         let appointment;
 

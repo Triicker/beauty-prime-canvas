@@ -2,13 +2,17 @@ import { Outlet, createFileRoute, Link, useLocation } from "@tanstack/react-rout
 import { useEffect, useState } from "react";
 import {
   CalendarCheck,
+  CalendarClock,
   Eye,
   EyeOff,
   Image as ImageIcon,
+  Inbox,
   LayoutDashboard,
   LogOut,
+  MailCheck,
   Megaphone,
   Package,
+  PackageCheck,
   Scissors,
   Sparkles,
   UserRound,
@@ -102,7 +106,7 @@ function AdminPage() {
 
   return (
     <AdminShell user={dashboard.user?.name}>
-      <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-7">
+      <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-4">
         <Metric label="Serviços" value={dashboard.counts.services} icon={Scissors} />
         <Metric label="Produtos" value={dashboard.counts.products} icon={Package} />
         <Metric label="Profissionais" value={dashboard.counts.professionals} icon={UserRound} />
@@ -111,6 +115,71 @@ function AdminPage() {
         <Metric label="Marketing" value={dashboard.counts.marketing} icon={Megaphone} />
         <Metric label="Agenda" value={dashboard.counts.appointments} icon={CalendarCheck} />
         <Metric label="Submissões" value={dashboard.counts.submissions} icon={LayoutDashboard} />
+      </div>
+
+      <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <Metric label="Hoje" value={dashboard.operations.todayAppointments} icon={CalendarClock} />
+        <Metric
+          label="Pendentes"
+          value={dashboard.operations.pendingAppointments}
+          icon={CalendarCheck}
+        />
+        <Metric label="Mensagens" value={dashboard.operations.newMessages} icon={Inbox} />
+        <Metric
+          label="Newsletter"
+          value={dashboard.operations.newsletterSubscribers}
+          icon={MailCheck}
+        />
+        <Metric
+          label="Produtos pedidos"
+          value={dashboard.operations.mostRequestedProducts.length}
+          icon={PackageCheck}
+        />
+      </div>
+
+      <div className="mt-8 grid gap-6 xl:grid-cols-3">
+        <OperationsList
+          title="Próximos agendamentos"
+          empty="Nenhum agendamento futuro pendente."
+          items={dashboard.operations.upcomingAppointments.map((appointment) => ({
+            id: appointment.id,
+            title: appointment.service || "Serviço não informado",
+            subtitle: [
+              appointment.professional,
+              appointment.customerName,
+              formatAdminDate(appointment.startsAt),
+            ]
+              .filter(Boolean)
+              .join(" · "),
+            badge: appointment.status,
+          }))}
+          actionHref="/admin/agendamentos"
+          actionLabel="Abrir agenda"
+        />
+        <OperationsList
+          title="Mensagens recentes"
+          empty="Nenhuma submissão recente."
+          items={dashboard.operations.recentSubmissions.map((submission) => ({
+            id: submission.id,
+            title: submission.name || submission.email || submission.type,
+            subtitle: [submission.type, submission.email, formatAdminDate(submission.createdAt)]
+              .filter(Boolean)
+              .join(" · "),
+            badge: submission.status || "novo",
+          }))}
+        />
+        <OperationsList
+          title="Produtos mais solicitados"
+          empty="Nenhum pedido de carrinho ainda."
+          items={dashboard.operations.mostRequestedProducts.map((product) => ({
+            id: product.name,
+            title: product.name,
+            subtitle: `${product.quantity} unidade(s) em ${product.requests} pedido(s)`,
+            badge: "carrinho",
+          }))}
+          actionHref="/admin/produtos"
+          actionLabel="Ver produtos"
+        />
       </div>
 
       <div className="mt-8 grid gap-6 xl:grid-cols-2">
@@ -174,6 +243,16 @@ function AdminPage() {
       </div>
     </AdminShell>
   );
+}
+
+function formatAdminDate(value: string | null) {
+  if (!value) return "";
+
+  return new Intl.DateTimeFormat("pt-PT", {
+    dateStyle: "short",
+    timeStyle: "short",
+    timeZone: "Europe/Lisbon",
+  }).format(new Date(value));
 }
 
 function AdminShell({ children, user }: { children: React.ReactNode; user?: string }) {
@@ -324,6 +403,51 @@ function AdminList({
               <p className="mt-3 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                 Ordem {item.sortOrder}
               </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function OperationsList({
+  title,
+  items,
+  empty,
+  actionHref,
+  actionLabel,
+}: {
+  title: string;
+  items: Array<{ id: string; title: string; subtitle: string; badge: string }>;
+  empty: string;
+  actionHref?: string;
+  actionLabel?: string;
+}) {
+  return (
+    <section className="border border-border bg-card">
+      <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <h2 className="font-display text-2xl text-foreground">{title}</h2>
+        {actionHref && actionLabel && (
+          <Link to={actionHref} className="text-[11px] uppercase tracking-[0.2em] text-primary">
+            {actionLabel}
+          </Link>
+        )}
+      </div>
+      <div className="divide-y divide-border">
+        {items.length === 0 && <p className="p-5 text-sm text-muted-foreground">{empty}</p>}
+        {items.map((item) => (
+          <article key={item.id} className="p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-sm font-medium text-foreground">{item.title}</h3>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                  {item.subtitle}
+                </p>
+              </div>
+              <span className="shrink-0 text-[10px] uppercase tracking-[0.16em] text-primary">
+                {item.badge}
+              </span>
             </div>
           </article>
         ))}

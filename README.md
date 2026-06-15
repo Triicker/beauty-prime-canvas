@@ -151,6 +151,7 @@ Arquivos importantes:
 
 - `db/schema.sql` — estrutura base completa.
 - `db/add-booking-appointments.sql` — estrutura aditiva da agenda própria.
+- `db/add-public-rate-limits.sql` — estrutura de proteção contra abuso nos formulários públicos.
 - `db/seed-admin.sql` — criação do usuário admin.
 - `src/lib/admin/*.server.ts` — regras server-side de CRUD, agenda e dashboard.
 
@@ -161,7 +162,9 @@ O painel admin permite gerir:
 - profissionais
 - espaços/cadeiras
 - galeria
+- banners de marketing da home
 - agendamentos
+- dashboard inicial com resumo operacional
 
 ### Emails e Formulários
 
@@ -182,21 +185,37 @@ RESEND_API_KEY=...
 EMAIL_FROM=LOMA <no-reply@lomaexperience.com>
 EMAIL_TO=...
 EMAIL_REPLY_TO=...
-EMAIL_LOGO_URL=https://midiasave-5c064.web.app/logo-lomaa.png
+EMAIL_LOGO_URL=https://midiasave-5c064.web.app/logo-lomaa2.png
+RATE_LIMIT_SALT=...
 NODE_ENV=production
 ```
+
+`RATE_LIMIT_SALT` é opcional, mas recomendado em produção para gerar hashes estáveis dos
+identificadores de rate limit sem guardar IP/user-agent em texto puro.
 
 Formulários atualmente integrados:
 
 - `/api/contact` — contacto;
 - `/api/newsletter` — newsletter;
 - `/api/cart-request` — lista de produtos do carrinho, sem pagamento;
+- `/api/booking/availability` — consulta pública de disponibilidade;
 - `/api/booking` — pedido de agendamento com bloqueio por profissional;
 - `/api/professional-inquiry` — candidatura de profissionais.
 
+Os endpoints públicos usam rate limit server-side em `src/lib/security/rate-limit.server.ts`,
+com contagem persistida em `public_rate_limits` no PostgreSQL:
+
+- `/api/contact`: 5 envios a cada 10 minutos;
+- `/api/newsletter`: 3 envios por hora;
+- `/api/cart-request`: 5 envios a cada 15 minutos;
+- `/api/booking/availability`: 80 consultas a cada 5 minutos;
+- `/api/booking`: 8 envios a cada 15 minutos;
+- `/api/professional-inquiry`: 3 envios por hora.
+
 Regra para próximas alterações: não criar envio direto com `fetch` para terceiros no frontend.
 Crie ou ajuste uma rota em `src/routes/api.*.tsx`, valide com `zod`, chame `sendSiteEmail`
-e mantenha o payload completo em `form_submissions`.
+aplique `enforceRateLimit` quando a rota for pública e mantenha o payload completo em
+`form_submissions`.
 
 ### Agenda Própria
 
@@ -205,12 +224,42 @@ O agendamento não usa Cal.com. O fluxo atual é próprio:
 - serviços e profissionais vêm do PostgreSQL;
 - disponibilidade é consultada em `/api/booking/availability`;
 - a reserva é criada em `appointments`;
-- horários são bloqueados por `professional_id`;
+- datas e horários são tratados em `Europe/Lisbon`;
+- horários são bloqueados por `professional_id`, com transação e trava no PostgreSQL;
+- o banco também possui constraint de sobreposição para evitar duas marcações simultâneas para o mesmo profissional;
+- o servidor valida duração do serviço, horário passado, dias fechados e expediente;
 - dois profissionais diferentes podem atender no mesmo horário;
 - o admin acompanha tudo em `/admin/agendamentos`;
+- o admin pode filtrar por data, profissional, serviço e status;
+- o admin pode confirmar, cancelar, reagendar, copiar contacto, abrir WhatsApp e reenviar confirmação;
+- o histórico de alterações fica em `appointment_events`;
 - o botão de Google Calendar no admin apenas monta um evento manual para a equipa adicionar.
 
 Para preparar o banco, rode `db/add-booking-appointments.sql` no DBeaver conectado ao banco do Render.
+
+Se a constraint de sobreposição falhar ao rodar o SQL, verifique se já existem agendamentos
+duplicados para o mesmo profissional/horário e corrija esses registros antes de executar novamente.
+
+### Painel Admin
+
+O `/admin` possui um dashboard inicial para operação diária:
+
+- agendamentos de hoje;
+- próximos agendamentos;
+- pedidos de agenda pendentes;
+- novas mensagens de formulários;
+- inscritos na newsletter;
+- produtos mais solicitados pelo carrinho.
+
+As ações de agenda ficam em `/admin/agendamentos`; os demais CRUDs ficam nas rotas específicas de
+serviços, produtos, profissionais, marketing e galeria.
+
+### Documentação Operacional
+
+- `docs/manual-admin-cliente-loma.md` — guia para a cliente operar produtos, serviços, profissionais, banners, agenda e candidaturas no admin.
+- `docs/render-admin-setup.md` — configuração técnica do Render/PostgreSQL/admin.
+- `docs/booking-admin-setup.md` — estrutura técnica da agenda própria.
+- `docs/proximos-passos-loma.md` — recomendações de melhorias futuras.
 
 ### Adicionar FAQ
 
@@ -225,6 +274,7 @@ Criar `src/routes/faq.tsx` e adicionar a chave `faq` em `pt.ts` e `en.ts` com a 
 | Nome                 | LOMA Clinic & Beauty Hair        |
 | Fundadora            | Marina Loreti                    |
 | Localização          | Silveira — Torres Vedras         |
+| NIF                  | 233249168                        |
 | Email                | Lomahairspa@gmail.com            |
 | Cor primária (ouro)  | `#f4d183`                        |
 | Cor de fundo (cacau) | `#7d563d`                        |

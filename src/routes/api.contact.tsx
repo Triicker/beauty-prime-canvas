@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
 import { sendSiteEmail } from "@/lib/email/mailer.server";
+import { enforceRateLimit, publicFormRateLimits } from "@/lib/security/rate-limit.server";
 
 const contactSchema = z.object({
   name: z.string().trim().min(2),
@@ -27,6 +28,9 @@ export const Route = createFileRoute("/api/contact")({
         if (parsed.data.website) {
           return Response.json({ ok: true });
         }
+
+        const rateLimited = await enforceRateLimit(request, publicFormRateLimits.contact);
+        if (rateLimited) return rateLimited;
 
         const result = await sendSiteEmail({
           type: "contact",
