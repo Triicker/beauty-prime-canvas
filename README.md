@@ -175,12 +175,14 @@ Todo formulário operacional deve passar por `sendSiteEmail`, pois ele:
 - envia email interno para `EMAIL_TO`;
 - usa `replyTo` com o email do cliente quando existir;
 - envia confirmação automática ao cliente quando `confirmation.enabled = true`;
+- tenta novamente envios com falha transitória antes de marcar erro final;
 - registra erro no payload se o envio falhar.
 
 Variáveis necessárias no Render e no `.env` local:
 
 ```env
 DATABASE_URL=...
+ADMIN_SESSION_SECRET=...
 RESEND_API_KEY=...
 EMAIL_FROM=LOMA <no-reply@lomaexperience.com>
 EMAIL_TO=...
@@ -190,8 +192,22 @@ RATE_LIMIT_SALT=...
 NODE_ENV=production
 ```
 
-`RATE_LIMIT_SALT` é opcional, mas recomendado em produção para gerar hashes estáveis dos
-identificadores de rate limit sem guardar IP/user-agent em texto puro.
+`RATE_LIMIT_SALT` deve estar configurado em produção para gerar hashes estáveis dos
+identificadores de rate limit sem guardar IP/user-agent em texto puro. Se faltar, o código usa
+apenas um fallback fixo de desenvolvimento e emite aviso no servidor; nunca usa `DATABASE_URL`
+como salt.
+
+O pool PostgreSQL usa limites conservadores para Render por padrão:
+
+- `DATABASE_POOL_MAX=5`;
+- `DATABASE_IDLE_TIMEOUT_MS=30000`;
+- `DATABASE_CONNECTION_TIMEOUT_MS=5000`.
+
+Essas variáveis são opcionais; só altere se houver necessidade operacional clara.
+
+Se `EMAIL_LOGO_URL` não for informado, o email usa o fallback público
+`https://midiasave-5c064.web.app/logo-lomaa2.png`. Evite apontar para assets internos do build do
+Render, porque eles podem mudar de nome a cada deploy.
 
 Formulários atualmente integrados:
 
@@ -211,6 +227,10 @@ com contagem persistida em `public_rate_limits` no PostgreSQL:
 - `/api/booking/availability`: 80 consultas a cada 5 minutos;
 - `/api/booking`: 8 envios a cada 15 minutos;
 - `/api/professional-inquiry`: 3 envios por hora.
+
+A tabela `public_rate_limits` é criada defensivamente pelo backend quando necessário. Registros
+antigos são limpos na inicialização do processo e depois em intervalo controlado de 1 hora, evitando
+queries aleatórias de limpeza em cada request.
 
 Regra para próximas alterações: não criar envio direto com `fetch` para terceiros no frontend.
 Crie ou ajuste uma rota em `src/routes/api.*.tsx`, valide com `zod`, chame `sendSiteEmail`
@@ -236,6 +256,9 @@ O agendamento não usa Cal.com. O fluxo atual é próprio:
 - o botão de Google Calendar no admin apenas monta um evento manual para a equipa adicionar.
 
 Para preparar o banco, rode `db/add-booking-appointments.sql` no DBeaver conectado ao banco do Render.
+
+As verificações de existência das tabelas `appointments` e `appointment_events` são cacheadas em
+memória após a primeira confirmação positiva, reduzindo consultas repetidas de `to_regclass`.
 
 Se a constraint de sobreposição falhar ao rodar o SQL, verifique se já existem agendamentos
 duplicados para o mesmo profissional/horário e corrija esses registros antes de executar novamente.
@@ -292,8 +315,13 @@ O site é deployado no **[Render](https://render.com/)** como um serviço Node.j
 | Build Command | `npm run build`              |
 | Start Command | `node dist/server/server.js` |
 | Node Version  | 20+                          |
+| Health Check  | `/api/health`                |
 
 O DNS do domínio `lomaexperience.com` aponta para o Render via Cloudflare (proxy DNS apenas).
+
+O endpoint `/api/health` responde `200` quando a aplicação consegue executar `select 1` no
+PostgreSQL e `503` quando o banco não está configurado ou não responde. Use esse caminho em
+Health Check Path no Render.
 
 ---
 

@@ -14,6 +14,9 @@ const BOOKING_OPEN_TIME = "09:30";
 const BOOKING_CLOSE_TIME = "19:00";
 const BOOKING_ACTIVE_STATUSES = ["pending", "confirmed"] as const;
 
+let appointmentsTableExists = false;
+let appointmentEventsTableExists = false;
+
 export const BOOKING_TIMES = [
   "09:30",
   "10:00",
@@ -150,17 +153,25 @@ function normalizeAppointmentEvent(row: AppointmentEventRow): AppointmentEventRe
 }
 
 async function hasAppointmentsTable() {
+  if (appointmentsTableExists) return true;
+
   const row = await queryOne<{ exists: boolean }>(
     "select to_regclass('public.appointments') is not null as exists",
   );
-  return Boolean(row?.exists);
+
+  appointmentsTableExists = Boolean(row?.exists);
+  return appointmentsTableExists;
 }
 
 async function hasAppointmentEventsTable() {
+  if (appointmentEventsTableExists) return true;
+
   const row = await queryOne<{ exists: boolean }>(
     "select to_regclass('public.appointment_events') is not null as exists",
   );
-  return Boolean(row?.exists);
+
+  appointmentEventsTableExists = Boolean(row?.exists);
+  return appointmentEventsTableExists;
 }
 
 export function parseDurationMinutes(label?: string | null) {
@@ -275,7 +286,8 @@ function validateBookingWindow(input: {
   }
 
   const startMinutes = toMinutes(input.time);
-  const endMinutes = startMinutes + Math.round((input.endsAt.getTime() - input.startsAt.getTime()) / 60_000);
+  const endMinutes =
+    startMinutes + Math.round((input.endsAt.getTime() - input.startsAt.getTime()) / 60_000);
 
   if (startMinutes < toMinutes(BOOKING_OPEN_TIME) || endMinutes > toMinutes(BOOKING_CLOSE_TIME)) {
     throw new Error("Horário fora do expediente.");

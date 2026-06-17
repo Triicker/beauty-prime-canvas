@@ -15,6 +15,8 @@ type RateLimitRow = {
 };
 
 let setupPromise: Promise<void> | undefined;
+let cleanupStarted = false;
+let warnedMissingSalt = false;
 
 export const publicFormRateLimits = {
   contact: { route: "/api/contact", max: 5, windowSeconds: 10 * 60 },
@@ -27,6 +29,10 @@ export const publicFormRateLimits = {
 
 function getEnv(name: string) {
   return process.env[name] ?? (import.meta.env as Record<string, string | undefined>)[name];
+}
+
+function isProduction() {
+  return getEnv("NODE_ENV") === "production";
 }
 
 function getClientSignal(request: Request) {
@@ -42,8 +48,19 @@ function getClientSignal(request: Request) {
 }
 
 function hashIdentifier(value: string) {
-  const salt = getEnv("RATE_LIMIT_SALT") || getEnv("DATABASE_URL") || "loma-rate-limit";
-  return createHash("sha256").update(`${salt}:${value}`).digest("hex");
+  const salt = getEnv("RATE_LIMIT_SALT");
+
+  if (salt) {
+    return createHash("sha256").update(`${salt}:${value}`).digest("hex");
+  }
+
+  if (isProduction() && !warnedMissingSalt) {
+    warnedMissingSalt = true;
+    console.warn("RATE_LIMIT_SALT is not configured. Using development fallback salt.");
+  }
+
+  const fallbackSalt = "loma-rate-limit-development-fallback";
+  return createHash("sha256").update(`${fallbackSalt}:${value}`).digest("hex");
 }
 
 async function ensureRateLimitTable() {
@@ -64,18 +81,37 @@ async function ensureRateLimitTable() {
       on public_rate_limits(route, identifier_hash);
   `).then(() => undefined);
 
-  return setupPromise;
+  await setupPromise;
+  startRateLimitCleanup();
 }
 
 async function cleanupOldWindows() {
-  if (Math.random() > 0.02) return;
-
   await query(
     `
       delete from public_rate_limits
       where updated_at < now() - interval '2 days'
     `,
   );
+}
+
+function startRateLimitCleanup() {
+  if (cleanupStarted) return;
+  cleanupStarted = true;
+
+  cleanupOldWindows().catch((error) => {
+    console.warn("Failed to clean old rate limit windows.", error);
+  });
+
+  const timer = setInterval(
+    () => {
+      cleanupOldWindows().catch((error) => {
+        console.warn("Failed to clean old rate limit windows.", error);
+      });
+    },
+    60 * 60 * 1000,
+  );
+
+  timer.unref?.();
 }
 
 export async function enforceRateLimit(request: Request, rule: RateLimitRule) {
@@ -105,8 +141,6 @@ export async function enforceRateLimit(request: Request, rule: RateLimitRule) {
     `,
     [key, rule.route, identifierHash, windowStartMs],
   );
-
-  await cleanupOldWindows();
 
   const count = row?.count ?? 1;
   const remaining = Math.max(rule.max - count, 0);

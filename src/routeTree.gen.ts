@@ -28,6 +28,7 @@ import { Route as ApiProfessionalInquiryRouteImport } from './routes/api.profess
 import { Route as ApiProductsRouteImport } from './routes/api.products'
 import { Route as ApiNewsletterRouteImport } from './routes/api.newsletter'
 import { Route as ApiMarketingSlidesRouteImport } from './routes/api.marketing-slides'
+import { Route as ApiHealthRouteImport } from './routes/api.health'
 import { Route as ApiContactRouteImport } from './routes/api.contact'
 import { Route as ApiCartRequestRouteImport } from './routes/api.cart-request'
 import { Route as ApiBookingRouteImport } from './routes/api.booking'
@@ -148,6 +149,11 @@ const ApiNewsletterRoute = ApiNewsletterRouteImport.update({
 const ApiMarketingSlidesRoute = ApiMarketingSlidesRouteImport.update({
   id: '/api/marketing-slides',
   path: '/api/marketing-slides',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiContactRoute = ApiContactRouteImport.update({
@@ -311,6 +317,7 @@ export interface FileRoutesByFullPath {
   '/api/booking': typeof ApiBookingRouteWithChildren
   '/api/cart-request': typeof ApiCartRequestRoute
   '/api/contact': typeof ApiContactRoute
+  '/api/health': typeof ApiHealthRoute
   '/api/marketing-slides': typeof ApiMarketingSlidesRoute
   '/api/newsletter': typeof ApiNewsletterRoute
   '/api/products': typeof ApiProductsRoute
@@ -358,6 +365,7 @@ export interface FileRoutesByTo {
   '/api/booking': typeof ApiBookingRouteWithChildren
   '/api/cart-request': typeof ApiCartRequestRoute
   '/api/contact': typeof ApiContactRoute
+  '/api/health': typeof ApiHealthRoute
   '/api/marketing-slides': typeof ApiMarketingSlidesRoute
   '/api/newsletter': typeof ApiNewsletterRoute
   '/api/products': typeof ApiProductsRoute
@@ -406,6 +414,7 @@ export interface FileRoutesById {
   '/api/booking': typeof ApiBookingRouteWithChildren
   '/api/cart-request': typeof ApiCartRequestRoute
   '/api/contact': typeof ApiContactRoute
+  '/api/health': typeof ApiHealthRoute
   '/api/marketing-slides': typeof ApiMarketingSlidesRoute
   '/api/newsletter': typeof ApiNewsletterRoute
   '/api/products': typeof ApiProductsRoute
@@ -455,6 +464,7 @@ export interface FileRouteTypes {
     | '/api/booking'
     | '/api/cart-request'
     | '/api/contact'
+    | '/api/health'
     | '/api/marketing-slides'
     | '/api/newsletter'
     | '/api/products'
@@ -502,6 +512,7 @@ export interface FileRouteTypes {
     | '/api/booking'
     | '/api/cart-request'
     | '/api/contact'
+    | '/api/health'
     | '/api/marketing-slides'
     | '/api/newsletter'
     | '/api/products'
@@ -549,6 +560,7 @@ export interface FileRouteTypes {
     | '/api/booking'
     | '/api/cart-request'
     | '/api/contact'
+    | '/api/health'
     | '/api/marketing-slides'
     | '/api/newsletter'
     | '/api/products'
@@ -591,6 +603,7 @@ export interface RootRouteChildren {
   ApiBookingRoute: typeof ApiBookingRouteWithChildren
   ApiCartRequestRoute: typeof ApiCartRequestRoute
   ApiContactRoute: typeof ApiContactRoute
+  ApiHealthRoute: typeof ApiHealthRoute
   ApiMarketingSlidesRoute: typeof ApiMarketingSlidesRoute
   ApiNewsletterRoute: typeof ApiNewsletterRoute
   ApiProductsRoute: typeof ApiProductsRoute
@@ -742,6 +755,13 @@ declare module '@tanstack/react-router' {
       path: '/api/marketing-slides'
       fullPath: '/api/marketing-slides'
       preLoaderRoute: typeof ApiMarketingSlidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/contact': {
@@ -1069,6 +1089,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBookingRoute: ApiBookingRouteWithChildren,
   ApiCartRequestRoute: ApiCartRequestRoute,
   ApiContactRoute: ApiContactRoute,
+  ApiHealthRoute: ApiHealthRoute,
   ApiMarketingSlidesRoute: ApiMarketingSlidesRoute,
   ApiNewsletterRoute: ApiNewsletterRoute,
   ApiProductsRoute: ApiProductsRoute,

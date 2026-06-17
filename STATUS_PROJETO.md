@@ -91,10 +91,15 @@ Checklist completo do estado atual do site, com o que está funcional, o que pre
 | Email interno          | ✅     | Enviado para `EMAIL_TO`                                     |
 | Confirmação ao cliente | ✅     | Habilitada por formulário com `confirmation.enabled = true` |
 | Registro no banco      | ✅     | Toda submissão operacional entra em `form_submissions`      |
-| Logo no email          | ✅     | `EMAIL_LOGO_URL` ou fallback do projeto                     |
+| Logo no email          | ✅     | `EMAIL_LOGO_URL` ou fallback público do midiasave           |
+| Retry de email         | ✅     | Tentativas curtas antes de marcar `email_failed`            |
 | Rate limit público     | ✅     | PostgreSQL em `public_rate_limits` antes de email/gravação  |
+| Limpeza de rate limit  | ✅     | Inicialização + intervalo controlado; sem limpeza aleatória |
 
-Variáveis esperadas no Render: `DATABASE_URL`, `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_TO`, `EMAIL_REPLY_TO`, `EMAIL_LOGO_URL`, `RATE_LIMIT_SALT`, `NODE_ENV`.
+Variáveis esperadas no Render: `DATABASE_URL`, `ADMIN_SESSION_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_TO`, `EMAIL_REPLY_TO`, `EMAIL_LOGO_URL`, `RATE_LIMIT_SALT`, `NODE_ENV`.
+
+`RATE_LIMIT_SALT` deve estar definido em produção. O backend não usa `DATABASE_URL` como fallback
+para salt.
 
 Regra para próximas alterações: manter envio server-side em rotas `src/routes/api.*.tsx`, validar entrada com `zod`, aplicar `enforceRateLimit` em endpoint público, usar `sendSiteEmail` e guardar o payload completo em `form_submissions`.
 
@@ -142,6 +147,7 @@ Regra para próximas alterações: manter envio server-side em rotas `src/routes
 | Fuso horário                      | Europe/Lisbon                           | ✅     | Servidor grava `timestamptz` e exibe em horário de Portugal |
 | Proteção contra conflito          | Transação + constraint no PostgreSQL    | ✅     | Evita dupla marcação simultânea para o mesmo profissional   |
 | Validações server-side            | Duração, passado e expediente           | ✅     | Impede horário inválido antes de gravar                     |
+| Cache de verificações de tabela   | `appointments` / `appointment_events`   | ✅     | Evita `to_regclass` repetido após primeira confirmação      |
 
 ### Carrinho (Loja)
 
@@ -235,15 +241,18 @@ Regra para próximas alterações: manter envio server-side em rotas `src/routes
 
 ## 7. PERFORMANCE & DEPLOY
 
-| Item                            | Estado | Observação                        |
-| ------------------------------- | ------ | --------------------------------- |
-| SSR (TanStack Start)            | ✅     |                                   |
-| Cloudflare Workers (edge)       | ✅     | `wrangler.jsonc` configurado      |
-| Lazy loading de imagens         | ✅     | `loading="lazy"` em todas as imgs |
-| CartDrawer lazy loaded          | ✅     | `Suspense` + `lazy()`             |
-| Vídeo hero (mobile e desktop)   | ✅     | Dois ficheiros separados          |
-| Imagens em WebP/JPEG otimizados | ⏳     | A verificar antes do deploy final |
-| `npm run build` sem erros       | ⏳     | A verificar                       |
+| Item                            | Estado | Observação                                                             |
+| ------------------------------- | ------ | ---------------------------------------------------------------------- |
+| SSR (TanStack Start)            | ✅     |                                                                        |
+| Cloudflare Workers (edge)       | ✅     | `wrangler.jsonc` configurado                                           |
+| Pool PostgreSQL                 | ✅     | `max=5`, `idleTimeoutMillis=30000`, `connectionTimeoutMillis=5000`     |
+| Health check Render             | ✅     | `/api/health` valida `select 1` no PostgreSQL e responde `200` / `503` |
+| Rate limit cleanup              | ✅     | Limpeza na inicialização e depois 1 vez por hora                       |
+| Lazy loading de imagens         | ✅     | `loading="lazy"` em todas as imgs                                      |
+| CartDrawer lazy loaded          | ✅     | `Suspense` + `lazy()`                                                  |
+| Vídeo hero (mobile e desktop)   | ✅     | Dois ficheiros separados                                               |
+| Imagens em WebP/JPEG otimizados | ⏳     | A verificar antes do deploy final                                      |
+| `npm run build` sem erros       | ⏳     | A verificar                                                            |
 
 ---
 

@@ -8,10 +8,20 @@ type QueryParams = readonly unknown[];
 
 let pool: pg.Pool | undefined;
 
+function getEnv(name: string) {
+  return process.env[name] ?? (import.meta.env as Record<string, string | undefined>)[name];
+}
+
 function getDatabaseUrl() {
-  return (
-    process.env.DATABASE_URL ?? (import.meta.env as Record<string, string | undefined>).DATABASE_URL
-  );
+  return getEnv("DATABASE_URL");
+}
+
+function getPositiveIntegerEnv(name: string, fallback: number) {
+  const value = getEnv(name);
+  if (!value) return fallback;
+
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
 }
 
 function shouldUseSsl(databaseUrl: string) {
@@ -33,6 +43,9 @@ export function getPool() {
   if (!pool) {
     pool = new Pool({
       connectionString: databaseUrl,
+      max: getPositiveIntegerEnv("DATABASE_POOL_MAX", 5),
+      idleTimeoutMillis: getPositiveIntegerEnv("DATABASE_IDLE_TIMEOUT_MS", 30_000),
+      connectionTimeoutMillis: getPositiveIntegerEnv("DATABASE_CONNECTION_TIMEOUT_MS", 5_000),
       ssl: shouldUseSsl(databaseUrl) ? { rejectUnauthorized: false } : false,
     });
   }
