@@ -135,8 +135,9 @@ function Loja() {
                     className="w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-1000"
                   />
                   <button
+                    type="button"
                     onClick={() => add({ id: p.id, name: p.name, price: p.price, image: p.image })}
-                    className="absolute bottom-4 right-4 w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all hover:scale-110"
+                    className="absolute bottom-4 right-4 flex h-12 w-12 translate-y-0 items-center justify-center rounded-full bg-primary text-primary-foreground opacity-100 shadow-[0_16px_34px_-20px_rgba(58,36,24,0.75)] transition-all hover:scale-110 hover:bg-primary/90"
                     aria-label={t("common.addToCart")}
                   >
                     <Plus className="w-5 h-5" />

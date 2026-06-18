@@ -20,18 +20,15 @@ const LANGS = [
   { code: "en", label: "English" },
   { code: "fr", label: "Français" },
 ];
+const LANG_CODES = LANGS.map((lang) => lang.code);
 
 export function Header() {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof document !== "undefined") {
-      return document.documentElement.classList.contains("theme-dark") ? "dark" : "light";
-    }
-    return "light";
-  });
+  const [hydrated, setHydrated] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const langRef = useRef<HTMLDivElement>(null);
   const { pathname } = useRouterState({ select: (s) => s.location });
   const cartCount = useCart((s) => s.count());
@@ -45,9 +42,35 @@ export function Header() {
   }, []);
 
   useEffect(() => {
+    setHydrated(true);
+    try {
+      const storedTheme = localStorage.getItem("loma-theme");
+      const nextTheme = storedTheme === "dark" ? "dark" : "light";
+      setTheme(nextTheme);
+      document.documentElement.classList.toggle("theme-dark", nextTheme === "dark");
+
+      const storedLang = localStorage.getItem("loma_lang");
+      if (storedLang && LANG_CODES.includes(storedLang)) {
+        i18n.changeLanguage(storedLang);
+      }
+    } catch {
+      document.documentElement.classList.remove("theme-dark");
+    }
+  }, [i18n]);
+
+  useEffect(() => {
     setOpen(false);
     setLangOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
 
   // Close lang dropdown on outside click
   useEffect(() => {
@@ -74,10 +97,16 @@ export function Header() {
 
   const setLang = (code: string) => {
     i18n.changeLanguage(code);
+    try {
+      localStorage.setItem("loma_lang", code);
+    } catch {
+      // ignore
+    }
     setLangOpen(false);
   };
 
-  const currentLang = i18n.language?.slice(0, 2) ?? "pt";
+  const langPrefix = i18n.language?.slice(0, 2) ?? "pt";
+  const currentLang = LANG_CODES.includes(langPrefix) ? langPrefix : "pt";
 
   const links = [
     { to: "/", label: t("nav.home") },
@@ -160,6 +189,18 @@ export function Header() {
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
 
+          <button
+            onClick={toggleTheme}
+            className="site-header-mobile-icon sm:hidden"
+            aria-label={theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"}
+          >
+            {theme === "dark" ? (
+              <Sun className="w-5 h-5" strokeWidth={1.8} />
+            ) : (
+              <Moon className="w-5 h-5" strokeWidth={1.8} />
+            )}
+          </button>
+
           {/* Cart */}
           <button
             onClick={() => setCartOpen(true)}
@@ -167,7 +208,7 @@ export function Header() {
             aria-label="Open cart"
           >
             <ShoppingBag className="w-5 h-5" />
-            {cartCount > 0 && (
+            {hydrated && cartCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
                 {cartCount}
               </span>
@@ -210,8 +251,8 @@ export function Header() {
       </div>
 
       {open && (
-        <div className="lg:hidden border-t border-border bg-background/95 backdrop-blur-xl">
-          <nav className="flex flex-col px-6 py-6 gap-1">
+        <div className="site-header-mobile-panel lg:hidden border-t" role="dialog" aria-label="Menu principal">
+          <nav className="site-header-mobile-nav flex flex-col px-6 py-6 gap-1">
             {links.map((l) => (
               <Link
                 key={l.to}
@@ -223,7 +264,7 @@ export function Header() {
             ))}
             <Link
               to="/agendamento"
-              className="mt-4 inline-flex items-center justify-center px-5 h-11 text-[12px] uppercase tracking-[0.25em] bg-primary text-primary-foreground"
+              className="site-header-mobile-cta mt-4 inline-flex items-center justify-center px-5 h-11 text-[12px] uppercase tracking-[0.25em] bg-primary text-primary-foreground"
             >
               {t("nav.bookCta")}
             </Link>
