@@ -41,7 +41,12 @@ export function CartDrawer() {
     setSending(false);
 
     if (!response?.ok) {
-      setError("Não foi possível enviar a lista. Tente novamente.");
+      const data = await response?.json().catch(() => null);
+      setError(
+        data?.message && typeof data.message === "string"
+          ? data.message
+          : "Não foi possível enviar a lista. Tente novamente.",
+      );
       return;
     }
 

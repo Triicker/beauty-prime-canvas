@@ -44,10 +44,9 @@ export function Header() {
   useEffect(() => {
     setHydrated(true);
     try {
-      const storedTheme = localStorage.getItem("loma-theme");
-      const nextTheme = storedTheme === "dark" ? "dark" : "light";
-      setTheme(nextTheme);
-      document.documentElement.classList.toggle("theme-dark", nextTheme === "dark");
+      setTheme("light");
+      document.documentElement.classList.remove("theme-dark");
+      localStorage.setItem("loma-theme", "light");
 
       const storedLang = localStorage.getItem("loma_lang");
       if (storedLang && LANG_CODES.includes(storedLang)) {
@@ -183,22 +182,10 @@ export function Header() {
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
-            className="hidden sm:inline-flex p-2 text-muted-foreground hover:text-primary transition"
+            className="site-header-theme-toggle inline-flex p-2 text-muted-foreground hover:text-primary transition"
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           >
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
-
-          <button
-            onClick={toggleTheme}
-            className="site-header-mobile-icon sm:hidden"
-            aria-label={theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"}
-          >
-            {theme === "dark" ? (
-              <Sun className="w-5 h-5" strokeWidth={1.8} />
-            ) : (
-              <Moon className="w-5 h-5" strokeWidth={1.8} />
-            )}
           </button>
 
           {/* Cart */}

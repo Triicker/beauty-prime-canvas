@@ -192,6 +192,23 @@ RATE_LIMIT_SALT=...
 NODE_ENV=production
 ```
 
+Para o Resend aceitar `EMAIL_FROM` com `@lomaexperience.com`, o domínio precisa estar
+verificado no Resend. Os registros MX/TXT/DKIM devem ser criados no provedor DNS
+autoritativo do domínio. Se o Resend continuar em `Pending` ou retornar `403 Domain not
+verified`, confirme os nameservers públicos antes de editar o DNS:
+
+```bash
+nslookup -type=NS lomaexperience.com
+nslookup -type=TXT send.lomaexperience.com
+nslookup -type=MX send.lomaexperience.com
+nslookup -type=TXT resend._domainkey.lomaexperience.com
+```
+
+Em Junho de 2026, o DNS público de `lomaexperience.com` responde pelos nameservers da
+Hostinger (`horizon.dns-parking.com` / `orbit.dns-parking.com`). Portanto, registros
+adicionados apenas no Cloudflare não serão vistos pelo Resend enquanto esses nameservers
+continuarem ativos.
+
 `RATE_LIMIT_SALT` deve estar configurado em produção para gerar hashes estáveis dos
 identificadores de rate limit sem guardar IP/user-agent em texto puro. Se faltar, o código usa
 apenas um fallback fixo de desenvolvimento e emite aviso no servidor; nunca usa `DATABASE_URL`
@@ -317,7 +334,10 @@ O site é deployado no **[Render](https://render.com/)** como um serviço Node.j
 | Node Version  | 20+                          |
 | Health Check  | `/api/health`                |
 
-O DNS do domínio `lomaexperience.com` aponta para o Render via Cloudflare (proxy DNS apenas).
+O domínio `lomaexperience.com` aponta para o Render (`www` via CNAME para o serviço Render e
+apex via A record do Render). Confirme sempre qual provedor é autoritativo pelos nameservers
+públicos antes de configurar registros de email, pois o Resend só valida DNS publicado no
+provedor autoritativo.
 
 O endpoint `/api/health` responde `200` quando a aplicação consegue executar `select 1` no
 PostgreSQL e `503` quando o banco não está configurado ou não responde. Use esse caminho em

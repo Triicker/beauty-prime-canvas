@@ -32,6 +32,7 @@ type FormSubmissionRow = {
 };
 
 type ResendEmailPayload = Parameters<Resend["emails"]["send"]>[0];
+type ResendSendError = Error & { statusCode?: number };
 
 const EMAIL_RETRY_DELAYS_MS = [0, 500, 1500] as const;
 const DEFAULT_EMAIL_LOGO_URL = "https://midiasave-5c064.web.app/logo-lomaa2.png";
@@ -89,20 +90,42 @@ async function sendResendEmailWithRetry(apiKey: string, payload: ResendEmailPayl
       const response = await getResend(apiKey).emails.send(payload);
 
       if (response.error) {
-        throw new Error(response.error.message);
+        throw toResendError(response.error);
       }
 
       return response;
     } catch (error) {
       lastError = error;
 
-      if (attempt < EMAIL_RETRY_DELAYS_MS.length) {
+      if (attempt < EMAIL_RETRY_DELAYS_MS.length && isRetryableEmailError(error)) {
         console.warn(`Resend email attempt ${attempt} failed. Retrying...`, error);
+        continue;
       }
+
+      break;
     }
   }
 
   throw lastError instanceof Error ? lastError : new Error(String(lastError));
+}
+
+function toResendError(error: { message?: string; name?: string; statusCode?: number }) {
+  const resendError = new Error(error.message || "Resend email request failed.") as ResendSendError;
+  resendError.name = error.name || "ResendError";
+  resendError.statusCode = error.statusCode;
+  return resendError;
+}
+
+function isRetryableEmailError(error: unknown) {
+  const statusCode = error instanceof Error ? (error as ResendSendError).statusCode : undefined;
+  if (statusCode && statusCode >= 400 && statusCode < 500) return false;
+
+  const message = error instanceof Error ? error.message : String(error);
+  if (/domain.*not verified|verify.*domain|invalid api key|from domain/i.test(message)) {
+    return false;
+  }
+
+  return true;
 }
 
 function formatValue(value: unknown) {

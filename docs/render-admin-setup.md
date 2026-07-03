@@ -77,9 +77,25 @@ Futuro envio de email:
 
 ```text
 EMAIL_TO=Lomahairspa@gmail.com
-EMAIL_FROM=site@seudominio.com
+EMAIL_FROM=LOMA <no-reply@lomaexperience.com>
 RESEND_API_KEY=...
 ```
+
+Antes de usar `@lomaexperience.com` como remetente, verifique o domínio no Resend e crie os
+registros de DNS no provedor autoritativo. Não basta o registro existir em um painel DNS que
+não controla os nameservers públicos do domínio.
+
+Comandos úteis para confirmar o DNS publicado:
+
+```powershell
+Resolve-DnsName -Type NS lomaexperience.com
+Resolve-DnsName -Type TXT send.lomaexperience.com
+Resolve-DnsName -Type MX send.lomaexperience.com
+Resolve-DnsName -Type TXT resend._domainkey.lomaexperience.com
+```
+
+Se o Resend retornar `403 Domain not verified`, corrija/verifique os registros no DNS
+autoritativo ou temporariamente altere `EMAIL_FROM` para um domínio já verificado no Resend.
 
 ## 6. Deploy
 

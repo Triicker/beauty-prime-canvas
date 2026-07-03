@@ -1,6 +1,5 @@
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
-import LanguageDetector from "i18next-browser-languagedetector";
 import { pt } from "./i18n/pt";
 import { en } from "./i18n/en";
 import { fr } from "./i18n/fr";
@@ -9,10 +8,7 @@ import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
 if (!i18next.isInitialized) {
-  const isClient = typeof window !== "undefined";
-  const instance = i18next.use(initReactI18next);
-  if (isClient) instance.use(LanguageDetector);
-  instance.init({
+  i18next.use(initReactI18next).init({
     initImmediate: false,
     resources: {
       pt: { translation: pt },
@@ -20,16 +16,9 @@ if (!i18next.isInitialized) {
       fr: { translation: fr },
     },
     fallbackLng: "pt",
-    lng: isClient ? undefined : "pt",
+    lng: "pt",
     supportedLngs: ["pt", "en", "fr"],
     interpolation: { escapeValue: false },
-    ...(isClient && {
-      detection: {
-        order: ["localStorage", "navigator"],
-        caches: ["localStorage"],
-        lookupLocalStorage: "loma_lang",
-      },
-    }),
   });
 }
 
