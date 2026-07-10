@@ -262,9 +262,12 @@ O agendamento não usa Cal.com. O fluxo atual é próprio:
 - disponibilidade é consultada em `/api/booking/availability`;
 - a reserva é criada em `appointments`;
 - datas e horários são tratados em `Europe/Lisbon`;
+- o expediente público padrão é segunda a sábado, das 09:00 às 19:00;
+- a grade pública é recalculada no backend conforme a duração real do serviço;
 - horários são bloqueados por `professional_id`, com transação e trava no PostgreSQL;
 - o banco também possui constraint de sobreposição para evitar duas marcações simultâneas para o mesmo profissional;
-- o servidor valida duração do serviço, horário passado, dias fechados e expediente;
+- o servidor valida duração do serviço, horário passado, dias fechados, expediente e sobreposição de intervalos;
+- o frontend apenas exibe a disponibilidade retornada pelo backend e limpa o horário escolhido se ele deixar de ser válido;
 - dois profissionais diferentes podem atender no mesmo horário;
 - o admin acompanha tudo em `/admin/agendamentos`;
 - o admin pode filtrar por data, profissional, serviço e status;
@@ -279,6 +282,10 @@ memória após a primeira confirmação positiva, reduzindo consultas repetidas 
 
 Se a constraint de sobreposição falhar ao rodar o SQL, verifique se já existem agendamentos
 duplicados para o mesmo profissional/horário e corrija esses registros antes de executar novamente.
+
+Não é necessária alteração de banco para esta regra: a duração continua vindo de `services.duration_label`,
+e a validação usa `appointments.starts_at`, `appointments.ends_at`, `appointments.duration_minutes`
+e `appointments.professional_id`.
 
 ### Painel Admin
 

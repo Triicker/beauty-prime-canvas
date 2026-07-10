@@ -25,6 +25,7 @@ export const en: Dict = {
     confirm: "Confirm",
     close: "Close",
     scheduleNow: "Book Now",
+    whatsapp: "Chat on WhatsApp",
   },
   home: {
     eyebrow: "Beauty · Confidence · Experience",
@@ -443,11 +444,15 @@ export const en: Dict = {
     email: "Email",
     phone: "Phone",
     notes: "Notes (optional)",
-    pay: "Pay and Confirm",
+    pay: "Confirm",
     confirmed: "Booking confirmed",
     confirmedBody:
       "You will shortly receive an email with all the details of your Loma experience.",
     newBooking: "New booking",
+    noSlots:
+      "There are no available times on this date for the selected service duration. Choose another date or service.",
+    timeNeedsReselect:
+      "The selected time is no longer available for this service. Choose another time.",
     professionals: ["Marina Loreti", "LOMA Team"],
   },
   shop: {

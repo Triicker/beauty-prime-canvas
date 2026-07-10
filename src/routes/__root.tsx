@@ -14,6 +14,7 @@ import "../i18n";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CookieBanner } from "@/components/CookieBanner";
+import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 
 const CartDrawer = lazy(() =>
   import("@/components/CartDrawer").then((m) => ({ default: m.CartDrawer })),
@@ -186,6 +187,7 @@ function RootComponent() {
       <Suspense fallback={null}>
         <CartDrawer />
       </Suspense>
+      <FloatingWhatsApp />
       <CookieBanner />
     </QueryClientProvider>
   );

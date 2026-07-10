@@ -23,6 +23,13 @@ Exemplo:
 - Se Maria estiver livre as 10:00, outro cliente ainda pode marcar com Maria.
 - O tempo bloqueado vem do campo `duration_label` do servico.
 - O servidor valida sempre a duracao real do servico no banco.
+- O expediente publico padrao fica centralizado no codigo da agenda: segunda a sabado,
+  das 09:00 as 19:00, com domingo fechado.
+- A grade de horarios e recalculada conforme a duracao do servico selecionado.
+- Um horario so e aceito quando `inicio + duracao <= fechamento`.
+- Exemplo: em um servico de 4 horas, 15:00 e valido porque termina as 19:00,
+  mas 15:30 e 18:00 sao bloqueados.
+- Conflitos sao validados pelo intervalo completo `[inicio, fim)`, nao apenas pelo horario inicial.
 - A marcacao e gravada com timezone `Europe/Lisbon`.
 - Horarios passados, dias fechados e horarios fora do expediente sao recusados.
 - A criacao usa transacao no PostgreSQL e trava por profissional para evitar duas reservas
@@ -96,13 +103,24 @@ npm run dev
 8. Teste confirmar, cancelar, reagendar e reenviar email.
 9. Confira o historico na tabela `appointment_events` ou na propria tela admin.
 
+## Testes da regra de horarios
+
+O projeto possui testes unitarios para a regra pura de disponibilidade:
+
+```bash
+npm test
+```
+
+Esses testes cobrem servicos que terminam exatamente no fechamento, horarios que ultrapassam o
+fechamento, dia fechado, duracao maior que o expediente e sobreposicao de intervalos.
+
 ## Proximo refinamento recomendado
 
-Hoje a grade de horarios e fixa no codigo. Depois, podemos criar tabelas de disponibilidade:
+Hoje o expediente semanal ainda e configurado no codigo da agenda. Depois, podemos criar tabelas de disponibilidade:
 
 - horarios de funcionamento por dia da semana
 - folgas por profissional
 - bloqueios manuais
 - capacidade por servico ou cadeira
 
-Para o primeiro teste, a grade fixa e suficiente e mais simples de validar.
+Para o primeiro teste, a regra centralizada no backend e suficiente e mais simples de validar.

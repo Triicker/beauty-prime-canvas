@@ -23,6 +23,7 @@
     confirm: "Confirmar",
     close: "Fechar",
     scheduleNow: "Agendar Agora",
+    whatsapp: "Falar no WhatsApp",
   },
   home: {
     eyebrow: "Beleza · Confiança · Experiência",
@@ -441,10 +442,14 @@
     email: "Email",
     phone: "Telefone",
     notes: "Notas (opcional)",
-    pay: "Pagar e Confirmar",
+    pay: "Confirmar",
     confirmed: "Reserva confirmada",
     confirmedBody: "Receberá em breve um email com todos os detalhes da sua experiência Loma.",
     newBooking: "Nova reserva",
+    noSlots:
+      "Não existem horários disponíveis nesta data para a duração do serviço selecionado. Escolha outra data ou outro serviço.",
+    timeNeedsReselect:
+      "O horário escolhido deixou de estar disponível para este serviço. Escolha outro horário.",
     professionals: ["Marina Loreti", "Equipa LOMA"],
   },
   shop: {

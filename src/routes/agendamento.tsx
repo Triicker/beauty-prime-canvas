@@ -104,6 +104,7 @@ function Booking() {
 
   const selectedService = services.find((service) => service.id === data.serviceId);
   const selectedProfessional = pros.find((professional) => professional.id === data.professionalId);
+  const hasAvailableSlots = slots.some((slot) => slot.available);
 
   const dates = useMemo(() => {
     const out: { label: string; iso: string; day: string }[] = [];
@@ -148,6 +149,16 @@ function Booking() {
 
     return () => controller.abort();
   }, [data.serviceId, data.professionalId, data.date]);
+
+  useEffect(() => {
+    if (!data.time || isLoadingSlots) return;
+
+    const selectedSlot = slots.find((slot) => slot.time === data.time);
+    if (!selectedSlot?.available) {
+      setData((current) => ({ ...current, time: "" }));
+      setError(t("booking.timeNeedsReselect"));
+    }
+  }, [data.time, isLoadingSlots, slots, t]);
 
   const steps = [
     t("booking.chooseService"),
@@ -329,6 +340,11 @@ function Booking() {
                         {slot.time}
                       </button>
                     ))}
+                  {!isLoadingSlots && !hasAvailableSlots && (
+                    <p className="col-span-full text-sm leading-relaxed text-muted-foreground">
+                      {t("booking.noSlots")}
+                    </p>
+                  )}
                 </div>
               )}
             </div>

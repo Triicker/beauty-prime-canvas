@@ -8,33 +8,28 @@ import type {
   AppointmentRecord,
   AppointmentStatus,
 } from "./appointments.types";
+import {
+  BOOKING_TIMEZONE,
+  generateBookingTimesForDuration,
+  getBookingBusinessHours,
+  getLisbonWeekday,
+  isValidIsoDate,
+  isWithinBusinessHours,
+  makeZonedDate,
+  parseDurationMinutes,
+  validateDurationMinutes,
+} from "@/lib/booking/availability";
 
-export const BOOKING_TIMEZONE = "Europe/Lisbon";
-const BOOKING_OPEN_TIME = "09:30";
-const BOOKING_CLOSE_TIME = "19:00";
 const BOOKING_ACTIVE_STATUSES = ["pending", "confirmed"] as const;
 
 let appointmentsTableExists = false;
 let appointmentEventsTableExists = false;
 
-export const BOOKING_TIMES = [
-  "09:30",
-  "10:00",
-  "10:30",
-  "11:00",
-  "11:30",
-  "12:00",
-  "12:30",
-  "14:00",
-  "14:30",
-  "15:00",
-  "15:30",
-  "16:00",
-  "16:30",
-  "17:00",
-  "17:30",
-  "18:00",
-];
+export const BOOKING_TIMES = generateBookingTimesForDuration(30, {
+  isOpen: true,
+  openTime: "09:00",
+  closeTime: "19:00",
+});
 
 export type BookingAvailabilitySlot = {
   time: string;
@@ -174,90 +169,6 @@ async function hasAppointmentEventsTable() {
   return appointmentEventsTableExists;
 }
 
-export function parseDurationMinutes(label?: string | null) {
-  if (!label) return 60;
-
-  const normalized = label
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-  const hourMatch = normalized.match(/(\d+(?:[,.]\d+)?)\s*h/);
-  const minMatch = normalized.match(/(\d+)\s*(?:min|m)/);
-
-  let minutes = 0;
-  if (hourMatch) minutes += Math.round(Number(hourMatch[1].replace(",", ".")) * 60);
-  if (minMatch) minutes += Number(minMatch[1]);
-
-  if (minutes > 0) return minutes;
-
-  const firstNumber = normalized.match(/\d+/);
-  return firstNumber ? Number(firstNumber[0]) : 60;
-}
-
-function validateDurationMinutes(duration: number) {
-  if (!Number.isFinite(duration) || duration < 15 || duration > 8 * 60) {
-    throw new Error("Duração do serviço inválida.");
-  }
-
-  return duration;
-}
-
-function getTimeZoneParts(date: Date, timeZone: string) {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  }).formatToParts(date);
-
-  return Object.fromEntries(parts.map((part) => [part.type, part.value]));
-}
-
-function makeZonedDate(date: string, time: string, timeZone = BOOKING_TIMEZONE) {
-  const [year, month, day] = date.split("-").map(Number);
-  const [hour, minute] = time.split(":").map(Number);
-  const utcGuess = new Date(Date.UTC(year, month - 1, day, hour, minute, 0));
-  const zoneParts = getTimeZoneParts(utcGuess, timeZone);
-  const zoneAsUtc = Date.UTC(
-    Number(zoneParts.year),
-    Number(zoneParts.month) - 1,
-    Number(zoneParts.day),
-    Number(zoneParts.hour),
-    Number(zoneParts.minute),
-    Number(zoneParts.second),
-  );
-  const desiredAsUtc = Date.UTC(year, month - 1, day, hour, minute, 0);
-
-  return new Date(desiredAsUtc - (zoneAsUtc - utcGuess.getTime()));
-}
-
-function isValidIsoDate(value: string) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-  const [year, month, day] = value.split("-").map(Number);
-  const parsed = new Date(Date.UTC(year, month - 1, day));
-  return (
-    parsed.getUTCFullYear() === year &&
-    parsed.getUTCMonth() === month - 1 &&
-    parsed.getUTCDate() === day
-  );
-}
-
-function toMinutes(time: string) {
-  const [hour, minute] = time.split(":").map(Number);
-  return hour * 60 + minute;
-}
-
-function getLisbonWeekday(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: BOOKING_TIMEZONE,
-    weekday: "short",
-  }).format(date);
-}
-
 function validateBookingDateTime(date: string, time: string) {
   if (!isValidIsoDate(date)) {
     throw new Error("Data inválida.");
@@ -281,16 +192,15 @@ function validateBookingWindow(input: {
   }
 
   const weekday = getLisbonWeekday(input.startsAt);
-  if (weekday === "Sun" || weekday === "Mon") {
+  const businessHours = getBookingBusinessHours(input.date);
+  if (!businessHours.isOpen || weekday === "Sun") {
     throw new Error("O salão está encerrado neste dia.");
   }
 
-  const startMinutes = toMinutes(input.time);
-  const endMinutes =
-    startMinutes + Math.round((input.endsAt.getTime() - input.startsAt.getTime()) / 60_000);
+  const durationMinutes = Math.round((input.endsAt.getTime() - input.startsAt.getTime()) / 60_000);
 
-  if (startMinutes < toMinutes(BOOKING_OPEN_TIME) || endMinutes > toMinutes(BOOKING_CLOSE_TIME)) {
-    throw new Error("Horário fora do expediente.");
+  if (!isWithinBusinessHours(input.time, durationMinutes, businessHours)) {
+    throw new Error("O atendimento ultrapassa o horário de funcionamento.");
   }
 }
 
@@ -533,9 +443,10 @@ export async function listBookingAvailability(input: {
   if (!service || !professional) return [];
 
   const duration = validateDurationMinutes(parseDurationMinutes(service.duration_label));
+  const times = generateBookingTimesForDuration(duration, getBookingBusinessHours(input.date));
 
   const slots = await Promise.all(
-    BOOKING_TIMES.map(async (time) => {
+    times.map(async (time) => {
       let start: Date;
       let end: Date;
 
