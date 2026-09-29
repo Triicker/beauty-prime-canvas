@@ -31,6 +31,12 @@ type FormSubmissionRow = {
   id: string;
 };
 
+type ResendEmailPayload = Parameters<Resend["emails"]["send"]>[0];
+type ResendSendError = Error & { statusCode?: number };
+
+const EMAIL_RETRY_DELAYS_MS = [0, 500, 1500] as const;
+const DEFAULT_EMAIL_LOGO_URL = "https://midiasave-5c064.web.app/logo-lomaa2.png";
+
 let resend: Resend | undefined;
 
 function getEnv(name: string) {
@@ -42,7 +48,7 @@ function getEmailConfig() {
   const from = getEnv("EMAIL_FROM");
   const to = getEnv("EMAIL_TO");
   const defaultReplyTo = getEnv("EMAIL_REPLY_TO");
-  const logoUrl = getEnv("EMAIL_LOGO_URL") || "https://midiasave-5c064.web.app/logo-lomaa.png";
+  const logoUrl = getEnv("EMAIL_LOGO_URL") || DEFAULT_EMAIL_LOGO_URL;
 
   if (!apiKey || !from || !to) {
     throw new Error("Email is not configured. Check RESEND_API_KEY, EMAIL_FROM and EMAIL_TO.");
@@ -63,6 +69,63 @@ function getEmailConfig() {
 function getResend(apiKey: string) {
   if (!resend) resend = new Resend(apiKey);
   return resend;
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function sendResendEmailWithRetry(apiKey: string, payload: ResendEmailPayload) {
+  let lastError: unknown;
+
+  for (let index = 0; index < EMAIL_RETRY_DELAYS_MS.length; index += 1) {
+    const attempt = index + 1;
+    const delay = EMAIL_RETRY_DELAYS_MS[index];
+
+    if (delay > 0) {
+      await wait(delay);
+    }
+
+    try {
+      const response = await getResend(apiKey).emails.send(payload);
+
+      if (response.error) {
+        throw toResendError(response.error);
+      }
+
+      return response;
+    } catch (error) {
+      lastError = error;
+
+      if (attempt < EMAIL_RETRY_DELAYS_MS.length && isRetryableEmailError(error)) {
+        console.warn(`Resend email attempt ${attempt} failed. Retrying...`, error);
+        continue;
+      }
+
+      break;
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error(String(lastError));
+}
+
+function toResendError(error: { message?: string; name?: string; statusCode?: number }) {
+  const resendError = new Error(error.message || "Resend email request failed.") as ResendSendError;
+  resendError.name = error.name || "ResendError";
+  resendError.statusCode = error.statusCode;
+  return resendError;
+}
+
+function isRetryableEmailError(error: unknown) {
+  const statusCode = error instanceof Error ? (error as ResendSendError).statusCode : undefined;
+  if (statusCode && statusCode >= 400 && statusCode < 500) return false;
+
+  const message = error instanceof Error ? error.message : String(error);
+  if (/domain.*not verified|verify.*domain|invalid api key|from domain/i.test(message)) {
+    return false;
+  }
+
+  return true;
 }
 
 function formatValue(value: unknown) {
@@ -94,24 +157,33 @@ function buildHtml(input: SendSiteEmailInput, options: { logoUrl: string; footer
     .join("");
 
   return `
-    <div style="margin:0;padding:34px 18px;background:#f8f1e7;font-family:Arial,Helvetica,sans-serif;color:#3a2418;">
-      <div style="max-width:720px;margin:0 auto;background:#fff9f0;border:1px solid #eadfce;box-shadow:0 18px 50px rgba(58,36,24,0.08);">
-        <div style="padding:26px 30px 22px;border-bottom:1px solid #eadfce;background:#fff7ea;text-align:center;">
-          <img src="${escapeHtml(options.logoUrl)}" width="132" alt="LOMA Clinic & Beauty Hair" style="display:block;margin:0 auto 16px;max-width:132px;height:auto;border:0;" />
-          <div style="font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#c99a45;margin-bottom:12px;">LOMA Clinic & Beauty Hair</div>
-          <h1 style="margin:0;font-size:30px;line-height:1.18;font-family:Georgia,'Times New Roman',serif;font-weight:400;color:#3a2418;">${escapeHtml(input.title)}</h1>
-          ${input.intro ? `<p style="margin:16px auto 0;max-width:560px;color:#7a5a45;font-size:15px;line-height:1.65;">${escapeHtml(input.intro)}</p>` : ""}
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
+      <body style="margin:0;padding:0;background:#f8f1e7;">
+        <div style="margin:0;padding:34px 18px;background:#f8f1e7;font-family:Arial,Helvetica,sans-serif;color:#3a2418;">
+          <div style="max-width:720px;margin:0 auto;background:#fff9f0;border:1px solid #eadfce;box-shadow:0 18px 50px rgba(58,36,24,0.08);">
+            <div style="padding:26px 30px 22px;border-bottom:1px solid #eadfce;background:#fff7ea;text-align:center;">
+              <img src="${escapeHtml(options.logoUrl)}" width="180" alt="LOMA Clinic & Beauty Hair" style="display:block;margin:0 auto 16px;max-width:180px;height:auto;border:0;" />
+              <div style="font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#c99a45;margin-bottom:12px;">LOMA Clinic & Beauty Hair</div>
+              <h1 style="margin:0;font-size:30px;line-height:1.18;font-family:Georgia,'Times New Roman',serif;font-weight:400;color:#3a2418;">${escapeHtml(input.title)}</h1>
+              ${input.intro ? `<p style="margin:16px auto 0;max-width:560px;color:#7a5a45;font-size:15px;line-height:1.65;">${escapeHtml(input.intro)}</p>` : ""}
+            </div>
+            <table style="width:100%;border-collapse:collapse;">
+              ${rows}
+            </table>
+            <div style="padding:22px 30px;background:#fff7ea;color:#7a5a45;font-size:12px;line-height:1.65;text-align:center;">
+              ${escapeHtml(options.footer || "Enviado automaticamente pelo site lomaexperience.com.")}
+              <br />
+              <span style="color:#c99a45;">lomaexperience.com</span>
+            </div>
+          </div>
         </div>
-        <table style="width:100%;border-collapse:collapse;">
-          ${rows}
-        </table>
-        <div style="padding:22px 30px;background:#fff7ea;color:#7a5a45;font-size:12px;line-height:1.65;text-align:center;">
-          ${escapeHtml(options.footer || "Enviado automaticamente pelo site lomaexperience.com.")}
-          <br />
-          <span style="color:#c99a45;">lomaexperience.com</span>
-        </div>
-      </div>
-    </div>
+      </body>
+    </html>
   `;
 }
 
@@ -195,7 +267,7 @@ export async function sendSiteEmail(input: SendSiteEmailInput) {
   try {
     const config = getEmailConfig();
     const replyTo = input.email || config.defaultReplyTo || undefined;
-    const response = await getResend(config.apiKey).emails.send({
+    const response = await sendResendEmailWithRetry(config.apiKey, {
       from: config.from,
       to: config.to,
       replyTo,
@@ -214,7 +286,7 @@ export async function sendSiteEmail(input: SendSiteEmailInput) {
       const confirmationInput = buildConfirmationInput(input);
 
       try {
-        const confirmationResponse = await getResend(config.apiKey).emails.send({
+        const confirmationResponse = await sendResendEmailWithRetry(config.apiKey, {
           from: config.from,
           to: input.email,
           replyTo: config.defaultReplyTo || undefined,

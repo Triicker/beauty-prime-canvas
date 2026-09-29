@@ -14,6 +14,7 @@ import "../i18n";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CookieBanner } from "@/components/CookieBanner";
+import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 
 const CartDrawer = lazy(() =>
   import("@/components/CartDrawer").then((m) => ({ default: m.CartDrawer })),
@@ -162,7 +163,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
         {/* Restore theme before first paint to avoid flash */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('loma-theme');if(t!=='light')document.documentElement.classList.add('theme-dark');}catch(e){document.documentElement.classList.add('theme-dark');}})();`,
+            __html: `(function(){document.documentElement.classList.remove('theme-dark');})();`,
           }}
         />
       </head>
@@ -186,6 +187,7 @@ function RootComponent() {
       <Suspense fallback={null}>
         <CartDrawer />
       </Suspense>
+      <FloatingWhatsApp />
       <CookieBanner />
     </QueryClientProvider>
   );

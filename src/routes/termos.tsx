@@ -50,7 +50,7 @@ function Termos() {
             <br />
             Morada: R. da Azenha 6, 2560-474 Silveira, Torres Vedras
             <br />
-            NIF: <em className="opacity-60">[a confirmar]</em>
+            NIF: 233249168
             <br />
             Email:{" "}
             <a
@@ -67,9 +67,9 @@ function Termos() {
         <Section title="2. Objeto e Aceitação">
           <p>
             Os presentes Termos e Condições regulam o acesso e utilização do site{" "}
-            <strong className="text-foreground">lomaexperience.com</strong> e dos serviços
-            prestados pela LOMA Clinic & Beauty Hair. Ao aceder ao site, o utilizador declara ter
-            lido, compreendido e aceite estes termos.
+            <strong className="text-foreground">lomaexperience.com</strong> e dos serviços prestados
+            pela LOMA Clinic & Beauty Hair. Ao aceder ao site, o utilizador declara ter lido,
+            compreendido e aceite estes termos.
           </p>
         </Section>
 
@@ -107,8 +107,7 @@ function Termos() {
               <strong className="text-foreground">24 horas de antecedência</strong>
             </li>
             <li>
-              Cancelamentos com menos de 24 horas poderão estar sujeitos a uma taxa de
-              cancelamento
+              Cancelamentos com menos de 24 horas poderão estar sujeitos a uma taxa de cancelamento
             </li>
             <li>
               Em caso de não comparência repetida sem aviso, a LOMA reserva-se o direito de
@@ -123,9 +122,9 @@ function Termos() {
             indicados são em Euros (€) e incluem IVA à taxa legal em vigor.
           </p>
           <p className="mt-2">
-            <strong className="text-foreground">Nota:</strong> O checkout online encontra-se em
-            fase de implementação. As compras de produtos são atualmente efetuadas presencialmente
-            ou através de contacto direto com o salão.
+            <strong className="text-foreground">Nota:</strong> O checkout online encontra-se em fase
+            de implementação. As compras de produtos são atualmente efetuadas presencialmente ou
+            através de contacto direto com o salão.
           </p>
           <p className="mt-2">
             A LOMA reserva-se o direito de alterar preços e disponibilidade de produtos sem aviso
@@ -136,9 +135,9 @@ function Termos() {
         <Section title="6. Propriedade Intelectual">
           <p>
             Todo o conteúdo presente neste site — incluindo textos, imagens, fotografias, design,
-            logótipo e marca — é propriedade da LOMA Clinic & Beauty Hair ou dos seus
-            fornecedores de conteúdo e está protegido pela legislação portuguesa e europeia de
-            propriedade intelectual.
+            logótipo e marca — é propriedade da LOMA Clinic & Beauty Hair ou dos seus fornecedores
+            de conteúdo e está protegido pela legislação portuguesa e europeia de propriedade
+            intelectual.
           </p>
           <p className="mt-2">
             É proibida a reprodução, distribuição ou utilização deste conteúdo sem autorização
@@ -147,14 +146,10 @@ function Termos() {
         </Section>
 
         <Section title="7. Limitação de Responsabilidade">
-          <p>
-            A LOMA Clinic & Beauty Hair não se responsabiliza por danos resultantes de:
-          </p>
+          <p>A LOMA Clinic & Beauty Hair não se responsabiliza por danos resultantes de:</p>
           <ul className="list-disc list-inside space-y-1 ml-2">
             <li>Informação incorreta fornecida pelo utilizador nos formulários</li>
-            <li>
-              Indisponibilidade temporária do site por razões técnicas fora do seu controlo
-            </li>
+            <li>Indisponibilidade temporária do site por razões técnicas fora do seu controlo</li>
             <li>Utilização indevida do site por parte de terceiros</li>
           </ul>
         </Section>
@@ -196,8 +191,8 @@ function Termos() {
         <Section title="10. Alterações aos Termos">
           <p>
             A LOMA reserva-se o direito de alterar estes Termos e Condições a qualquer momento. As
-            alterações entram em vigor no momento da sua publicação no site. Recomendamos a
-            consulta periódica desta página.
+            alterações entram em vigor no momento da sua publicação no site. Recomendamos a consulta
+            periódica desta página.
           </p>
         </Section>
       </div>

@@ -1,8 +1,18 @@
 ﻿import { Link, useRouterState } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, ShoppingBag, Sun, Moon, ChevronDown, CalendarDays } from "lucide-react";
-import logoAsset from "@/assets/logo-lomaa.png";
+import {
+  Menu,
+  X,
+  ShoppingBag,
+  Sun,
+  Moon,
+  ChevronDown,
+  CalendarDays,
+  Phone,
+  Instagram,
+} from "lucide-react";
+import logoAsset from "@/assets/logo-lomaa2.png";
 import { useCart } from "@/store/cart";
 
 const LANGS = [
@@ -10,18 +20,15 @@ const LANGS = [
   { code: "en", label: "English" },
   { code: "fr", label: "Français" },
 ];
+const LANG_CODES = LANGS.map((lang) => lang.code);
 
 export function Header() {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof document !== "undefined") {
-      return document.documentElement.classList.contains("theme-dark") ? "dark" : "light";
-    }
-    return "dark";
-  });
+  const [hydrated, setHydrated] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const langRef = useRef<HTMLDivElement>(null);
   const { pathname } = useRouterState({ select: (s) => s.location });
   const cartCount = useCart((s) => s.count());
@@ -35,9 +42,34 @@ export function Header() {
   }, []);
 
   useEffect(() => {
+    setHydrated(true);
+    try {
+      setTheme("light");
+      document.documentElement.classList.remove("theme-dark");
+      localStorage.setItem("loma-theme", "light");
+
+      const storedLang = localStorage.getItem("loma_lang");
+      if (storedLang && LANG_CODES.includes(storedLang)) {
+        i18n.changeLanguage(storedLang);
+      }
+    } catch {
+      document.documentElement.classList.remove("theme-dark");
+    }
+  }, [i18n]);
+
+  useEffect(() => {
     setOpen(false);
     setLangOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
 
   // Close lang dropdown on outside click
   useEffect(() => {
@@ -64,10 +96,16 @@ export function Header() {
 
   const setLang = (code: string) => {
     i18n.changeLanguage(code);
+    try {
+      localStorage.setItem("loma_lang", code);
+    } catch {
+      // ignore
+    }
     setLangOpen(false);
   };
 
-  const currentLang = i18n.language?.slice(0, 2) ?? "pt";
+  const langPrefix = i18n.language?.slice(0, 2) ?? "pt";
+  const currentLang = LANG_CODES.includes(langPrefix) ? langPrefix : "pt";
 
   const links = [
     { to: "/", label: t("nav.home") },
@@ -91,7 +129,7 @@ export function Header() {
           <img
             src={logoAsset}
             alt="LOMA Clinic & Beauty Spa"
-            className="h-11 sm:h-14 lg:h-18 w-auto object-contain"
+            className="site-header-logo h-11 sm:h-14 lg:h-18 w-auto object-contain"
           />
         </Link>
 
@@ -144,7 +182,7 @@ export function Header() {
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 text-muted-foreground hover:text-primary transition"
+            className="site-header-theme-toggle inline-flex p-2 text-muted-foreground hover:text-primary transition"
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           >
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -153,16 +191,34 @@ export function Header() {
           {/* Cart */}
           <button
             onClick={() => setCartOpen(true)}
-            className="relative p-2 text-muted-foreground hover:text-primary transition"
+            className="relative hidden sm:inline-flex p-2 text-muted-foreground hover:text-primary transition"
             aria-label="Open cart"
           >
             <ShoppingBag className="w-5 h-5" />
-            {cartCount > 0 && (
+            {hydrated && cartCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
                 {cartCount}
               </span>
             )}
           </button>
+
+          <a
+            href="tel:+351913016182"
+            className="site-header-mobile-icon sm:hidden"
+            aria-label="Telefonar para LOMA"
+          >
+            <Phone className="w-5 h-5" strokeWidth={1.8} />
+          </a>
+
+          <a
+            href="https://www.instagram.com/lomahairspa/"
+            target="_blank"
+            rel="noreferrer"
+            className="site-header-mobile-icon sm:hidden"
+            aria-label="Instagram da LOMA"
+          >
+            <Instagram className="w-5 h-5" strokeWidth={1.8} />
+          </a>
 
           <Link
             to="/agendamento"
@@ -172,7 +228,7 @@ export function Header() {
             <CalendarDays className="w-4 h-4" />
           </Link>
           <button
-            className="lg:hidden p-2 text-foreground"
+            className="site-header-mobile-menu-button lg:hidden p-2 text-foreground"
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
           >
@@ -182,8 +238,8 @@ export function Header() {
       </div>
 
       {open && (
-        <div className="lg:hidden border-t border-border bg-background/95 backdrop-blur-xl">
-          <nav className="flex flex-col px-6 py-6 gap-1">
+        <div className="site-header-mobile-panel lg:hidden border-t" role="dialog" aria-label="Menu principal">
+          <nav className="site-header-mobile-nav flex flex-col px-6 py-6 gap-1">
             {links.map((l) => (
               <Link
                 key={l.to}
@@ -195,7 +251,7 @@ export function Header() {
             ))}
             <Link
               to="/agendamento"
-              className="mt-4 inline-flex items-center justify-center px-5 h-11 text-[12px] uppercase tracking-[0.25em] bg-primary text-primary-foreground"
+              className="site-header-mobile-cta mt-4 inline-flex items-center justify-center px-5 h-11 text-[12px] uppercase tracking-[0.25em] bg-primary text-primary-foreground"
             >
               {t("nav.bookCta")}
             </Link>

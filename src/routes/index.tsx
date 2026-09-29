@@ -1,9 +1,10 @@
 ﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Play, Heart, Award, Star, Sofa, CalendarDays } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowRight, Sparkles, Heart, Award, Star, Sofa, CalendarDays } from "lucide-react";
 import heroDarkImg from "@/assets/woman1.jpg";
 import heroLightImg from "@/assets/woman2.png";
-import aboutImg from "@/assets/about-salon.jpg";
+import aboutImg from "@/assets/IMG_6262.jpg";
 import seal from "@/assets/logo-loma-seal.jpg";
 import sCut from "@/assets/service-cut.jpg";
 import sColor from "@/assets/service-color.jpg";
@@ -15,9 +16,60 @@ import g1 from "@/assets/IMG_5364.jpg";
 import g2 from "@/assets/IMG_5368.jpg";
 import g3 from "@/assets/IMG_5722.jpg";
 import g5 from "@/assets/IMG_5978.jpg";
-import { products as allProducts } from "@/data/products";
+import shampoo1 from "@/assets/lomaproducts/shampoo1.webp";
+import mascara1 from "@/assets/lomaproducts/mascara1.webp";
+import oleo1 from "@/assets/lomaproducts/oleo1.png";
+import termico1 from "@/assets/lomaproducts/termico1.webp";
+import { MarketingCarouselSection } from "@/components/MarketingCarouselSection";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
+import type { ProductRecord } from "@/lib/admin/products.server";
+
+type HomeProduct = {
+  id: string;
+  name: string;
+  img: string;
+  price: number;
+  isFeatured?: boolean;
+};
+
+const fallbackFeaturedProducts: HomeProduct[] = [
+  {
+    id: "fallback-shampoo1",
+    name: "Shampoo Vitaminado Fortificante Indian Hair 250 ml",
+    img: shampoo1,
+    price: 21.89,
+  },
+  {
+    id: "fallback-mascara1",
+    name: "Máscara Vitaminada Indian Hair 500 ml",
+    img: mascara1,
+    price: 32.89,
+  },
+  {
+    id: "fallback-oleo1",
+    name: "Prana Oil | Óleo Fortificante 115 ml",
+    img: oleo1,
+    price: 32.89,
+  },
+  {
+    id: "fallback-termico1",
+    name: "Protetor térmico e UV Ganesh Thermic 240 ml",
+    img: termico1,
+    price: 29.9,
+  },
+];
+
+function stableScore(value: string) {
+  let hash = 0;
+
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash << 5) - hash + value.charCodeAt(i);
+    hash |= 0;
+  }
+
+  return Math.abs(hash);
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -38,7 +90,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [dbProducts, setDbProducts] = useState<ProductRecord[]>([]);
+  const lang = (i18n.language?.slice(0, 2) ?? "pt") as "pt" | "en" | "fr";
   const featuredNames = t("services.featured", { returnObjects: true }) as string[];
   const services = [
     { name: featuredNames[0], img: sCut },
@@ -48,16 +102,63 @@ function Index() {
     { name: featuredNames[4], img: sAesth },
     { name: featuredNames[5], img: sHydra },
   ];
-  const products = [allProducts[0], allProducts[8], allProducts[15], allProducts[19]].map((p) => ({
-    name: p.name,
-    img: p.image,
-    price: p.price,
-  }));
+  useEffect(() => {
+    let active = true;
+
+    fetch("/api/products")
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Falha ao carregar produtos");
+        return (await response.json()) as { products: ProductRecord[] };
+      })
+      .then((data) => {
+        if (active) setDbProducts(data.products);
+      })
+      .catch(() => {
+        if (active) setDbProducts([]);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const products = useMemo(() => {
+    const mapped = dbProducts
+      .filter((product) => product.imageUrl && product.price != null)
+      .map<HomeProduct>((product) => ({
+        id: product.id,
+        name:
+          lang === "en"
+            ? product.nameEn || product.namePt
+            : lang === "fr"
+              ? product.nameFr || product.namePt
+              : product.namePt,
+        img: product.imageUrl ?? "",
+        price: product.price ?? 0,
+        isFeatured: product.isFeatured,
+      }));
+
+    if (mapped.length === 0) return fallbackFeaturedProducts;
+
+    const featured = mapped.filter((product) => product.isFeatured).slice(0, 4);
+    const source = mapped.filter((product) => !product.isFeatured);
+    const seed = new Date().toISOString().slice(0, 10);
+    const rotated = [...source].sort(
+      (a, b) => stableScore(`${seed}-${a.id}`) - stableScore(`${seed}-${b.id}`),
+    );
+
+    return [...featured, ...rotated].slice(0, 4);
+  }, [dbProducts, lang]);
   const testimonialsRaw = t("testimonials.items", { returnObjects: true });
   const testimonials = (Array.isArray(testimonialsRaw) ? testimonialsRaw : []) as {
     n: string;
     t: string;
   }[];
+  const mobileHeroLines = {
+    pt: ["O lugar", "onde a sua", t("home.heroLine2Accent"), t("home.heroLine2End")],
+    en: ["The place", "where your", t("home.heroLine2Accent"), t("home.heroLine2End")],
+    fr: ["Le lieu", "où votre", t("home.heroLine2Accent"), t("home.heroLine2End")],
+  }[lang];
 
   return (
     <>
@@ -75,55 +176,74 @@ function Index() {
         />
         <div className="home-hero-overlay" />
 
-        <div className="relative z-10 mx-auto max-w-[1480px] h-full px-6 sm:px-8 lg:px-12 pt-36 lg:pt-40 pb-10 flex flex-col justify-center">
-          <div className="max-w-[760px]">
+        <div className="home-hero-content relative z-10 mx-auto max-w-[1480px] h-full px-6 sm:px-8 lg:px-12 pt-36 lg:pt-40 pb-10 flex flex-col justify-center">
+          <div className="home-hero-copy max-w-[760px]">
             <Reveal>
-              <div className="eyebrow mb-8 flex items-center gap-3 text-primary">
+              <div className="home-hero-eyebrow eyebrow mb-8 flex items-center gap-3 text-primary">
                 <span className="h-px w-9 bg-primary/80" />
                 {t("home.eyebrow")}
               </div>
             </Reveal>
             <Reveal delay={120}>
-              <h1 className="font-display tracking-normal text-5xl sm:text-6xl md:text-7xl xl:text-[78px] 2xl:text-[86px] leading-[0.98] text-foreground">
-                {t("home.heroLine1")}
-                <br />
-                <span className="block sm:whitespace-nowrap">
-                  {t("home.heroLine2Start")}{" "}
-                  <span className="text-gradient-gold italic font-light">
-                    {t("home.heroLine2Accent")}
+              <h1
+                className="home-hero-title font-display tracking-normal text-5xl sm:text-6xl md:text-7xl xl:text-[78px] 2xl:text-[86px] leading-[0.98] text-foreground"
+                aria-label={`${t("home.heroLine1")} ${t("home.heroLine2Start")} ${t("home.heroLine2Accent")} ${t("home.heroLine2End")}`}
+              >
+                <span className="home-hero-title-desktop">
+                  {t("home.heroLine1")}
+                  <br />
+                  <span className="block sm:whitespace-nowrap">
+                    {t("home.heroLine2Start")}{" "}
+                    <span className="text-gradient-gold italic font-light">
+                      {t("home.heroLine2Accent")}
+                    </span>{" "}
+                    {t("home.heroLine2End")}
                   </span>{" "}
-                  {t("home.heroLine2End")}
-                </span>{" "}
+                </span>
+                <span className="home-hero-title-mobile" aria-hidden="true">
+                  {mobileHeroLines[0]}
+                  <br />
+                  {mobileHeroLines[1]}
+                  <br />
+                  <span className="text-gradient-gold italic font-light">{mobileHeroLines[2]}</span>
+                  <br />
+                  {mobileHeroLines[3]}
+                </span>
               </h1>
             </Reveal>
+            <div className="home-hero-mobile-divider" aria-hidden="true">
+              <span />
+              <img src={seal} alt="" />
+              <span />
+            </div>
             <Reveal delay={240}>
-              <p className="mt-8 text-base sm:text-lg text-foreground/86 max-w-lg leading-[1.9]">
+              <p className="home-hero-subtitle mt-8 text-base sm:text-lg text-foreground/86 max-w-lg leading-[1.9]">
                 {t("home.subtitle")}
               </p>
             </Reveal>
             <Reveal delay={360}>
-              <div className="mt-10 flex flex-wrap items-center gap-6">
+              <div className="home-hero-actions mt-10 flex flex-wrap items-center gap-6">
                 <Link
                   to="/agendamento"
-                  className="group inline-flex items-center gap-4 px-7 sm:px-9 h-16 rounded-md bg-gradient-gold text-cocoa-deep text-[12px] font-semibold uppercase tracking-[0.16em] hover:opacity-90 transition-all shadow-elegant"
+                  className="home-hero-primary-cta group inline-flex items-center gap-4 px-7 sm:px-9 h-16 rounded-md bg-gradient-gold text-cocoa-deep text-[12px] font-semibold uppercase tracking-[0.16em] hover:opacity-90 transition-all shadow-elegant"
                   style={{ color: "oklch(0.22 0.04 50)" }}
                 >
                   <CalendarDays className="w-5 h-5" />
                   {t("common.scheduleNow")}
                 </Link>
-                <a
-                  href="#video"
-                  className="group inline-flex items-center gap-4 text-foreground text-[12px] font-semibold uppercase tracking-[0.16em]"
+                <Link
+                  to="/profissionais"
+                  className="hero-experience-link group inline-flex items-center gap-4 text-foreground text-[12px] font-semibold uppercase tracking-[0.16em]"
                 >
                   <span className="w-12 h-12 rounded-full border border-foreground/80 flex items-center justify-center group-hover:border-primary group-hover:text-primary transition">
-                    <Play className="w-4 h-4 fill-current" />
+                    <Sparkles className="w-4 h-4" />
                   </span>
                   {t("shop.watchVideo")}
-                </a>
+                </Link>
               </div>
             </Reveal>
             <Reveal delay={480}>
-              <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-y-6 max-w-[760px]">
+              <div className="home-hero-features mt-16 grid grid-cols-2 md:grid-cols-4 gap-y-6 max-w-[760px]">
                 {[
                   { i: Heart, k: "f1" },
                   { i: Award, k: "f2" },
@@ -132,19 +252,26 @@ function Index() {
                 ].map(({ i: Icon, k }, index) => (
                   <div
                     key={k}
-                    className={`flex items-center gap-3 md:pr-6 ${index > 0 ? "md:border-l md:border-primary/35 md:pl-6" : ""}`}
+                    className={`home-hero-feature flex items-center gap-3 md:pr-6 ${index > 0 ? "md:border-l md:border-primary/35 md:pl-6" : ""}`}
                   >
                     <Icon className="w-7 h-7 text-primary shrink-0" strokeWidth={1.35} />
-                    <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.12em] text-foreground/90 leading-tight">
+                    <span className="home-hero-feature-label text-[10px] sm:text-[11px] uppercase tracking-[0.12em] text-foreground/90 leading-tight">
                       {t(`shop.heroFeatures.${k}`)}
                     </span>
                   </div>
                 ))}
               </div>
             </Reveal>
+            <div className="home-hero-mobile-footer-mark" aria-hidden="true">
+              <span />
+              <img src={seal} alt="" />
+              <span />
+            </div>
           </div>
         </div>
       </section>
+
+      <MarketingCarouselSection />
 
       {/* ABOUT */}
       <section className="py-28 md:py-40">
@@ -186,7 +313,7 @@ function Index() {
       </section>
 
       {/* SERVICES */}
-      <section className="py-24 md:py-32 bg-gradient-cocoa">
+      <section className="services-showcase py-24 md:py-32">
         <div className="mx-auto max-w-7xl px-6 sm:px-8">
           <Reveal>
             <SectionHeading eyebrow={t("home.servicesEyebrow")} title={t("home.servicesTitle")} />
@@ -196,7 +323,7 @@ function Index() {
               <Reveal key={s.name} delay={i * 80}>
                 <Link
                   to="/servicos"
-                  className="group relative block aspect-[4/5] overflow-hidden hover-lift"
+                  className="service-showcase-card group relative block aspect-[4/5] overflow-hidden hover-lift"
                 >
                   <img
                     src={s.img}
@@ -204,7 +331,7 @@ function Index() {
                     loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                  <div className="service-showcase-card-overlay absolute inset-0" />
                   <div className="absolute inset-x-0 bottom-0 p-6">
                     <div className="eyebrow mb-2">0{i + 1}</div>
                     <div className="font-display text-2xl md:text-3xl text-foreground">
@@ -235,14 +362,14 @@ function Index() {
           </Reveal>
           <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {products.map((p, i) => (
-              <Reveal key={p.name} delay={i * 70}>
+              <Reveal key={p.id} delay={i * 70}>
                 <Link to="/loja" className="group block">
                   <div className="aspect-square overflow-hidden bg-secondary">
                     <img
                       src={p.img}
                       alt={p.name}
                       loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                      className="w-full h-full object-contain p-6 transition-transform duration-1000 group-hover:scale-105"
                     />
                   </div>
                   <div className="mt-4 flex justify-between items-baseline">

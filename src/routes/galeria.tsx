@@ -21,7 +21,7 @@ import p7 from "@/assets/IMG_5457.jpg";
 import p8 from "@/assets/IMG_5468.jpg";
 import p9 from "@/assets/IMG_5595.jpg";
 import p10 from "@/assets/IMG_4006.jpg";
-import p11 from "@/assets/faixada.png";
+import p11 from "@/assets/pros-lounge.png";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
 

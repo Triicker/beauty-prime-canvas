@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
 import { sendSiteEmail } from "@/lib/email/mailer.server";
+import { enforceRateLimit, publicFormRateLimits } from "@/lib/security/rate-limit.server";
 
 const cartItemSchema = z.object({
   id: z.string(),
@@ -32,37 +33,56 @@ export const Route = createFileRoute("/api/cart-request")({
           );
         }
 
+        const rateLimited = await enforceRateLimit(request, publicFormRateLimits.cartRequest);
+        if (rateLimited) return rateLimited;
+
         const subtotal = parsed.data.items.reduce((sum, item) => sum + item.price * item.qty, 0);
         const productLines = parsed.data.items.map(
           (item) => `${item.qty}x ${item.name} - ${(item.price * item.qty).toFixed(2)} EUR`,
         );
 
-        const result = await sendSiteEmail({
-          type: "cart_request",
-          subject: `Nova lista de produtos - ${parsed.data.name}`,
-          title: "Nova lista de produtos",
-          intro:
-            "O cliente enviou uma lista de produtos pelo carrinho. Não houve pagamento online.",
-          name: parsed.data.name,
-          email: parsed.data.email,
-          phone: parsed.data.phone,
-          fields: [
-            { label: "Nome", value: parsed.data.name },
-            { label: "Email", value: parsed.data.email },
-            { label: "Telefone", value: parsed.data.phone },
-            { label: "Produtos", value: productLines.join("\n") },
-            { label: "Subtotal estimado", value: `${subtotal.toFixed(2)} EUR` },
-            { label: "Notas", value: parsed.data.notes },
-          ],
-          payload: { ...parsed.data, subtotal },
-          confirmation: {
-            enabled: true,
-            subject: "Recebemos a sua lista de produtos - LOMA",
-            title: "Lista de produtos recebida",
+        let result: Awaited<ReturnType<typeof sendSiteEmail>>;
+
+        try {
+          result = await sendSiteEmail({
+            type: "cart_request",
+            subject: `Nova lista de produtos - ${parsed.data.name}`,
+            title: "Nova lista de produtos",
             intro:
-              "Obrigada pelo interesse nos produtos LOMA. A equipa recebeu a sua lista e entrará em contacto para confirmar disponibilidade e próximos passos.",
-          },
-        });
+              "O cliente enviou uma lista de produtos pelo carrinho. Não houve pagamento online.",
+            name: parsed.data.name,
+            email: parsed.data.email,
+            phone: parsed.data.phone,
+            fields: [
+              { label: "Nome", value: parsed.data.name },
+              { label: "Email", value: parsed.data.email },
+              { label: "Telefone", value: parsed.data.phone },
+              { label: "Produtos", value: productLines.join("\n") },
+              { label: "Subtotal estimado", value: `${subtotal.toFixed(2)} EUR` },
+              { label: "Notas", value: parsed.data.notes },
+            ],
+            payload: { ...parsed.data, subtotal },
+            confirmation: {
+              enabled: true,
+              subject: "Recebemos a sua lista de produtos - LOMA",
+              title: "Lista de produtos recebida",
+              intro:
+                "Obrigada pelo interesse nos produtos LOMA. A equipa recebeu a sua lista e entrará em contacto para confirmar disponibilidade e próximos passos.",
+            },
+          });
+        } catch (error) {
+          console.error("Cart request email failed", error);
+
+          return Response.json(
+            {
+              ok: false,
+              code: "email_failed",
+              message:
+                "Não foi possível enviar a lista por email neste momento. Verifique a configuração do Resend.",
+            },
+            { status: 502 },
+          );
+        }
 
         return Response.json({ ok: true, ...result });
       },

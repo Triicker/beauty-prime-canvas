@@ -6,6 +6,229 @@ const projectRoot = process.cwd();
 const productsDir = path.join(projectRoot, "src", "assets", "lomaproducts");
 const publicBaseUrl = "https://midiasave-5c064.web.app";
 
+const avaniProductCatalog = {
+  shampoo1: {
+    name: "Shampoo Vitaminado Fortificante Indian Hair 250 ml | Sem Sal",
+    price: 21.89,
+  },
+  shampoo2: {
+    name: "Shampoo Vitaminado Fortificante Indian Hair 500 ml | Sem sal",
+    price: 38.39,
+  },
+  shampoo3: {
+    name: "Shampoo Purificante Cold Effect 250 ml | Sem Sal",
+    price: 24.75,
+  },
+  shampoo4: {
+    name: "Shampoo Reconstrutor Indian Hair Rebuild 250ml | Sem Sal",
+    price: 26.9,
+  },
+  shampoo5: {
+    name: "Shampoo Nutritivo Indian Hair Nutrition 250 ml | Sem Sal",
+    price: 21.89,
+  },
+  shampoo6: {
+    name: "Shampoo fortificante e apaziguador com Açafrão Panchali 250 ml | Sem Sal",
+    price: 25.19,
+  },
+  shampoo7: {
+    name: "Shampoo Purificante Cold Effect 500 ml | Sem Sal",
+    price: 43.89,
+  },
+  shampoo8: {
+    name: "Shampoo Nutritivo Indian Hair Nutrition 500 ml | Sem Sal",
+    price: 38.39,
+  },
+  shampoo9: {
+    name: "Shampoo Pouca Espuma Krishna Curls 250 ml | Sem Sal",
+    price: 25.19,
+  },
+  shampoo10: {
+    name: "Shampoo Reconstrutor Indian Hair Rebuild 500ml | Sem Sal",
+    price: 49.9,
+  },
+  shampoo11: {
+    name: "Shampoo fortificante e apaziguador com Açafrão Panchali 500 ml | Vegan",
+    price: 43.89,
+  },
+  shampoo12: {
+    name: "Shampoo Black Platinum Pro 250 ml | Neutralizante Amarelos e Grisalhos",
+    price: 21.89,
+  },
+  shampoo13: {
+    name: "Co Wash Krishna Curls | Lavagem Hidratante Sem Espuma | 250 ml",
+    price: 32.89,
+  },
+  shampoo14: {
+    name: "Shampoo Krishna Curls | Caracóis Naturais | Pouca Espuma 500ml",
+    price: 43.89,
+  },
+  shampoo15: {
+    name: "Shampoo Vitaminado Fortificante Indian Hair 5 L | Sem sal",
+    price: 218.9,
+  },
+  shampoo16: {
+    name: "Shampoo Black Platinum Pro 500 ml | Neutralizante Amarelos e Grisalhos",
+    price: 39.4,
+  },
+  shampoo17: {
+    name: "Co Wash Krishna Curls | Lavagem Hidratante Sem Espuma | 500ml",
+    price: 63.81,
+  },
+  mascara1: {
+    name: "Máscara Vitaminada Indian Hair 500 ml | Hidratante",
+    price: 32.89,
+  },
+  mascara2: {
+    name: "Máscara Indian Hair Rebuild 500 ml | Reconstrutora",
+    price: 49.9,
+  },
+  mascara3: {
+    name: "Máscara Indian Hair Nutrition 500 ml | Nutritiva",
+    price: 38.39,
+  },
+  mascara4: {
+    name: "Máscara Indian Hair Nutrition Spider Web 500 ml | Nutritiva Leve",
+    price: 43.89,
+  },
+  mascara5: {
+    name: "Máscara Panchali 500 ml | Hidratante & Fortificante | Açafrão Biológico",
+    price: 43.89,
+  },
+  mascara6: {
+    name: "Creme Purificante especial Couro Cabeludo 500 ml | Hamamélis",
+    price: 32.89,
+  },
+  mascara7: {
+    name: "Máscara Krishna Curls 500 ml | Nutrição Profunda",
+    price: 43.89,
+  },
+  mascara8: {
+    name: "Máscara Black Platinum Pro 500 ml | Neutralizante Amarelos e Grisalhos",
+    price: 43.89,
+  },
+  condicionador1: {
+    name: "Condicionador Fortificante Indian Hair Vitaminado 250 ml | Sem Sal",
+    price: 25.19,
+  },
+  condicionador2: {
+    name: "Condicionador Reconstrutor Indian Hair Rebuild 250 ml | Sem Sal",
+    price: 29.9,
+  },
+  condicionador3: {
+    name: "Condicionador Nutritivo Indian Hair Nutrition 250 ml | Sem Sal",
+    price: 27.39,
+  },
+  condicionador4: {
+    name: "Condicionador Fortificante Indian Hair Vitaminado 500 ml | Sem Sal",
+    price: 41.69,
+  },
+  condicionador5: {
+    name: "Condicionador Selante Nutritivo Krishna Curls 250 ml | Sem Sal",
+    price: 32.89,
+  },
+  condicionador6: {
+    name: "Condicionador fortificante e apaziguador com Açafrão Panchali 250 ml | Vegan",
+    price: 27.39,
+  },
+  condicionador7: {
+    name: "Condicionador fortificante e apaziguador com Açafrão Panchali 500 ml | Vegan",
+    price: 47.19,
+  },
+  condicionador8: {
+    name: "Condicionador Black Platinum Pro 250 ml | Neutralizante Amarelos e Grisalhos",
+    price: 27.39,
+  },
+  condicionador9: {
+    name: "Condicionador Indian Hair Rebuild 500 ml | Reconstrutor",
+    price: 56.81,
+  },
+  tonico: {
+    name: "Tónico Capilar Vitaminado Fortificante Indian Hair 100 ml | Amla",
+    price: 38.39,
+  },
+  creme1: {
+    name: "Sérum Selador de Pontas Indian Hair Rebuild | 100ml",
+    price: 29.9,
+  },
+  creme2: {
+    name: "Modelador de Caracóis Active Curls | Creme Finalizador 250ml",
+    price: 21.89,
+  },
+  creme3: {
+    name: "Casual Waves 250ml | Geleia Texturizante Leave in",
+    price: 21.89,
+  },
+  creme4: {
+    name: "Modelador de Caracóis Active Curls | Creme Finalizador 500ml",
+    price: 32.89,
+  },
+  creme5: {
+    name: "Creme Intenso Krishna Curls | Nutrição Profunda | 250 ml",
+    price: 29.59,
+  },
+  creme6: {
+    name: "Creme Purificante especial Couro Cabeludo 500 ml | Hamamélis",
+    price: 32.89,
+  },
+  creme7: {
+    name: "Creme Intenso Krishna Curls | Nutrição Profunda | 500 ml",
+    price: 43.89,
+  },
+  oleo1: {
+    name: "Prana Oil | Óleo Fortificante para cabelos finos e médios | 115ml",
+    price: 32.89,
+  },
+  oleo2: {
+    name: "Mudra Oil | Óleo Nutritivo para Cabelos Grossos | 115ml",
+    price: 32.89,
+  },
+  oleo3: {
+    name: "Óleo de Rícino Cure 100ml | 100% Biológico",
+    price: 27.39,
+  },
+  oleo4: {
+    name: "Óleo Melaleuca Tea Tree 15ml",
+    price: 21.89,
+  },
+  oleo5: {
+    name: "Óleo de Rosa Mosqueta Puro | Virgem e Biológico | 30 ml",
+    price: 32.89,
+  },
+  termico1: {
+    name: "Protetor térmico e UV Ganesh Thermic | Leite Reparador e Anti-Frizz 240ml",
+    price: 29.9,
+  },
+  protecaotermica1: {
+    name: "Protetor térmico e UV Ganesh Thermic | Leite Reparador e Anti-Frizz 240ml",
+    price: 29.9,
+  },
+  termico2: {
+    name: "Protetor Térmico & UV Surya Thermic | Spray Bifásico 200ml",
+    price: 29.59,
+  },
+  protecaotermica2: {
+    name: "Protetor Térmico & UV Surya Thermic | Spray Bifásico 200ml",
+    price: 29.59,
+  },
+  cera1: {
+    name: "Cera Capilar Styling Wax Pro Everlasting | Fixação Extra Forte 150g",
+    price: 29.9,
+  },
+  cera2: {
+    name: "Cera Capilar Styling Wax Fresh Effect | Fixação Normal 150g",
+    price: 29.9,
+  },
+  cera3: {
+    name: "Cera Capilar Styling Wax Pro Matte Paste | Matte Fixação Forte 150g",
+    price: 29.9,
+  },
+  cera4: {
+    name: "Prenda Especial | Cera Capilar Styling Wax Pro Matte Paste",
+    price: 29.9,
+  },
+};
+
 const categoryRules = [
   {
     match: /^fortalecimento/i,
@@ -204,10 +427,22 @@ function ruleFor(filename) {
   return categoryRules.find((rule) => rule.match.test(slug));
 }
 
+function productCatalogEntry(filename) {
+  return avaniProductCatalog[slugFromFilename(filename)];
+}
+
 function productName(rule, filename) {
+  const catalog = productCatalogEntry(filename);
+  if (catalog?.name) return catalog.name;
+
   const slug = slugFromFilename(filename);
   const n = numberFromSlug(slug);
   return `${rule.name} ${n}`;
+}
+
+function productPrice(rule, filename) {
+  const catalog = productCatalogEntry(filename);
+  return catalog?.price ?? rule.price;
 }
 
 const env = { ...readEnv(), ...process.env };
@@ -277,7 +512,7 @@ for (const file of files) {
       slug,
       productName(rule, file),
       rule.description,
-      rule.price,
+      productPrice(rule, file),
       categories[0],
       categories,
       imageUrl,
