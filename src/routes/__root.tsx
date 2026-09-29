@@ -69,13 +69,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Salão premium de beleza e bem-estar capilar em Santa Cruz, Torres Vedras. Corte, coloração, tratamentos e boutique de produtos exclusivos.",
+          "Salão premium de beleza e bem-estar capilar em Torres Vedras. Corte, coloração, tratamentos e boutique de produtos exclusivos.",
       },
       { property: "og:title", content: "LOMA Clinic & Beauty Hair — Cabelo, estética & bem-estar" },
       {
         property: "og:description",
         content:
-          "Salão premium de beleza e bem-estar capilar em Santa Cruz, Torres Vedras. Corte, coloração, tratamentos e boutique de produtos exclusivos.",
+          "Salão premium de beleza e bem-estar capilar em Torres Vedras. Corte, coloração, tratamentos e boutique de produtos exclusivos.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -86,7 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "twitter:description",
         content:
-          "Salão premium de beleza e bem-estar capilar em Santa Cruz, Torres Vedras. Corte, coloração, tratamentos e boutique de produtos exclusivos.",
+          "Salão premium de beleza e bem-estar capilar em Torres Vedras. Corte, coloração, tratamentos e boutique de produtos exclusivos.",
       },
       { property: "og:image", content: "https://lomaexperience.com/og-loma.png" },
       { name: "twitter:image", content: "https://lomaexperience.com/og-loma.png" },
@@ -113,7 +113,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           logo: "https://lomaexperience.com/og-loma.png",
           image: "https://lomaexperience.com/og-loma.png",
           description:
-            "Salão premium de beleza e bem-estar capilar em Santa Cruz, Torres Vedras. Corte, coloração, tratamentos e boutique de produtos exclusivos.",
+            "Salão premium de beleza e bem-estar capilar em Torres Vedras. Corte, coloração, tratamentos e boutique de produtos exclusivos.",
           telephone: "+351913016182",
           email: "Lomahairspa@gmail.com",
           address: {

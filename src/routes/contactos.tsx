@@ -12,7 +12,7 @@ export const Route = createFileRoute("/contactos")({
       {
         name: "description",
         content:
-          "Visite a LOMA em Santa Cruz, Torres Vedras — morada, horário, formulário e redes sociais.",
+          "Visite a LOMA em Torres Vedras — morada, horário, formulário e redes sociais.",
       },
       { property: "og:title", content: "Contactos — LOMA" },
       { property: "og:description", content: "Estamos à sua espera." },
