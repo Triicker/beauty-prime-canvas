@@ -40,7 +40,7 @@ export const fr: Dict = {
     aboutEyebrow: "Maison Loma",
     aboutTitle: "Beauté, santé capillaire et bien-être en un seul espace",
     aboutBody:
-      "LOMA est bien plus qu'un salon — un espace conçu pour ralentir, prendre soin et transformer. Nous combinons techniques avancées, service personnalisé et une atmosphère sophistiquée et accueillante à Santa Cruz — Torres Vedras.",
+      "LOMA est bien plus qu'un salon — un espace conçu pour ralentir, prendre soin et transformer. Nous combinons techniques avancées, service personnalisé et une atmosphère sophistiquée et accueillante à — Torres Vedras.",
     servicesEyebrow: "Services signature",
     servicesTitle: "Des rituels beauté taillés pour vous",
     productsEyebrow: "Boutique",
@@ -508,7 +508,7 @@ export const fr: Dict = {
   contact: {
     eyebrow: "Rendez-nous visite",
     title: "Nous vous attendons",
-    address: "Santa Cruz — Torres Vedras",
+    address: "Torres Vedras",
     hours: "Lun–Sam · 10h à 20h",
     formTitle: "Envoyez-nous un message",
     message: "Message",
@@ -667,7 +667,7 @@ export const fr: Dict = {
           },
           {
             q: "Où se trouve LOMA ?",
-            a: "Nous sommes situés à Santa Cruz, Torres Vedras. Pour l'adresse exacte et les indications, visitez notre page Contact ou envoyez-nous un message WhatsApp.",
+            a: "Nous sommes situés à Torres Vedras. Pour l'adresse exacte et les indications, visitez notre page Contact ou envoyez-nous un message WhatsApp.",
           },
         ],
       },

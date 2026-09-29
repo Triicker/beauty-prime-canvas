@@ -38,7 +38,7 @@
     aboutEyebrow: "A Casa Loma",
     aboutTitle: "Beleza, saúde capilar e bem-estar num só espaço",
     aboutBody:
-      "A LOMA é mais do que um salão — é um ambiente pensado para desacelerar, cuidar e transformar. Combinamos técnicas avançadas, atendimento personalizado e uma atmosfera sofisticada e acolhedora em Santa Cruz — Torres Vedras.",
+      "A LOMA é mais do que um salão — é um ambiente pensado para desacelerar, cuidar e transformar. Combinamos técnicas avançadas, atendimento personalizado e uma atmosfera sofisticada e acolhedora em Torres Vedras.",
     servicesEyebrow: "Serviços assinatura",
     servicesTitle: "Rituais de beleza criados à medida",
     productsEyebrow: "Boutique",

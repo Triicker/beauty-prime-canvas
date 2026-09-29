@@ -40,7 +40,7 @@ export const en: Dict = {
     aboutEyebrow: "Maison Loma",
     aboutTitle: "Beauty, hair health and wellness in one space",
     aboutBody:
-      "LOMA is more than a salon — a space designed to slow down, care and transform. We combine advanced techniques, personalised service and a sophisticated, welcoming atmosphere in Santa Cruz — Torres Vedras.",
+      "LOMA is more than a salon — a space designed to slow down, care and transform. We combine advanced techniques, personalised service and a sophisticated, welcoming atmosphere in — Torres Vedras.",
     servicesEyebrow: "Signature services",
     servicesTitle: "Beauty rituals tailored to you",
     productsEyebrow: "Boutique",

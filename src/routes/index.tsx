@@ -74,11 +74,11 @@ function stableScore(value: string) {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "LOMA Clinic & Beauty Hair — Santa Cruz, Torres Vedras" },
+      { title: "LOMA Clinic & Beauty Hair — Torres Vedras" },
       {
         name: "description",
         content:
-          "Salão premium de beleza capilar, loiros, extensões e Head Spa em Santa Cruz — Torres Vedras.",
+          "Salão premium de beleza capilar, loiros, extensões e Head Spa em Torres Vedras.",
       },
       { property: "og:title", content: "LOMA Clinic & Beauty Hair" },
       { property: "og:description", content: "Beleza que revela a sua melhor versão." },
